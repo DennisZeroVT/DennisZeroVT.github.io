@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://denniszerovt.github.io/sitemap.xml
