@@ -2190,21 +2190,21 @@ function renderAlbumsGrid() {
             }, 300);
         }
         
-        // Blog Pagination
+        // Blog Pagination - updated for dynamic posts
         let currentBlogPage = 0;
-        const blogPosts = document.querySelectorAll('.blog-post');
-        const blogPageBtns = document.querySelectorAll('.blog-page-btn');
         
         function showBlogPost(index) {
-            blogPosts.forEach(post => post.classList.remove('active'));
+            const blogPosts = document.querySelectorAll('#blog-posts-container .blog-post');
+            const blogPageBtns = document.querySelectorAll('.blog-page-btn');
+            
+            blogPosts.forEach((post, i) => {
+                post.style.display = i === index ? 'block' : 'none';
+            });
+            
             blogPageBtns.forEach(btn => {
                 btn.classList.remove('bg-[#A596DA]', 'text-white');
                 btn.classList.add('glass');
             });
-            
-            if (blogPosts[index]) {
-                blogPosts[index].classList.add('active');
-            }
             if (blogPageBtns[index]) {
                 blogPageBtns[index].classList.add('bg-[#A596DA]', 'text-white');
                 blogPageBtns[index].classList.remove('glass');
@@ -2213,10 +2213,28 @@ function renderAlbumsGrid() {
         }
         
         function changeBlogPage(direction) {
+            const blogPosts = document.querySelectorAll('#blog-posts-container .blog-post');
             const newIndex = currentBlogPage + direction;
             if (newIndex >= 0 && newIndex < blogPosts.length) {
                 showBlogPost(newIndex);
             }
+        }
+        
+        function updatePagination() {
+            const blogPosts = document.querySelectorAll('#blog-posts-container .blog-post');
+            const paginationContainer = document.getElementById('blog-pagination');
+            if (!paginationContainer) return;
+            
+            paginationContainer.innerHTML = '';
+            blogPosts.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.className = `blog-page-btn w-10 h-10 rounded-lg ${i===0?'bg-[#A596DA] text-white':'glass'} font-semibold`;
+                btn.textContent = i+1;
+                btn.onclick = () => showBlogPost(i);
+                paginationContainer.appendChild(btn);
+            });
+            if (blogPosts.length > 0) showBlogPost(0);
+        }
         }
         
         // Handle ESC key for overlay
@@ -2784,10 +2802,12 @@ document.addEventListener('DOMContentLoaded', function() {
               });
               sb.classList.add('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
               renderPosts();
+    updatePagination();
             });
           });
         }
         renderPosts();
+    updatePagination();
       });
     });
   }
@@ -2845,6 +2865,7 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('Firebase: received', snapshot.size, 'posts');
       allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       renderPosts();
+    updatePagination();
     }, (error) => {
       console.error('Firebase error:', error);
       const container = document.getElementById('blog-posts-container');
