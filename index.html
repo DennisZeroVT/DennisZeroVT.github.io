@@ -2819,32 +2819,38 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function renderPosts(){
-    const c = document.getElementById('blog-posts-container');
+    const c=document.getElementById('blog-posts-container');
     if(!c) return;
-    let p = [...allPosts];
-    if(currentCat!=='All') p = p.filter(x=>x.category===currentCat);
-    if(currentSub!=='All') p = p.filter(x=>x.subcategory===currentSub);
-    if(p.length===0){ c.innerHTML='<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet in this category.</div>'; return; }
-    c.innerHTML = p.map(post=>{
-      const cat = categories.find(x=>x.name===post.category);
-      const col = post.color || cat?.color || '#A596DA';
-      
-      let contentHtml = '';
-      if(post.blocks && Array.isArray(post.blocks)){
-        contentHtml = post.blocks.map(b=>{
-          if(b.type==='text'){ const t=(b.value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); return `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${t}</p>`; }
-          if(b.type==='image'){ return `<div class="mb-6"><img src="${b.value}" class="max-w-full h-auto rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:700px" onclick="window.open('${b.value}','_blank')"></div>`; }
-          if(b.type==='divider'){ return `<hr class="my-8 border-white/10">`; }
+    let p=[...allPosts];
+    if(currentCat!=='All') p=p.filter(x=>x.category===currentCat);
+    if(currentSub!=='All') p=p.filter(x=>x.subcategory===currentSub);
+    if(p.length===0){ c.innerHTML='<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet.</div>'; return; }
+    c.innerHTML=p.map(post=>{
+      const cat=categories.find(x=>x.name===post.category);
+      const col=post.color||cat?.color||'#A596DA';
+      let html='';
+      if(post.blocks && Array.isArray(post.blocks) && post.blocks.length){
+        html=post.blocks.map(b=>{
+          if(b.type==='text'){
+            const t=String(b.value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
+/g,'<br>');
+            return `<p class="text-[var(--text-secondary)] leading-relaxed mb-4" style="opacity:1">${t}</p>`;
+          }
+          if(b.type==='image'){
+            return `<div class="my-6"><img src="${b.value}" class="w-full max-h-[700px] object-contain rounded-xl border border-white/10 mx-auto block" style="opacity:1" loading="lazy"></div>`;
+          }
+          if(b.type==='divider'){
+            return `<hr class="my-8 border-white/10" style="opacity:1">`;
+          }
           return '';
         }).join('');
-      } else {
-        const imgs = post.images||[];
-        const imgHtml = imgs.length ? `<div class="mb-6 grid gap-3 ${imgs.length>1?'grid-cols-2':''}">${imgs.map(i=>`<img src="${i}" class="w-full rounded-xl border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>` : '';
-        const body = (post.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-        contentHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${body}</p>${imgHtml}`;
+      }else{
+        const body=String(post.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
+/g,'<br>');
+        const imgs=(post.images||[]).map(i=>`<div class="my-4"><img src="${i}" class="w-full max-h-[600px] object-contain rounded-xl border border-white/10 block"></div>`).join('');
+        html=`<p class="text-[var(--text-secondary)] leading-relaxed mb-4" style="opacity:1">${body}</p>${imgs}`;
       }
-      
-      return `<article class="blog-post glass rounded-2xl p-8 mb-8"><div class="flex gap-3 items-center mb-4 text-sm"><span class="px-3 py-1 rounded-full" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="opacity-60">${post.subcategory||''}</span><span class="ml-auto opacity-60">${post.displayDate||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text">${post.title}</h3>${contentHtml}</article>`;
+      return `<article class="blog-post glass rounded-2xl p-8 mb-8" style="opacity:1 !important; visibility:visible !important; transform:none !important"><div class="flex gap-2 items-center mb-3 text-xs"><span class="px-2.5 py-1 rounded-full" style="background:${col}22;color:${col};border:1px solid ${col}44">${post.category}</span><span class="opacity-60">${post.subcategory||''}</span><span class="ml-auto opacity-50">${post.displayDate||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text" style="opacity:1">${post.title}</h3>${html}</article>`;
     }).join('');
   }
 
