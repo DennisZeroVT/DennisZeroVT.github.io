@@ -86,6 +86,7 @@ document.getElementById('lockBtn').onclick=()=>{alert('Lock disabled in this bui
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 const cfg = {
   apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
@@ -97,6 +98,7 @@ const cfg = {
 };
 const app = initializeApp(cfg);
 const db = getFirestore(app);
+const storage = getStorage(app);
 
 let categories = [];
 let blocks = [];
@@ -255,20 +257,30 @@ function renderBlocks(){
 document.querySelectorAll('.add-btn').forEach(b=> b.onclick=()=> addBlock(b.dataset.add));
 
 // === FIXED IMAGE SYSTEM WITH COMPRESSION ===
-async function compressFile(file, maxW=1920, quality=0.8){
+async function compressAndUpload(file, maxW=1280, quality=0.65){
   return new Promise((resolve)=>{
     const img = new Image();
-    img.onload = ()=>{
+    img.onload = async ()=>{
       const scale = Math.min(1, maxW / img.width);
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(img.width*scale);
       canvas.height = Math.round(img.height*scale);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      canvas.toBlob((blob)=>{
-        const reader = new FileReader();
-        reader.onloadend = ()=> resolve({dataUrl: reader.result, size: blob.size});
-        reader.readAsDataURL(blob);
+      canvas.toBlob(async (blob)=>{
+        try{
+          const path = `posts/${Date.now()}_${Math.random().toString(36).slice(2,8)}.jpg`;
+          const storageRef = ref(storage, path);
+          await uploadBytes(storageRef, blob);
+          const url = await getDownloadURL(storageRef);
+          resolve({url, size: blob.size});
+        }catch(e){
+          console.error('Storage upload failed', e);
+          // fallback to base64
+          const reader = new FileReader();
+          reader.onloadend = ()=> resolve({url: reader.result, size: blob.size, isBase64:true});
+          reader.readAsDataURL(blob);
+        }
       }, 'image/jpeg', quality);
     };
     img.src = URL.createObjectURL(file);
@@ -278,12 +290,15 @@ async function compressFile(file, maxW=1920, quality=0.8){
 document.getElementById('files').onchange = async e=>{
   for(const f of [...e.target.files]){
     const note = document.createElement('div');
-    note.className = 'text-xs opacity-60';
-    note.textContent = 'Compressing '+f.name+'...';
+    note.className = 'text-xs opacity-60 mb-1';
+    note.textContent = 'Uploading '+f.name+'...';
     document.getElementById('blocks').prepend(note);
-    const out = await compressFile(f);
+    const out = await compressAndUpload(f);
     note.remove();
-    if(out) addBlock('image',{src: out.dataUrl});
+    if(out){
+      addBlock('image',{src: out.url});
+      if(out.isBase64) alert('Warning: Firebase Storage blocked. Using base64 fallback (may still hit size limit). Fix Storage rules in Firebase console.');
+    }
   }
   e.target.value='';
 };
@@ -306,8 +321,8 @@ document.getElementById('publish').onclick = async ()=>{
     displayDate: new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
     blocks: blocks,
     // backwards compat
-    body: blocks.filter(b=>b.type==='text').map(b=>b.content).join('\n\n'),
-    images: blocks.filter(b=>b.type==='image').map(b=>b.src),
+    body: '',
+    images: [], // no longer storing duplicates
     color: color.value,
     createdAt: serverTimestamp()
   };
