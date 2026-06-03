@@ -2828,10 +2828,23 @@ document.addEventListener('DOMContentLoaded', function() {
     c.innerHTML = p.map(post=>{
       const cat = categories.find(x=>x.name===post.category);
       const col = post.color || cat?.color || '#A596DA';
-      const imgs = post.images||[];
-      const imgHtml = imgs.length===1 ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>` :
-        imgs.length>1 ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>` : '';
-      return `<article class="blog-post glass rounded-2xl p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-4 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text">${post.title}</h3><p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${post.body}</p>${imgHtml}</article>`;
+      
+      let contentHtml = '';
+      if(post.blocks && Array.isArray(post.blocks)){
+        contentHtml = post.blocks.map(b=>{
+          if(b.type==='text'){ const t=(b.value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); return `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${t}</p>`; }
+          if(b.type==='image'){ return `<div class="mb-6"><img src="${b.value}" class="max-w-full h-auto rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:700px" onclick="window.open('${b.value}','_blank')"></div>`; }
+          if(b.type==='divider'){ return `<hr class="my-8 border-white/10">`; }
+          return '';
+        }).join('');
+      } else {
+        const imgs = post.images||[];
+        const imgHtml = imgs.length ? `<div class="mb-6 grid gap-3 ${imgs.length>1?'grid-cols-2':''}">${imgs.map(i=>`<img src="${i}" class="w-full rounded-xl border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>` : '';
+        const body = (post.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        contentHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${body}</p>${imgHtml}`;
+      }
+      
+      return `<article class="blog-post glass rounded-2xl p-8 mb-8"><div class="flex gap-3 items-center mb-4 text-sm"><span class="px-3 py-1 rounded-full" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="opacity-60">${post.subcategory||''}</span><span class="ml-auto opacity-60">${post.displayDate||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text">${post.title}</h3>${contentHtml}</article>`;
     }).join('');
   }
 
