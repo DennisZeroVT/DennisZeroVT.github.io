@@ -2809,11 +2809,23 @@ function renderPosts() {
     return;
   }
   
-  container.innerHTML = '';
+      container.innerHTML = '';
   filtered.forEach((post, index) => {
     const article = document.createElement('article');
     article.className = 'blog-post glass rounded-2xl p-8 glow-hover gradient-border' + (index === 0 ? ' active' : '');
     const catColor = post.category === 'Game Dev' ? '#A596DA' : post.category === 'Music Production' ? '#ec4899' : '#22c55e';
+    
+    let imagesHtml = '';
+    if (post.images && post.images.length > 0) {
+      if (post.images.length === 1) {
+        imagesHtml = `<div class="mb-6 -mx-2 sm:mx-0"><img src="${post.images[0]}" alt="${post.title}" class="w-full h-64 object-cover rounded-xl border border-white/10 cursor-pointer" onclick="window.open('${post.images[0]}','_blank')"></div>`;
+      } else {
+        imagesHtml = `<div class="mb-6 grid grid-cols-2 md:grid-cols-3 gap-2 -mx-2 sm:mx-0">` +
+          post.images.map(img => `<img src="${img}" alt="" class="w-full h-32 md:h-40 object-cover rounded-lg border border-white/10 cursor-pointer hover:opacity-80 transition" onclick="window.open('${img}','_blank')">`).join('') +
+          `</div>`;
+      }
+    }
+    
     article.innerHTML = `
       <div class="flex items-center gap-3 mb-4 text-sm text-[var(--text-secondary)] flex-wrap">
         <span class="px-3 py-1 rounded-full font-medium" style="background:${catColor}20; color:${catColor}">${post.category}</span>
@@ -2822,7 +2834,8 @@ function renderPosts() {
         <span>${post.displayDate}</span>
       </div>
       <h2 class="text-3xl font-bold mb-4">${post.title}</h2>
-      <p class="text-[var(--text-secondary)] leading-relaxed mb-6">${post.body}</p>
+      ${imagesHtml}
+      <p class="text-[var(--text-secondary)] leading-relaxed mb-6 whitespace-pre-wrap">${post.body}</p>
       <button class="text-[#A596DA] font-semibold hover:gap-3 flex items-center gap-2 transition-all">
         Read Full Post <i class="fas fa-arrow-right"></i>
       </button>
