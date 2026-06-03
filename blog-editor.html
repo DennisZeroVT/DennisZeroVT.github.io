@@ -19,7 +19,7 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
 <div class="max-w-7xl mx-auto">
   <div class="flex items-center justify-between mb-8">
     <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Editor</span> <span class="ml-2 text-xs px-2 py-1 rounded-full gradient text-black">BLOCKS</span></h1>
-    <div class="flex gap-2 items-center"><a href="./" class="px-3 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-1"></i>View</a><input id="ghToken" placeholder="GitHub token (optional)" class="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-xs w-40 md:w-56" title="Paste Personal Access Token for auto-upload to GitHub"><button id="lockBtn" class="px-3 py-2 glass rounded-lg text-sm"><i class="fas fa-lock"></i></button></div>
+    <div class="flex gap-2 items-center"><a href="./" class="px-3 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-1"></i>View</a><input id="ghToken" placeholder="GitHub token" class="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-xs w-32 md:w-44" title="Paste PAT"><button id="cleanupBtn" class="px-2 py-2 glass rounded-lg text-xs" title="Delete unused GitHub images">🧹</button><button id="lockBtn" class="px-3 py-2 glass rounded-lg text-sm"><i class="fas fa-lock"></i></button></div>
   </div>
 
   <div class="grid xl:grid-cols-3 gap-6">
@@ -265,6 +265,45 @@ const GITHUB_OWNER = 'denniszerovt';
 const GITHUB_REPO = 'denniszerovt.github.io';
 const GITHUB_PATH = 'images/posts';
 
+
+
+document.getElementById('cleanupBtn').onclick = async ()=>{
+  const token = localStorage.getItem('github_pat');
+  if(!token) return alert('Paste GitHub token first');
+  if(!confirm('Scan all posts and delete GitHub images not used anywhere?')) return;
+  
+  // 1) get all used URLs from Firestore
+  const used = new Set();
+  const snap = await getDocs(collection(db,'posts'));
+  snap.forEach(d=>{
+    const data = d.data();
+    if(data.blocks) data.blocks.forEach(b=>{
+      if(b.type==='image' && b.src && b.src.includes('denniszerovt.github.io/images/posts/')){
+        used.add(b.src.split('/').pop());
+      }
+    });
+  });
+  
+  // 2) list GitHub folder
+  const listRes = await fetch(`https://api.github.com/repos/denniszerovt/denniszerovt.github.io/contents/images/posts`,{
+    headers:{'Authorization':'token '+token}
+  });
+  const files = await listRes.json();
+  
+  // 3) delete orphans
+  let deleted = 0;
+  for(const f of files){
+    if(!used.has(f.name)){
+      await fetch(`https://api.github.com/repos/denniszerovt/denniszerovt.github.io/contents/images/posts/${f.name}`,{
+        method:'DELETE',
+        headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+        body:JSON.stringify({message:'cleanup '+f.name, sha:f.sha, branch:'main'})
+      });
+      deleted++;
+    }
+  }
+  alert(`Cleanup done. Deleted ${deleted} unused images. Kept ${used.size}.`);
+};
 
 async function deleteFromGitHub(url){
   const token = localStorage.getItem('github_pat');
