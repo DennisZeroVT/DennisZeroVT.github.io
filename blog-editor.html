@@ -238,20 +238,7 @@ function renderBlocks(){
 
   // bind events
   wrap.querySelectorAll('[data-txt]').forEach(el=> el.oninput = e=> blocks[+el.dataset.txt].content = e.target.value );
-  
-  wrap.querySelectorAll('[data-img]').forEach(el=> el.oninput = async e=> { 
-    let val = e.target.value.trim();
-    blocks[+el.dataset.img].src = val; 
-    // if it's a huge data URL, warn
-    if(val.startsWith('data:image') && val.length > 900000){
-      el.style.borderColor = '#ef4444';
-      el.title = 'Image too big (>900KB) - will fail Firebase. Use Upload button to auto-compress.';
-    } else {
-      el.style.borderColor = '';
-    }
-    renderBlocks(); 
-  });
-
+  wrap.querySelectorAll('[data-img]').forEach(el=> el.oninput = e=> { blocks[+el.dataset.img].src = e.target.value; renderBlocks(); });
   wrap.querySelectorAll('[data-del]').forEach(b=> b.onclick=()=>{ blocks.splice(+b.dataset.del,1); renderBlocks(); });
   wrap.querySelectorAll('[data-up]').forEach(b=> b.onclick=()=>{ const i=+b.dataset.up; if(i>0){ [blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]]; renderBlocks(); }});
   wrap.querySelectorAll('[data-down]').forEach(b=> b.onclick=()=>{ const i=+b.dataset.down; if(i<blocks.length-1){ [blocks[i+1],blocks[i]]=[blocks[i],blocks[i+1]]; renderBlocks(); }});
@@ -267,64 +254,50 @@ function renderBlocks(){
 
 document.querySelectorAll('.add-btn').forEach(b=> b.onclick=()=> addBlock(b.dataset.add));
 
-// upload images -> auto add image blocks
-// upload images -> auto add image blocks WITH COMPRESSION
+// === FIXED IMAGE SYSTEM WITH COMPRESSION ===
 async function compressFile(file, maxW=1920, quality=0.8){
   return new Promise((resolve)=>{
     const img = new Image();
     img.onload = ()=>{
       const scale = Math.min(1, maxW / img.width);
-      const w = Math.round(img.width * scale);
-      const h = Math.round(img.height * scale);
       const canvas = document.createElement('canvas');
-      canvas.width = w; canvas.height = h;
+      canvas.width = Math.round(img.width*scale);
+      canvas.height = Math.round(img.height*scale);
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img,0,0,w,h);
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
       canvas.toBlob((blob)=>{
         const reader = new FileReader();
         reader.onloadend = ()=> resolve({dataUrl: reader.result, size: blob.size});
         reader.readAsDataURL(blob);
       }, 'image/jpeg', quality);
     };
-    img.onerror = ()=> resolve(null);
     img.src = URL.createObjectURL(file);
   });
 }
 
 document.getElementById('files').onchange = async e=>{
-  const files = [...e.target.files];
-  for(const f of files){
-    const btn = document.createElement('div');
-    btn.className = 'text-[11px] opacity-70';
-    btn.textContent = `Compressing ${f.name}...`;
-    document.getElementById('blocks').prepend(btn);
-    const compressed = await compressFile(f);
-    btn.remove();
-    if(compressed){
-      // check size
-      const kb = Math.round(compressed.size/1024);
-      addBlock('image',{src:compressed.dataUrl});
-      // show toast
-      console.log(`Added ${f.name} → ${kb}KB`);
-    }
+  for(const f of [...e.target.files]){
+    const note = document.createElement('div');
+    note.className = 'text-xs opacity-60';
+    note.textContent = 'Compressing '+f.name+'...';
+    document.getElementById('blocks').prepend(note);
+    const out = await compressFile(f);
+    note.remove();
+    if(out) addBlock('image',{src: out.dataUrl});
   }
-  e.target.value = '';
+  e.target.value='';
 };
-    r.readAsDataURL(f);
-  });
-};
+
+// upload images -> auto add image blocks
+// old handler removed
 
 // publish
 document.getElementById('publish').onclick = async ()=>{
   const btn = document.getElementById('publish');
   if(blocks.length===0) return alert('Add at least one block');
-  
-  // check total size
-  const totalSize = JSON.stringify(blocks).length;
-  if(totalSize > 900000){
-    if(!confirm(`Post is about ${Math.round(totalSize/1024)}KB (Firestore limit is 1MB). Images are stored as compressed JPEGs now. Continue? It may still fail if too big.`)) return;
+  if(JSON.stringify(blocks).length > 950000){
+    if(!confirm('Post is near 1MB limit. Make sure you used Upload (not paste). Continue?')) return;
   }
-  
   const data = {
     title: title.value.trim(),
     category: category.value,
@@ -333,25 +306,16 @@ document.getElementById('publish').onclick = async ()=>{
     displayDate: new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
     blocks: blocks,
     // backwards compat
-    body: blocks.filter(b=>b.type==='text').map(b=>b.content).join('
-
-'),
+    body: blocks.filter(b=>b.type==='text').map(b=>b.content).join('\n\n'),
     images: blocks.filter(b=>b.type==='image').map(b=>b.src),
     color: color.value,
     createdAt: serverTimestamp()
   };
   if(!data.title) return alert('Need title');
   btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
-  try{
-    await addDoc(collection(db,'posts'), data);
-    title.value=''; blocks=[]; renderBlocks();
-    btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
-  }catch(err){
-    btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
-    alert('Firebase error: '+err.message+'
-
-Tip: Your images are still too big. Use the Upload button (not paste) – it auto-compresses to ~200KB each.');
-  }
+  try{ await addDoc(collection(db,'posts'), data); }catch(e){ alert('Save failed: '+e.message+'\nUse Upload button to compress images.'); btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live'; return; }
+  title.value=''; blocks=[]; renderBlocks();
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
 };
 
 // posts list
