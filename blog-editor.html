@@ -2,125 +2,233 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Blog Editor - Blocks</title>
+<title>Blog Editor Pro</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
-body{background:#0a0a0f;color:#eee;font-family:Inter,system-ui} .glass{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(12px)}
+body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space Grotesk'}
+.glass{background:rgba(255,255,255,.05);backdrop-filter:blur(16px);border:1px solid rgba(165,150,218,.15)}
+.gradient{background:linear-gradient(135deg,#A596DA,#c4b5fd)}
 </style>
 </head>
-<body class="p-6">
-<div class="max-w-6xl mx-auto">
-  <h1 class="text-2xl font-bold mb-6">Blog Editor <span class="text-violet-400">BLOCKS</span></h1>
-  
-  <div class="grid lg:grid-cols-3 gap-6">
-    <div class="lg:col-span-2 space-y-4">
-      <div class="glass rounded-xl p-4">
-        <input id="title" class="w-full bg-black/30 border border-white/10 rounded-lg px-3 py-2 mb-3" placeholder="Title">
-        <div class="grid grid-cols-3 gap-2">
-          <select id="cat" class="bg-black/30 border border-white/10 rounded-lg px-2 py-1.5 text-sm"></select>
-          <select id="sub" class="bg-black/30 border border-white/10 rounded-lg px-2 py-1.5 text-sm"></select>
-          <input id="date" type="date" class="bg-black/30 border border-white/10 rounded-lg px-2 py-1.5 text-sm">
+<body class="min-h-screen p-4 md:p-8">
+<div class="max-w-7xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Editor</span> <span class="ml-2 text-xs px-2 py-1 rounded-full gradient text-black">PRO</span></h1>
+    <div class="flex gap-3"><a href="./" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-2"></i>View Site</a><button id="lockBtn" class="px-4 py-2 glass rounded-lg text-sm"><i class="fas fa-lock mr-2"></i>Lock</button></div>
+  </div>
+
+  <div class="grid xl:grid-cols-3 gap-6">
+    <div class="xl:col-span-2 glass rounded-2xl p-6">
+      <h2 class="font-semibold mb-4 flex items-center gap-2"><i class="fas fa-pen text-[#A596DA]"></i> Create Post</h2>
+      <div class="space-y-4">
+        <input id="title" placeholder="Post title..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none text-lg">
+        <div class="grid md:grid-cols-3 gap-3">
+          <select id="category" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10"></select>
+          <select id="subcategory" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10"></select>
+          <input id="date" type="date" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10">
         </div>
-      </div>
-      
-      <div class="glass rounded-xl p-4">
-        <div class="flex justify-between mb-3">
-          <span class="text-sm">Blocks</span>
-          <div class="flex gap-2">
-            <button id="addT" class="px-2 py-1 bg-white/10 rounded text-xs">+ Text</button>
-            <button id="addI" class="px-2 py-1 bg-white/10 rounded text-xs">+ Image</button>
-            <button id="addD" class="px-2 py-1 bg-white/10 rounded text-xs">+ Divider</button>
+        <div class="flex items-center gap-3">
+          <label class="text-sm opacity-70">Post Color:</label>
+          <input id="color" type="color" value="#A596DA" class="w-12 h-9 rounded-lg bg-black/40 border border-white/10 cursor-pointer">
+          <span class="text-xs opacity-50">Overrides category color</span>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium opacity-80">Content Blocks</span>
+            <div class="flex gap-1.5">
+              <button type="button" id="addTextBtn" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-font mr-1"></i>Text</button>
+              <button type="button" id="addImgBtn" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-image mr-1"></i>Image</button>
+              <button type="button" id="addDivBtn" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-minus mr-1"></i>Divider</button>
+            </div>
           </div>
+          <div id="blocks" class="space-y-3 min-h-[200px]"></div>
+          <input type="file" id="blockFile" accept="image/*" class="hidden" multiple>
         </div>
-        <div id="list" class="space-y-3"></div>
+        <button id="publish" class="w-full py-3.5 rounded-xl gradient text-black font-bold text-lg hover:opacity-90 transition"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
       </div>
-      
-      <button id="pub" class="w-full py-3 bg-violet-500 text-black font-bold rounded-xl">Publish</button>
     </div>
-    
-    <div class="space-y-4">
-      <div class="glass rounded-xl p-4">
-        <h3 class="text-sm mb-2">Live Posts (<span id="count">0</span>)</h3>
-        <div id="posts" class="space-y-1 text-xs max-h-80 overflow-auto"></div>
+
+    <div class="space-y-6">
+      <div class="glass rounded-2xl p-5">
+        <h3 class="font-semibold mb-3 flex items-center justify-between">Categories <span id="catCount" class="text-xs opacity-60">0</span></h3>
+        <div id="catList" class="space-y-2 mb-3 max-h-60 overflow-auto"></div>
+        <div class="flex gap-2">
+          <input id="newCat" placeholder="New category" class="flex-1 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-sm">
+          <input id="newColor" type="color" value="#A596DA" class="w-8 h-8 rounded bg-black/30">
+          <button id="addCatBtn" class="px-3 py-1.5 glass rounded text-xs">Add</button>
+        </div>
+        <input id="newSubs" placeholder="Subcategories (comma separated)" class="w-full mt-2 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-xs">
       </div>
-      <div class="glass rounded-xl p-4">
-        <h3 class="text-sm mb-2">Categories</h3>
-        <div id="cats" class="space-y-1 text-xs"></div>
+
+      <div class="glass rounded-2xl p-5">
+        <h3 class="font-semibold mb-3">Live Posts (<span id="postCount">0</span>)</h3>
+        <div id="postList" class="space-y-2 max-h-80 overflow-auto"></div>
       </div>
     </div>
   </div>
 </div>
 
-<input type="file" id="f" accept="image/*" hidden>
-
 <script type="module">
-const PASS='dennis2026';
-if(localStorage.p!==PASS){ if(prompt('pass')!==PASS) throw 'no'; localStorage.p=PASS; }
-
-import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {getFirestore,collection,addDoc,onSnapshot,doc,deleteDoc,serverTimestamp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-const app=initializeApp({apiKey:"AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",authDomain:"denniszerovt-blog.firebaseapp.com",projectId:"denniszerovt-blog"});
-const db=getFirestore(app);
-
-let cats=[]; let blocks=[];
-date.valueAsDate=new Date();
-
-onSnapshot(collection(db,'categories'),s=>{
-  cats=s.docs.map(d=>d.data());
-  cat.innerHTML=cats.map(c=>`<option>${c.name}</option>`).join('');
-  sub.innerHTML=(cats[0]?.subs||[]).map(x=>`<option>${x}</option>`).join('');
-  catsEl.innerHTML=cats.map(c=>`<div>${c.name}</div>`).join('');
-});
-const catsEl = document.getElementById('cats');
-cat.onchange=()=>{ const c=cats.find(x=>x.name===cat.value); sub.innerHTML=(c?.subs||[]).map(x=>`<option>${x}</option>`).join(''); };
-
-onSnapshot(collection(db,'posts'),s=>{
-  const p=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  count.textContent=p.length;
-  posts.innerHTML=p.map(x=>`<div class="flex justify-between items-center p-1.5 bg-black/20 rounded"><span class="truncate">${x.title}</span><button onclick="delP('${x.id}')" class="text-red-400 ml-2">del</button></div>`).join('');
-});
-window.delP=async id=>{ if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',id)); };
-
-function draw(){
-  list.innerHTML = blocks.map((b,i)=>`
-    <div class="bg-black/20 p-2 rounded border border-white/10">
-      <div class="flex justify-between text-[10px] mb-1 opacity-60">
-        <span>${b.type.toUpperCase()}</span>
-        <span><button onclick="up(${i})">↑</button> <button onclick="down(${i})">↓</button> <button onclick="del(${i})">✕</button></span>
-      </div>
-      ${b.type==='text'?`<textarea oninput="blocks[${i}].value=this.value" class="w-full h-20 bg-black/30 border border-white/10 rounded p-1 text-sm">${b.value||''}</textarea>`:
-        b.type==='image'?`<input oninput="blocks[${i}].value=this.value" value="${b.value||''}" placeholder="image url" class="w-full bg-black/30 border border-white/10 rounded p-1 text-xs mb-1"><button onclick="pick(${i})" class="text-[10px] underline">upload</button>${b.value?`<img src="${b.value}" class="mt-1 max-h-32">`:''}`:
-        `<hr class="border-white/20">`}
-    </div>`).join('') || '<div class="text-center opacity-40 py-8 text-sm">empty</div>';
+const PASS = "dennis2026";
+if(localStorage.getItem('editorPass')!==PASS){ 
+  const p = prompt('Editor password:');
+  if(p!==PASS){ document.body.innerHTML='<div class="h-screen flex items-center justify-center text-2xl">Access Denied</div>'; throw new Error('locked') } 
+  else localStorage.setItem('editorPass',PASS)
 }
-window.up=i=>{if(i>0){[blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]];draw()}};
-window.down=i=>{if(i<blocks.length-1){[blocks[i+1],blocks[i]]=[blocks[i+1],blocks[i]];draw()}};
-window.del=i=>{blocks.splice(i,1);draw()};
-window.pick=i=>{f.dataset.i=i;f.click()};
-f.onchange=e=>{const r=new FileReader();r.onload=()=>{blocks[+f.dataset.i].value=r.result;draw()};r.readAsDataURL(f.files[0])};
+document.getElementById('lockBtn').onclick=()=>{localStorage.removeItem('editorPass');location.reload()};
 
-addT.onclick=()=>{blocks.push({type:'text',value:''});draw()};
-addI.onclick=()=>{blocks.push({type:'image',value:''});draw()};
-addD.onclick=()=>{blocks.push({type:'divider'});draw()};
-draw();
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-pub.onclick=async()=>{
-  if(!title.value) return alert('title');
-  await addDoc(collection(db,'posts'),{
-    title:title.value,
-    category:cat.value,
-    subcategory:sub.value,
-    date:date.value,
-    displayDate:new Date().toLocaleDateString(),
-    blocks,
-    body:blocks.filter(b=>b.type==='text').map(b=>b.value).join('\n\n'),
-    images:blocks.filter(b=>b.type==='image').map(b=>b.value),
-    createdAt:serverTimestamp()
-  });
-  title.value='';blocks=[];draw();alert('published');
+const cfg = {
+  apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
+  authDomain: "denniszerovt-blog.firebaseapp.com",
+  projectId: "denniszerovt-blog",
+  storageBucket: "denniszerovt-blog.firebasestorage.app",
+  messagingSenderId: "438217423363",
+  appId: "1:438217423363:web:5db4e6e955494f87e6c36"
 };
+const app = initializeApp(cfg);
+const db = getFirestore(app);
+
+let categories = [];
+let blocks = [];
+
+const defaults = [
+  {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
+  {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
+  {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
+];
+
+// ensure defaults
+getDocs(collection(db,'categories')).then(snap=>{ if(snap.empty){ defaults.forEach(c=> setDoc(doc(db,'categories',c.id), c)); }});
+
+onSnapshot(collection(db,'categories'), snap=>{
+  categories = snap.docs.map(d=>({id:d.id,...d.data()}));
+  document.getElementById('catCount').textContent = categories.length;
+  const catSel = document.getElementById('category');
+  catSel.innerHTML = categories.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+  updateSubs();
+  renderCats();
+});
+
+function updateSubs(){
+  const cat = categories.find(c=>c.name===category.value);
+  subcategory.innerHTML = (cat?.subs||[]).map(s=>`<option>${s}</option>`).join('');
+  if(cat) color.value = cat.color;
+}
+category.onchange = updateSubs;
+date.valueAsDate = new Date();
+
+function renderBlocks(){
+  const wrap=document.getElementById('blocks');
+  if(!blocks.length){ wrap.innerHTML='<div class="text-center py-12 opacity-40 text-sm border border-dashed border-white/10 rounded-xl">No blocks yet. Click Text or Image above.</div>'; return; }
+  wrap.innerHTML=blocks.map((b,i)=>{
+    if(b.type==='text') return `<div class="p-3 rounded-xl bg-black/30 border border-white/10"><div class="flex justify-between items-center mb-2"><span class="text-[11px] uppercase tracking-wide opacity-60">Text ${i+1}</span><div class="flex gap-2"><button data-up="${i}" class="text-xs opacity-60 hover:opacity-100">↑</button><button data-down="${i}" class="text-xs opacity-60 hover:opacity-100">↓</button><button data-del="${i}" class="text-xs text-red-400">✕</button></div></div><textarea data-idx="${i}" class="w-full h-28 p-2.5 rounded-lg bg-black/40 border border-white/10 text-sm resize-y" placeholder="Write...">${b.value||''}</textarea></div>`;
+    if(b.type==='image') return `<div class="p-3 rounded-xl bg-black/30 border border-white/10"><div class="flex justify-between items-center mb-2"><span class="text-[11px] uppercase opacity-60">Image ${i+1}</span><div class="flex gap-2"><button data-up="${i}" class="text-xs opacity-60">↑</button><button data-down="${i}" class="text-xs opacity-60">↓</button><button data-del="${i}" class="text-xs text-red-400">✕</button></div></div>${b.value?`<img src="${b.value}" class="max-h-48 mx-auto rounded-lg mb-2 border border-white/10">`:''}<div class="flex gap-2"><input data-url="${i}" value="${b.value||''}" placeholder="Image URL" class="flex-1 px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs"><button data-upimg="${i}" class="px-3 py-1.5 glass rounded-lg text-xs">Upload</button></div></div>`;
+    return `<div class="p-2 rounded-xl bg-black/20 border border-white/10 flex justify-between items-center"><span class="text-[11px] opacity-60">── DIVIDER ──</span><div class="flex gap-2"><button data-up="${i}" class="text-xs">↑</button><button data-down="${i}" class="text-xs">↓</button><button data-del="${i}" class="text-xs text-red-400">✕</button></div></div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-idx]').forEach(t=>t.oninput=e=>blocks[+t.dataset.idx].value=e.target.value);
+  wrap.querySelectorAll('[data-url]').forEach(u=>u.oninput=e=>blocks[+u.dataset.url].value=e.target.value);
+  wrap.querySelectorAll('[data-del]').forEach(d=>d.onclick=()=>{blocks.splice(+d.dataset.del,1);renderBlocks()});
+  wrap.querySelectorAll('[data-up]').forEach(u=>u.onclick=()=>{const i=+u.dataset.up;if(i>0){[blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]];renderBlocks()}});
+  wrap.querySelectorAll('[data-down]').forEach(d=>d.onclick=()=>{const i=+d.dataset.down;if(i<blocks.length-1){[blocks[i],blocks[i+1]]=[blocks[i+1],blocks[i]];renderBlocks()}});
+  wrap.querySelectorAll('[data-upimg]').forEach(b=>b.onclick=()=>{blockFile.dataset.idx=b.dataset.upimg;blockFile.click()});
+}
+document.getElementById('addTextBtn').onclick=()=>{blocks.push({type:'text',value:''});renderBlocks()};
+document.getElementById('addImgBtn').onclick=()=>{blocks.push({type:'image',value:''});renderBlocks()};
+document.getElementById('addDivBtn').onclick=()=>{blocks.push({type:'divider'});renderBlocks()};
+document.getElementById('blockFile').onchange=e=>{[...e.target.files].forEach(f=>{const r=new FileReader();r.onload=ev=>{const idx=+e.target.dataset.idx;if(!isNaN(idx))blocks[idx].value=ev.target.result;else blocks.push({type:'image',value:ev.target.result});renderBlocks()};r.readAsDataURL(f)});};
+
+renderBlocks();
+
+function renderCats(){
+  const list = document.getElementById('catList');
+  list.innerHTML = categories.map(c=>`
+    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${c.color}"></div><span class="text-sm">${c.name}</span></div>
+        <div class="flex gap-2">
+          <button data-edit="${c.id}" class="text-[#A596DA] text-xs hover:underline">Edit</button>
+          <button data-del="${c.id}" class="text-red-400 text-xs hover:underline">Del</button>
+        </div>
+      </div>
+      <div id="edit-${c.id}" class="hidden mt-2 space-y-1">
+        <input id="n-${c.id}" value="${c.name}" class="w-full px-2 py-1 rounded bg-black/40 text-xs border border-white/10">
+        <div class="flex gap-1">
+          <input id="col-${c.id}" type="color" value="${c.color}" class="w-8 h-6">
+          <input id="s-${c.id}" value="${c.subs.join(', ')}" class="flex-1 px-2 py-1 rounded bg-black/40 text-xs border border-white/10">
+        </div>
+        <div class="flex gap-1">
+          <button data-save="${c.id}" class="flex-1 py-1 bg-[#A596DA]/20 text-[#A596DA] rounded text-xs">Save</button>
+          <button data-cancel="${c.id}" class="px-2 py-1 bg-white/10 rounded text-xs">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  list.querySelectorAll('[data-edit]').forEach(b=> b.onclick=()=> document.getElementById('edit-'+b.dataset.edit).classList.toggle('hidden'));
+  list.querySelectorAll('[data-cancel]').forEach(b=> b.onclick=()=> document.getElementById('edit-'+b.dataset.cancel).classList.add('hidden'));
+  list.querySelectorAll('[data-del]').forEach(b=> b.onclick=async()=>{ if(confirm('Delete category?')) await deleteDoc(doc(db,'categories',b.dataset.del)); });
+  list.querySelectorAll('[data-save]').forEach(b=> b.onclick=async()=>{
+    const id=b.dataset.save;
+    const name=document.getElementById('n-'+id).value.trim();
+    const col=document.getElementById('col-'+id).value;
+    const subs=document.getElementById('s-'+id).value.split(',').map(x=>x.trim()).filter(Boolean);
+    await setDoc(doc(db,'categories',id), {id,name,color:col,subs});
+  });
+}
+
+document.getElementById('addCatBtn').onclick = async ()=>{
+  const name = newCat.value.trim(); if(!name) return;
+  const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const subs = newSubs.value.split(',').map(s=>s.trim()).filter(Boolean);
+  await setDoc(doc(db,'categories',id), {id,name,color:newColor.value,subs});
+  newCat.value=''; newSubs.value='';
+};
+
+
+
+// publish
+document.getElementById('publish').onclick = async ()=>{
+  const btn = document.getElementById('publish');
+  if(!title.value.trim()) return alert('Need title');
+  if(blocks.length===0) return alert('Add at least one block');
+  const data = {
+    title: title.value.trim(),
+    category: category.value,
+    subcategory: subcategory.value,
+    date: date.value,
+    displayDate: new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    body: blocks.filter(b=>b.type==='text').map(b=>b.value).join('\n\n'),
+    images: blocks.filter(b=>b.type==='image').map(b=>b.value),
+    blocks: blocks,
+    color: color.value,
+    createdAt: serverTimestamp()
+  };
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
+  await addDoc(collection(db,'posts'), data);
+  title.value=''; blocks=[]; renderBlocks();
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
+};
+
+// posts
+onSnapshot(collection(db,'posts'), snap=>{
+  const posts = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  document.getElementById('postCount').textContent = posts.length;
+  document.getElementById('postList').innerHTML = posts.map(p=>`
+    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5 flex justify-between items-start gap-2">
+      <div class="flex-1 min-w-0">
+        <div class="text-sm truncate">${p.title}</div>
+        <div class="text-[11px] opacity-60">${p.category} • ${p.displayDate||p.date}</div>
+      </div>
+      <button data-delp="${p.id}" class="text-red-400 hover:text-red-300 p-1"><i class="fas fa-trash text-xs"></i></button>
+    </div>
+  `).join('');
+  document.querySelectorAll('[data-delp]').forEach(b=> b.onclick=async()=>{ if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',b.dataset.delp)); });
+});
 </script>
 </body>
 </html>
