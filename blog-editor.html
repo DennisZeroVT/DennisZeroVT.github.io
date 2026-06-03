@@ -20,7 +20,6 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
   </div>
 
   <div class="grid xl:grid-cols-3 gap-6">
-    <!-- Left: Post Creator -->
     <div class="xl:col-span-2 glass rounded-2xl p-6">
       <h2 class="font-semibold mb-4 flex items-center gap-2"><i class="fas fa-pen text-[#A596DA]"></i> Create Post</h2>
       <div class="space-y-4">
@@ -38,25 +37,24 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
         <div>
           <div class="flex gap-2 mb-2">
             <input id="imgUrl" placeholder="Paste image URL or upload below" class="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm">
-            <button onclick="addUrl()" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10">Add URL</button>
+            <button id="addUrlBtn" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10">Add URL</button>
             <label class="px-4 py-2 glass rounded-lg text-sm cursor-pointer hover:bg-white/10"><i class="fas fa-upload mr-1"></i>Upload<input type="file" id="files" multiple accept="image/*" class="hidden"></label>
           </div>
           <div id="imgGrid" class="grid grid-cols-5 gap-2"></div>
         </div>
-        <textarea id="body" rows="10" placeholder="Write your story... Markdown supported" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none resize-none"></textarea>
+        <textarea id="body" rows="10" placeholder="Write your story..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none resize-none"></textarea>
         <button id="publish" class="w-full py-3.5 rounded-xl gradient text-black font-bold text-lg hover:opacity-90 transition"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
       </div>
     </div>
 
-    <!-- Right: Manager -->
     <div class="space-y-6">
       <div class="glass rounded-2xl p-5">
         <h3 class="font-semibold mb-3 flex items-center justify-between">Categories <span id="catCount" class="text-xs opacity-60">0</span></h3>
-        <div id="catList" class="space-y-2 mb-3 max-h-40 overflow-auto"></div>
+        <div id="catList" class="space-y-2 mb-3 max-h-60 overflow-auto"></div>
         <div class="flex gap-2">
           <input id="newCat" placeholder="New category" class="flex-1 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-sm">
           <input id="newColor" type="color" value="#A596DA" class="w-8 h-8 rounded bg-black/30">
-          <button onclick="addCategory()" class="px-3 py-1.5 glass rounded text-xs">Add</button>
+          <button id="addCatBtn" class="px-3 py-1.5 glass rounded text-xs">Add</button>
         </div>
         <input id="newSubs" placeholder="Subcategories (comma separated)" class="w-full mt-2 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-xs">
       </div>
@@ -70,12 +68,16 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
 </div>
 
 <script type="module">
-const PASS = "dennis2026"; // change me
-if(localStorage.getItem('editorPass')!==PASS){ if(prompt('Editor password:')!==PASS){document.body.innerHTML='<div class="h-screen flex items-center justify-center text-2xl">Access Denied</div>';throw new Error('locked')} else localStorage.setItem('editorPass',PASS)}
+const PASS = "dennis2026";
+if(localStorage.getItem('editorPass')!==PASS){ 
+  const p = prompt('Editor password:');
+  if(p!==PASS){ document.body.innerHTML='<div class="h-screen flex items-center justify-center text-2xl">Access Denied</div>'; throw new Error('locked') } 
+  else localStorage.setItem('editorPass',PASS)
+}
 document.getElementById('lockBtn').onclick=()=>{localStorage.removeItem('editorPass');location.reload()};
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const cfg = {
   apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
@@ -91,15 +93,24 @@ const db = getFirestore(app);
 let categories = [];
 let images = [];
 
-// Load categories
+const defaults = [
+  {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
+  {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
+  {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
+];
+
+// ensure defaults
+getDocs(collection(db,'categories')).then(snap=>{ if(snap.empty){ defaults.forEach(c=> setDoc(doc(db,'categories',c.id), c)); }});
+
 onSnapshot(collection(db,'categories'), snap=>{
   categories = snap.docs.map(d=>({id:d.id,...d.data()}));
   document.getElementById('catCount').textContent = categories.length;
   const catSel = document.getElementById('category');
-  catSel.innerHTML = categories.map(c=>`<option value="${c.name}" data-color="${c.color}">${c.name}</option>`).join('');
+  catSel.innerHTML = categories.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
   updateSubs();
   renderCats();
 });
+
 function updateSubs(){
   const cat = categories.find(c=>c.name===category.value);
   subcategory.innerHTML = (cat?.subs||[]).map(s=>`<option>${s}</option>`).join('');
@@ -108,65 +119,70 @@ function updateSubs(){
 category.onchange = updateSubs;
 date.valueAsDate = new Date();
 
-
 function renderCats(){
-  catList.innerHTML = categories.map(c=>`
-    <div class="p-2 rounded bg-black/20 text-xs border border-white/5">
+  const list = document.getElementById('catList');
+  list.innerHTML = categories.map(c=>`
+    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5">
       <div class="flex items-center justify-between">
-        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${c.color}"></div><span class="font-medium">${c.name}</span><span class="opacity-50">(${c.subs.length} subs)</span></div>
-        <div class="flex gap-1">
-          <button onclick="editCat('${c.id}')" class="text-[#A596DA] hover:text-[#c4b5fd] px-1.5" title="Edit"><i class="fas fa-pen"></i></button>
-          <button onclick="delCat('${c.id}')" class="text-red-400 hover:text-red-300 px-1.5" title="Delete"><i class="fas fa-trash"></i></button>
+        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${c.color}"></div><span class="text-sm">${c.name}</span></div>
+        <div class="flex gap-2">
+          <button data-edit="${c.id}" class="text-[#A596DA] text-xs hover:underline">Edit</button>
+          <button data-del="${c.id}" class="text-red-400 text-xs hover:underline">Del</button>
         </div>
       </div>
-      <div id="edit-${c.id}" class="hidden mt-2 pt-2 border-t border-white/10">
-        <input id="name-${c.id}" value="${c.name}" class="w-full mb-1 px-2 py-1 rounded bg-black/40 border border-white/10 text-xs">
-        <div class="flex gap-1 mb-1">
-          <input id="color-${c.id}" type="color" value="${c.color}" class="w-8 h-6 rounded">
-          <input id="subs-${c.id}" value="${c.subs.join(', ')}" placeholder="sub1, sub2" class="flex-1 px-2 py-1 rounded bg-black/40 border border-white/10 text-xs">
+      <div id="edit-${c.id}" class="hidden mt-2 space-y-1">
+        <input id="n-${c.id}" value="${c.name}" class="w-full px-2 py-1 rounded bg-black/40 text-xs border border-white/10">
+        <div class="flex gap-1">
+          <input id="col-${c.id}" type="color" value="${c.color}" class="w-8 h-6">
+          <input id="s-${c.id}" value="${c.subs.join(', ')}" class="flex-1 px-2 py-1 rounded bg-black/40 text-xs border border-white/10">
         </div>
         <div class="flex gap-1">
-          <button onclick="saveCat('${c.id}')" class="flex-1 py-1 rounded bg-[#A596DA]/20 text-[#A596DA] text-xs hover:bg-[#A596DA]/30">Save</button>
-          <button onclick="cancelEdit('${c.id}')" class="px-2 py-1 rounded bg-white/10 text-xs">Cancel</button>
+          <button data-save="${c.id}" class="flex-1 py-1 bg-[#A596DA]/20 text-[#A596DA] rounded text-xs">Save</button>
+          <button data-cancel="${c.id}" class="px-2 py-1 bg-white/10 rounded text-xs">Cancel</button>
         </div>
       </div>
     </div>
   `).join('');
-}
-window.editCat = id=>{ document.getElementById('edit-'+id).classList.toggle('hidden'); };
-window.cancelEdit = id=>{ document.getElementById('edit-'+id).classList.add('hidden'); };
-window.saveCat = async id=>{
-  const name = document.getElementById('name-'+id).value.trim();
-  const color = document.getElementById('color-'+id).value;
-  const subs = document.getElementById('subs-'+id).value.split(',').map(s=>s.trim()).filter(Boolean);
-  if(!name) return alert('Name required');
-  await setDoc(doc(db,'categories',id), {id,name,color,subs});
-  cancelEdit(id);
-};
-)</span></div>
-      <button onclick="delCat('${c.id}')" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
-    </div>
-  `).join('');
+  
+  list.querySelectorAll('[data-edit]').forEach(b=> b.onclick=()=> document.getElementById('edit-'+b.dataset.edit).classList.toggle('hidden'));
+  list.querySelectorAll('[data-cancel]').forEach(b=> b.onclick=()=> document.getElementById('edit-'+b.dataset.cancel).classList.add('hidden'));
+  list.querySelectorAll('[data-del]').forEach(b=> b.onclick=async()=>{ if(confirm('Delete category?')) await deleteDoc(doc(db,'categories',b.dataset.del)); });
+  list.querySelectorAll('[data-save]').forEach(b=> b.onclick=async()=>{
+    const id=b.dataset.save;
+    const name=document.getElementById('n-'+id).value.trim();
+    const col=document.getElementById('col-'+id).value;
+    const subs=document.getElementById('s-'+id).value.split(',').map(x=>x.trim()).filter(Boolean);
+    await setDoc(doc(db,'categories',id), {id,name,color:col,subs});
+  });
 }
 
-window.delCat = async id=>{ if(confirm('Delete category?')) await deleteDoc(doc(db,'categories',id)); };
-
-window.addCategory = async ()=>{
+document.getElementById('addCatBtn').onclick = async ()=>{
   const name = newCat.value.trim(); if(!name) return;
+  const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
   const subs = newSubs.value.split(',').map(s=>s.trim()).filter(Boolean);
-  const id = name.toLowerCase().replace(/\s+/g,'-');
   await setDoc(doc(db,'categories',id), {id,name,color:newColor.value,subs});
   newCat.value=''; newSubs.value='';
 };
 
-// Images
-files.onchange = e=>{ [...e.target.files].forEach(f=>{ const r=new FileReader(); r.onload=ev=>{images.push(ev.target.result); renderImgs()}; r.readAsDataURL(f); }); };
-function renderImgs(){ imgGrid.innerHTML = images.map((im,i)=>`<div class="relative group"><img src="${im}" class="w-full h-20 object-cover rounded-lg border border-white/10"><button onclick="images.splice(${i},1);renderImgs()" class="absolute -top-1 -right-1 w-5 h-5 bg-red-600 rounded-full text-[10px] opacity-0 group-hover:opacity-100">×</button></div>`).join(''); }
-window.addUrl = ()=>{ const u=imgUrl.value.trim(); if(u){images.push(u); imgUrl.value=''; renderImgs()} };
-window.renderImgs = renderImgs;
+// images
+document.getElementById('files').onchange = e=>{
+  [...e.target.files].forEach(f=>{
+    const r=new FileReader();
+    r.onload=ev=>{ images.push(ev.target.result); renderImgs(); };
+    r.readAsDataURL(f);
+  });
+};
+function renderImgs(){
+  document.getElementById('imgGrid').innerHTML = images.map((im,i)=>`<div class="relative group"><img src="${im}" class="w-full h-20 object-cover rounded-lg border border-white/10"><button data-i="${i}" class="del-img absolute -top1 -right1 w-5 h-5 bg-red-600 rounded-full text-[10px] opacity-0 group-hover:opacity-100">×</button></div>`).join('');
+  document.querySelectorAll('.del-img').forEach(b=> b.onclick=()=>{ images.splice(parseInt(b.dataset.i),1); renderImgs(); });
+}
+document.getElementById('addUrlBtn').onclick = ()=>{
+  const u = imgUrl.value.trim(); if(u){ images.push(u); imgUrl.value=''; renderImgs(); }
+};
 
-// Publish
-publish.onclick = async ()=>{
+// publish
+document.getElementById('publish').onclick = async ()=>{
+  const btn = document.getElementById('publish');
   const data = {
     title: title.value.trim(),
     category: category.value,
@@ -178,30 +194,28 @@ publish.onclick = async ()=>{
     color: color.value,
     createdAt: serverTimestamp()
   };
-  if(!data.title||!data.body) return alert('Title and body required');
-  publish.disabled=true; publish.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
+  if(!data.title||!data.body) return alert('Need title and body');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
   await addDoc(collection(db,'posts'), data);
   title.value=''; body.value=''; images=[]; renderImgs();
-  publish.disabled=false; publish.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
 };
 
-// Posts list
+// posts
 onSnapshot(collection(db,'posts'), snap=>{
   const posts = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-  postCount.textContent = posts.length;
-  postList.innerHTML = posts.map(p=>`
-    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5 hover:bg-white/5 transition">
-      <div class="flex justify-between items-start gap-2">
-        <div class="flex-1 min-w-0">
-          <div class="text-sm font-medium truncate">${p.title}</div>
-          <div class="text-[11px] opacity-60 flex items-center gap-2 mt-0.5"><span class="w-2 h-2 rounded-full" style="background:${p.color}"></span>${p.category} • ${p.displayDate||p.date}</div>
-        </div>
-        <button onclick="delPost('${p.id}','${p.title.replace(/'/g,"\'")}')" class="p-1.5 rounded hover:bg-red-500/20 text-red-400"><i class="fas fa-trash text-xs"></i></button>
+  document.getElementById('postCount').textContent = posts.length;
+  document.getElementById('postList').innerHTML = posts.map(p=>`
+    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5 flex justify-between items-start gap-2">
+      <div class="flex-1 min-w-0">
+        <div class="text-sm truncate">${p.title}</div>
+        <div class="text-[11px] opacity-60">${p.category} • ${p.displayDate||p.date}</div>
       </div>
+      <button data-delp="${p.id}" class="text-red-400 hover:text-red-300 p-1"><i class="fas fa-trash text-xs"></i></button>
     </div>
   `).join('');
+  document.querySelectorAll('[data-delp]').forEach(b=> b.onclick=async()=>{ if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',b.dataset.delp)); });
 });
-window.delPost = async (id,title)=>{ if(confirm(`Delete "${title}"?`)) await deleteDoc(doc(db,'posts',id)); };
 </script>
 </body>
 </html>
