@@ -86,7 +86,6 @@ document.getElementById('lockBtn').onclick=()=>{alert('Lock disabled in this bui
 
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 const cfg = {
   apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
@@ -98,7 +97,6 @@ const cfg = {
 };
 const app = initializeApp(cfg);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 let categories = [];
 let blocks = [];
@@ -257,31 +255,23 @@ function renderBlocks(){
 document.querySelectorAll('.add-btn').forEach(b=> b.onclick=()=> addBlock(b.dataset.add));
 
 // === FIXED IMAGE SYSTEM WITH COMPRESSION ===
-async function compressAndUpload(file, maxW=1280, quality=0.65){
+async function compressFile(file, maxW=1000, quality=0.55){
   return new Promise((resolve)=>{
     const img = new Image();
-    img.onload = async ()=>{
+    img.onload = ()=>{
       const scale = Math.min(1, maxW / img.width);
       const canvas = document.createElement('canvas');
       canvas.width = Math.round(img.width*scale);
       canvas.height = Math.round(img.height*scale);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      // try webp first (30% smaller), fallback to jpeg
       canvas.toBlob(async (blob)=>{
-        try{
-          const path = `posts/${Date.now()}_${Math.random().toString(36).slice(2,8)}.jpg`;
-          const storageRef = ref(storage, path);
-          await uploadBytes(storageRef, blob);
-          const url = await getDownloadURL(storageRef);
-          resolve({url, size: blob.size});
-        }catch(e){
-          console.error('Storage upload failed', e);
-          // fallback to base64
-          const reader = new FileReader();
-          reader.onloadend = ()=> resolve({url: reader.result, size: blob.size, isBase64:true});
-          reader.readAsDataURL(blob);
-        }
-      }, 'image/jpeg', quality);
+        if(!blob){ resolve(null); return; }
+        const reader = new FileReader();
+        reader.onloadend = ()=> resolve({dataUrl: reader.result, size: blob.size});
+        reader.readAsDataURL(blob);
+      }, 'image/webp', quality);
     };
     img.src = URL.createObjectURL(file);
   });
@@ -290,15 +280,12 @@ async function compressAndUpload(file, maxW=1280, quality=0.65){
 document.getElementById('files').onchange = async e=>{
   for(const f of [...e.target.files]){
     const note = document.createElement('div');
-    note.className = 'text-xs opacity-60 mb-1';
-    note.textContent = 'Uploading '+f.name+'...';
+    note.className = 'text-xs opacity-60';
+    note.textContent = 'Compressing '+f.name+'...';
     document.getElementById('blocks').prepend(note);
-    const out = await compressAndUpload(f);
+    const out = await compressFile(f);
     note.remove();
-    if(out){
-      addBlock('image',{src: out.url});
-      if(out.isBase64) alert('Warning: Firebase Storage blocked. Using base64 fallback (may still hit size limit). Fix Storage rules in Firebase console.');
-    }
+    if(out) addBlock('image',{src: out.dataUrl});
   }
   e.target.value='';
 };
@@ -322,7 +309,7 @@ document.getElementById('publish').onclick = async ()=>{
     blocks: blocks,
     // backwards compat
     body: '',
-    images: [], // no longer storing duplicates
+    images: [],
     color: color.value,
     createdAt: serverTimestamp()
   };
@@ -351,6 +338,11 @@ onSnapshot(collection(db,'posts'), snap=>{
 
 // init with example from screenshot
 renderBlocks();
+addBlock('image',{src:''});
+addBlock('text',{content:'thje drums i used are addticve drums with a compressopr\n\ni also dialed up the overhead to max'});
+addBlock('divider',{});
+addBlock('image',{src:''});
+addBlock('text',{content:'for the loud string is used the swam collection bc i have good control over them vibration and erxpression wise'});
 </script>
 </body>
 </html>
