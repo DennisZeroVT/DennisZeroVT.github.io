@@ -2839,15 +2839,23 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // REALTIME LISTENER
   const q = query(collection(db, 'posts'), orderBy('date', 'desc'));
-  onSnapshot(q, (snapshot) => {
-    allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    renderPosts();
-    setupFilters();
-  });
+  
+  function startListener() {
+    onSnapshot(q, (snapshot) => {
+      console.log('Firebase: received', snapshot.size, 'posts');
+      allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderPosts();
+    }, (error) => {
+      console.error('Firebase error:', error);
+      const container = document.getElementById('blog-posts-container');
+      if (container) container.innerHTML = `<div class="text-red-400 p-8">Firebase error: ${error.message}<br>Check Firestore rules.</div>`;
+    });
+  }
 
   // Initialize
   document.addEventListener('DOMContentLoaded', () => {
     setupFilters();
+    startListener();
   });
 </script>
 
