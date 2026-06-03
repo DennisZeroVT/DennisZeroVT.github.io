@@ -1,0 +1,29 @@
+[
+  {
+    "id": "weather-system-2024",
+    "title": "Dynamic Weather System Implementation",
+    "date": "2024-12-15",
+    "displayDate": "Dec 15, 2024",
+    "game": "Snowfall",
+    "color": "#A596DA",
+    "body": "Just finished implementing the core weather system for Snowfall. Particles are now reacting to wind direction, and snow accumulation respects surface angles. The ambient audio system dynamically adjusts based on how heavy the snowfall is. Next up is adding footstep sounds that change based on snow depth..."
+  },
+  {
+    "id": "rhythm-mechanics-2024",
+    "title": "Rhythm Mechanics: Syncing Puzzles to Music",
+    "date": "2024-12-08",
+    "displayDate": "Dec 8, 2024",
+    "game": "Stuck In Time",
+    "color": "#a855f7",
+    "body": "Experimenting with beat detection and procedural puzzle generation. The goal is to have obstacles spawn and move in perfect sync with the soundtrack. Early prototypes are promising - the time manipulation mechanic feels natural when tied to musical phrases. Working on a custom editor tool to help level designers align puzzles to BPM..."
+  },
+  {
+    "id": "balancing-2024",
+    "title": "Balancing Music Production and Game Development",
+    "date": "2024-11-29",
+    "displayDate": "Nov 29, 2024",
+    "game": "General",
+    "color": "#22c55e",
+    "body": "A lot of people ask how I manage to produce music while developing games. The truth is they feed into each other. Composing tracks for Stuck In Time has improved my understanding of rhythm design, and coding game systems has made me think about music structure differently. Here's my daily workflow and how I avoid burnout..."
+  }
+]

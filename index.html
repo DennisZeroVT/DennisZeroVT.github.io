@@ -1088,52 +1088,8 @@ body.optimized .glow-hover {
                     </p>
 </div>
 <!-- Blog Posts -->
-<div class="space-y-8 mb-12">
-<!-- Post 1 -->
-<article class="blog-post active glass rounded-2xl p-8 glow-hover gradient-border">
-<div class="flex items-center gap-3 mb-4 text-sm text-[var(--text-secondary)]">
-<span class="px-3 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] font-medium">Snowfall</span>
-<span>•</span>
-<span>Dec 15, 2024</span>
-</div>
-<h2 class="text-3xl font-bold mb-4">Dynamic Weather System Implementation</h2>
-<p class="text-[var(--text-secondary)] leading-relaxed mb-6">
-                            Just finished implementing the core weather system for Snowfall. Particles are now reacting to wind direction, and snow accumulation respects surface angles. The ambient audio system dynamically adjusts based on how heavy the snowfall is. Next up is adding footstep sounds that change based on snow depth...
-                        </p>
-<button class="text-[#A596DA] font-semibold hover:gap-3 flex items-center gap-2 transition-all">
-                            Read Full Post <i class="fas fa-arrow-right"></i>
-</button>
-</article>
-<!-- Post 2 -->
-<article class="blog-post glass rounded-2xl p-8 glow-hover gradient-border">
-<div class="flex items-center gap-3 mb-4 text-sm text-[var(--text-secondary)]">
-<span class="px-3 py-1 rounded-full bg-purple-500/20 text-purple-400 font-medium">Stuck In Time</span>
-<span>•</span>
-<span>Dec 8, 2024</span>
-</div>
-<h2 class="text-3xl font-bold mb-4">Rhythm Mechanics: Syncing Puzzles to Music</h2>
-<p class="text-[var(--text-secondary)] leading-relaxed mb-6">
-                            Experimenting with beat detection and procedural puzzle generation. The goal is to have obstacles spawn and move in perfect sync with the soundtrack. Early prototypes are promising - the time manipulation mechanic feels natural when tied to musical phrases. Working on a custom editor tool to help level designers align puzzles to BPM...
-                        </p>
-<button class="text-[#A596DA] font-semibold hover:gap-3 flex items-center gap-2 transition-all">
-                            Read Full Post <i class="fas fa-arrow-right"></i>
-</button>
-</article>
-<!-- Post 3 -->
-<article class="blog-post glass rounded-2xl p-8 glow-hover gradient-border">
-<div class="flex items-center gap-3 mb-4 text-sm text-[var(--text-secondary)]">
-<span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 font-medium">General</span>
-<span>•</span>
-<span>Nov 29, 2024</span>
-</div>
-<h2 class="text-3xl font-bold mb-4">Balancing Music Production and Game Development</h2>
-<p class="text-[var(--text-secondary)] leading-relaxed mb-6">
-                            A lot of people ask how I manage to produce music while developing games. The truth is they feed into each other. Composing tracks for Stuck In Time has improved my understanding of rhythm design, and coding game systems has made me think about music structure differently. Here's my daily workflow and how I avoid burnout...
-                        </p>
-<button class="text-[#A596DA] font-semibold hover:gap-3 flex items-center gap-2 transition-all">
-                            Read Full Post <i class="fas fa-arrow-right"></i>
-</button>
-</article>
+<div id="blog-posts-container" class="space-y-8 mb-12">
+  <div class="text-center py-12 text-[var(--text-secondary)]">Loading posts...</div>
 </div>
 <!-- Pagination -->
 <div class="flex items-center justify-center gap-2">
@@ -2756,6 +2712,44 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+</script>
+
+
+<script>
+// Load blog posts from posts.json
+async function loadBlogPosts() {
+  try {
+    const res = await fetch('./posts.json?v=' + Date.now());
+    const posts = await res.json();
+    const container = document.getElementById('blog-posts-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+    
+    posts.forEach((post, index) => {
+      const article = document.createElement('article');
+      article.className = 'blog-post glass rounded-2xl p-8 glow-hover gradient-border' + (index === 0 ? ' active' : '');
+      article.innerHTML = `
+        <div class="flex items-center gap-3 mb-4 text-sm text-[var(--text-secondary)]">
+          <span class="px-3 py-1 rounded-full font-medium" style="background:${post.color}20; color:${post.color}">${post.game}</span>
+          <span>•</span>
+          <span>${post.displayDate}</span>
+        </div>
+        <h2 class="text-3xl font-bold mb-4">${post.title}</h2>
+        <p class="text-[var(--text-secondary)] leading-relaxed mb-6">${post.body}</p>
+        <button class="text-[#A596DA] font-semibold hover:gap-3 flex items-center gap-2 transition-all">
+          Read Full Post <i class="fas fa-arrow-right"></i>
+        </button>
+      `;
+      container.appendChild(article);
+    });
+  } catch (e) {
+    console.error('Failed to load posts:', e);
+    document.getElementById('blog-posts-container').innerHTML = '<p class="text-center text-[var(--text-secondary)]">Could not load posts. Make sure posts.json is uploaded.</p>';
+  }
+}
+document.addEventListener('DOMContentLoaded', loadBlogPosts);
 </script>
 
 </body>

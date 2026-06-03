@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog Writer – DennisZeroVT</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  body { background: #0a0a0f; color: #f5f5f5; font-family: Inter, system-ui; }
+  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(165,150,218,0.15); }
+</style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+<div class="max-w-6xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Writer</span></h1>
+    <a href="./" class="text-sm text-[#A596DA] hover:underline"><i class="fas fa-arrow-left mr-2"></i>Back to site</a>
+  </div>
+
+  <div class="grid lg:grid-cols-2 gap-6">
+    <!-- Editor -->
+    <div class="glass rounded-2xl p-6">
+      <h2 class="font-semibold mb-4">New Post</h2>
+      <div class="space-y-4">
+        <div>
+          <label class="text-xs text-[#d6ccf7] uppercase">Title</label>
+          <input id="title" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 focus:border-[#A596DA] outline-none" placeholder="Dynamic Weather System Implementation">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-[#d6ccf7] uppercase">Game / Category</label>
+            <select id="game" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10">
+              <option>Snowfall</option>
+              <option>Stuck In Time</option>
+              <option>General</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-xs text-[#d6ccf7] uppercase">Date</label>
+            <input id="date" type="date" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10">
+          </div>
+        </div>
+        <div>
+          <label class="text-xs text-[#d6ccf7] uppercase">Content</label>
+          <textarea id="body" rows="10" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 focus:border-[#A596DA] outline-none" placeholder="Write your devlog here..."></textarea>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="addPost()" class="px-4 py-2 rounded-lg bg-[#A596DA] text-black font-semibold hover:bg-[#8B78CB]"><i class="fas fa-plus mr-2"></i>Add to List</button>
+          <button onclick="clearForm()" class="px-4 py-2 rounded-lg glass">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview & Export -->
+    <div class="glass rounded-2xl p-6">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="font-semibold">Posts (<span id="count">0</span>)</h2>
+        <div class="flex gap-2">
+          <button onclick="loadFromSite()" class="text-xs px-3 py-1 rounded glass hover:bg-white/10">Load current posts.json</button>
+          <button onclick="exportJSON()" class="text-xs px-3 py-1 rounded bg-[#A596DA]/20 text-[#A596DA]">Export</button>
+        </div>
+      </div>
+      <div id="posts-list" class="space-y-3 max-h-[400px] overflow-y-auto mb-4"></div>
+      <div>
+        <label class="text-xs text-[#d6ccf7] uppercase">posts.json output (copy this to GitHub)</label>
+        <textarea id="output" rows="8" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/50 border border-white/10 font-mono text-xs" readonly></textarea>
+        <button onclick="copyOutput()" class="mt-2 w-full py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm"><i class="fas fa-copy mr-2"></i>Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-8 glass rounded-2xl p-4 text-sm text-[#d6ccf7]">
+    <p><strong>How to use:</strong> 1) Add your posts here → 2) Click Export → 3) Copy → 4) Go to your GitHub repo → edit <code>posts.json</code> → paste → commit. Your site updates automatically. No code editing.</p>
+  </div>
+</div>
+
+<script>
+let posts = [];
+const gameColors = { 'Snowfall': '#A596DA', 'Stuck In Time': '#a855f7', 'General': '#22c55e' };
+
+document.getElementById('date').valueAsDate = new Date();
+
+function addPost() {
+  const title = document.getElementById('title').value.trim();
+  const game = document.getElementById('game').value;
+  const date = document.getElementById('date').value;
+  const body = document.getElementById('body').value.trim();
+  
+  if (!title || !body) { alert('Title and content required'); return; }
+  
+  const displayDate = new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  
+  posts.unshift({
+    id,
+    title,
+    date,
+    displayDate,
+    game,
+    color: gameColors[game] || '#A596DA',
+    body
+  });
+  
+  render();
+  clearForm();
+}
+
+function render() {
+  const list = document.getElementById('posts-list');
+  list.innerHTML = posts.map((p,i) => `
+    <div class="p-3 rounded-lg bg-black/30 border border-white/5">
+      <div class="flex justify-between items-start">
+        <div class="flex-1">
+          <div class="font-medium text-sm">${p.title}</div>
+          <div class="text-xs text-[#d6ccf7]">${p.game} • ${p.displayDate}</div>
+        </div>
+        <button onclick="removePost(${i})" class="text-red-400 hover:text-red-300 ml-2"><i class="fas fa-trash text-xs"></i></button>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('count').textContent = posts.length;
+  document.getElementById('output').value = JSON.stringify(posts, null, 2);
+}
+
+function removePost(i) { posts.splice(i,1); render(); }
+function clearForm() { document.getElementById('title').value=''; document.getElementById('body').value=''; }
+function copyOutput() { navigator.clipboard.writeText(document.getElementById('output').value); alert('Copied! Paste into posts.json on GitHub'); }
+function exportJSON() { render(); }
+
+async function loadFromSite() {
+  try {
+    const res = await fetch('./posts.json');
+    posts = await res.json();
+    render();
+  } catch(e) { alert('Could not load posts.json - make sure it exists'); }
+}
+
+// Load on start
+loadFromSite();
+</script>
+</body>
+</html>
