@@ -1,169 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Blog Writer – Realtime</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blog Editor - Delete Enabled</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>
-  body { background: #0a0a0f; color: #f5f5f5; font-family: Inter, system-ui; }
-  .glass { background: rgba(255,255,255,0.05); backdrop-filter: blur(12px); border: 1px solid rgba(165,150,218,0.15); }
-</style>
+<style>body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} .glass{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);border:1px solid rgba(165,150,218,.15)}</style>
 </head>
-<body class="min-h-screen p-4 md:p-8">
+<body class="p-6">
 <div class="max-w-6xl mx-auto">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Writer</span> <span class="text-xs ml-2 px-2 py-1 rounded bg-green-500/20 text-green-400">LIVE</span></h1>
-    <a href="./" class="text-sm text-[#A596DA] hover:underline"><i class="fas fa-arrow-left mr-2"></i>View site</a>
-  </div>
-
+  <h1 class="text-2xl font-bold mb-6">Blog Editor <span class="text-[#A596DA]">LIVE</span></h1>
   <div class="grid lg:grid-cols-2 gap-6">
-    <div class="glass rounded-2xl p-6">
-      <h2 class="font-semibold mb-4">New Post</h2>
-      <div class="space-y-4">
-        <input id="title" placeholder="Title" class="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10">
-        <div class="grid grid-cols-2 gap-3">
-          <select id="category" class="px-3 py-2 rounded-lg bg-black/30 border border-white/10">
-            <option>Game Dev</option><option>Music Production</option><option>Daily Life</option>
-          </select>
-          <select id="subcategory" class="px-3 py-2 rounded-lg bg-black/30 border border-white/10"></select>
-        </div>
-        <input id="date" type="date" class="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10">
-        <div>
-          <div class="flex gap-2 mb-2">
-            <input id="imageUrl" placeholder="Paste image URL" class="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm">
-            <button onclick="addImageUrl()" class="px-3 py-2 rounded glass text-sm">Add</button>
-            <label class="px-3 py-2 rounded glass cursor-pointer text-sm">
-              <i class="fas fa-upload"></i>
-              <input type="file" id="imageFile" accept="image/*" multiple class="hidden">
-            </label>
-          </div>
-          <div id="imageGrid" class="grid grid-cols-4 gap-2"></div>
-        </div>
-        <textarea id="body" rows="8" placeholder="Write your post..." class="w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10"></textarea>
-        <button onclick="publishPost()" id="publishBtn" class="w-full py-3 rounded-lg bg-[#A596DA] text-black font-bold hover:bg-[#8B78CB]"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
-        <p class="text-xs text-[#d6ccf7]/60 text-center">Publishes instantly to your site. No GitHub commit needed.</p>
-      </div>
+    <div class="glass rounded-xl p-5">
+      <input id="title" placeholder="Title" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10">
+      <select id="category" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10">
+        <option>Game Dev</option><option>Music Production</option><option>Daily Life</option>
+      </select>
+      <select id="subcategory" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10"></select>
+      <input id="date" type="date" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10">
+      <textarea id="body" rows="6" placeholder="Content..." class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10"></textarea>
+      <input type="file" id="files" multiple accept="image/*" class="mb-2 text-sm">
+      <div id="imgs" class="grid grid-cols-4 gap-2 mb-3"></div>
+      <button id="pub" class="w-full py-2 bg-[#A596DA] text-black font-bold rounded">Publish</button>
     </div>
-
-    <div class="glass rounded-2xl p-6">
-      <h2 class="font-semibold mb-4">Live Posts (<span id="count">0</span>)</h2>
-      <div id="posts-list" class="space-y-2 max-h-[500px] overflow-y-auto"></div>
+    <div class="glass rounded-xl p-5">
+      <h2 class="font-semibold mb-3">Posts (<span id="cnt">0</span>)</h2>
+      <div id="list" class="space-y-2 max-h-[600px] overflow-auto"></div>
     </div>
   </div>
 </div>
 
 <script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-  import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, query, orderBy, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-  // TODO: PASTE YOUR CONFIG HERE (same as index.html)
-  const firebaseConfig = {
-    "apiKey": "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
-    "authDomain": "denniszerovt-blog.firebaseapp.com",
-    "projectId": "denniszerovt-blog",
-    "storageBucket": "denniszerovt-blog.firebasestorage.app",
-    "messagingSenderId": "438217423363",
-    "appId": "1:438217423363:web:5db4e6e955494f87e6c36"
+const cfg = {
+  apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
+  authDomain: "denniszerovt-blog.firebaseapp.com",
+  projectId: "denniszerovt-blog",
+  storageBucket: "denniszerovt-blog.firebasestorage.app",
+  messagingSenderId: "438217423363",
+  appId: "1:438217423363:web:5db4e6e955494f87e6c36"
+};
+const app = initializeApp(cfg);
+const db = getFirestore(app);
+
+const subs = {
+  'Game Dev':['Snowfall','Stuck In Time','Other Projects'],
+  'Music Production':['Snowfall','Originals','Remixes'],
+  'Daily Life':['Workflow','Thoughts','Updates','Gear']
+};
+const cat = document.getElementById('category');
+const sub = document.getElementById('subcategory');
+function upd(){ sub.innerHTML = subs[cat.value].map(s=>`<option>${s}</option>`).join(''); }
+cat.onchange=upd; upd();
+document.getElementById('date').valueAsDate = new Date();
+
+let imgs=[];
+document.getElementById('files').onchange = e=>{
+  [...e.target.files].forEach(f=>{
+    const r=new FileReader();
+    r.onload=ev=>{imgs.push(ev.target.result); renderImgs();};
+    r.readAsDataURL(f);
+  });
+};
+function renderImgs(){
+  document.getElementById('imgs').innerHTML = imgs.map((im,i)=>`<div class="relative"><img src="${im}" class="h-16 w-full object-cover rounded"><button onclick="imgs.splice(${i},1);renderImgs()" class="absolute -top1 -right1 bg-red-600 w-5 h-5 rounded-full text-xs">×</button></div>`).join('');
+}
+window.renderImgs = renderImgs;
+
+document.getElementById('pub').onclick = async ()=>{
+  const data = {
+    title: title.value.trim(),
+    category: cat.value,
+    subcategory: sub.value,
+    date: date.value,
+    displayDate: new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    body: body.value.trim(),
+    images: imgs,
+    color: { 'Game Dev':'#A596DA','Music Production':'#ec4899','Daily Life':'#22c55e'}[cat.value],
+    createdAt: serverTimestamp()
+  };
+  if(!data.title||!data.body) return alert('need title/body');
+  await addDoc(collection(db,'posts'), data);
+  title.value=''; body.value=''; imgs=[]; renderImgs();
+  alert('Published!');
 };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  let currentImages = [];
-
-  const subcats = {
-    'Game Dev': ['Snowfall', 'Stuck In Time', 'Other Projects'],
-    'Music Production': ['Snowfall', 'Originals', 'Remixes', 'Soundtracks', 'Behind the Beat'],
-    'Daily Life': ['Workflow', 'Thoughts', 'Updates', 'Gear']
-  };
-
-  function init() {
-    document.getElementById('category').addEventListener('change', updateSubcats);
-    document.getElementById('imageFile').addEventListener('change', handleUpload);
-    document.getElementById('date').valueAsDate = new Date();
-    updateSubcats();
-    listenPosts();
-  }
-
-  function updateSubcats() {
-    const cat = category.value;
-    subcategory.innerHTML = subcats[cat].map(s => `<option>${s}</option>`).join('');
-  }
-
-  function handleUpload(e) {
-    [...e.target.files].forEach(file => {
-      if (file.size > 1500000) return alert(file.name + ' too big');
-      const reader = new FileReader();
-      reader.onload = ev => { currentImages.push(ev.target.result); renderImages(); };
-      reader.readAsDataURL(file);
-    });
-  }
-
-  function addImageUrl() {
-    const url = imageUrl.value.trim();
-    if (url) { currentImages.push(url); imageUrl.value=''; renderImages(); }
-  }
-  window.addImageUrl = addImageUrl;
-
-  function renderImages() {
-    imageGrid.innerHTML = currentImages.map((img,i) => `
-      <div class="relative group">
-        <img src="${img}" class="w-full h-16 object-cover rounded border border-white/10">
-        <button onclick="currentImages.splice(${i},1); renderImages()" class="absolute -top1 -right-1 w-5 h-5 bg-red-600 rounded-full text-xs opacity-0 group-hover:opacity-100">×</button>
-      </div>`).join('');
-  }
-  window.renderImages = renderImages;
-
-  async function publishPost() {
-    const btn = document.getElementById('publishBtn');
-    btn.disabled = true; btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
-    
-    const data = {
-      title: title.value.trim(),
-      category: category.value,
-      subcategory: subcategory.value,
-      date: date.value,
-      displayDate: new Date(date.value+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
-      body: body.value.trim(),
-      color: {'Game Dev':'#A596DA','Music Production':'#ec4899','Daily Life':'#22c55e'}[category.value],
-      images: [...currentImages],
-      createdAt: serverTimestamp()
+// LISTEN
+onSnapshot(collection(db,'posts'), snap=>{
+  const posts = snap.docs.map(d=>({id:d.id, ...d.data()}));
+  document.getElementById('cnt').textContent = posts.length;
+  console.log('posts:', posts);
+  
+  const list = document.getElementById('list');
+  if(posts.length===0){ list.innerHTML='<div class="opacity-50 text-sm">No posts</div>'; return; }
+  
+  list.innerHTML = posts.map(p=>`
+    <div class="p-3 bg-black/30 rounded border border-white/10 flex justify-between items-start gap-3">
+      <div class="flex-1 min-w-0">
+        <div class="font-medium truncate">${p.title||'(no title)'}</div>
+        <div class="text-xs opacity-60">${p.category||'?'} • ${p.date||''}</div>
+        <div class="text-[11px] opacity-40 mt-1 truncate">${(p.body||'').substring(0,60)}</div>
+      </div>
+      <button data-id="${p.id}" class="del px-2 py-1 bg-red-600/20 text-red-400 rounded text-xs hover:bg-red-600/30">Delete</button>
+    </div>
+  `).join('');
+  
+  list.querySelectorAll('.del').forEach(b=>{
+    b.onclick = async ()=>{
+      if(confirm('Delete "'+b.closest('div').querySelector('.font-medium').textContent+'"?')){
+        await deleteDoc(doc(db,'posts', b.dataset.id));
+      }
     };
-    
-    if (!data.title || !data.body) { alert('Need title and body'); btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live'; return; }
-    
-    await addDoc(collection(db, 'posts'), data);
-    
-    // Clear
-    title.value=''; body.value=''; currentImages=[]; renderImages();
-    btn.disabled=false; btn.innerHTML='<i class="fas fa-check mr-2"></i>Published!'; setTimeout(()=>btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live',2000);
-  }
-  window.publishPost = publishPost;
-
-  function listenPosts() {
-    const q = query(collection(db, 'posts'), orderBy('date','desc'));
-    onSnapshot(q, snap => {
-      const posts = snap.docs.map(d => ({id:d.id, ...d.data()}));
-      count.textContent = posts.length;
-      postsList.innerHTML = posts.map(p => `
-        <div class="p-2.5 rounded bg-black/30 border border-white/5 flex justify-between">
-          <div class="min-w-0 flex-1">
-            <div class="text-sm truncate">${p.title}</div>
-            <div class="text-[11px] text-[#d6ccf7]">${p.category} • ${p.displayDate}</div>
-          </div>
-          <button onclick="deletePost('${p.id}')" class="text-red-400 ml-2"><i class="fas fa-trash text-xs"></i></button>
-        </div>`).join('');
-    });
-  }
-
-  async function deletePost(id) {
-    if (confirm('Delete post?')) await deleteDoc(doc(db, 'posts', id));
-  }
-  window.deletePost = deletePost;
-  window.editPost = (id)=>{ alert('Edit coming soon - for now delete and repost'); };
-
-  window.addEventListener('DOMContentLoaded', init);
+  });
+}, err=>{
+  console.error(err);
+  document.getElementById('list').innerHTML = `<div class="text-red-400">Error: ${err.message}</div>`;
+});
 </script>
 </body>
 </html>
