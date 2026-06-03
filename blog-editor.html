@@ -2,37 +2,80 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Blog Editor - Delete Enabled</title>
+<title>Blog Editor Pro</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<style>body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} .glass{background:rgba(255,255,255,.05);backdrop-filter:blur(12px);border:1px solid rgba(165,150,218,.15)}</style>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space Grotesk'}
+.glass{background:rgba(255,255,255,.05);backdrop-filter:blur(16px);border:1px solid rgba(165,150,218,.15)}
+.gradient{background:linear-gradient(135deg,#A596DA,#c4b5fd)}
+</style>
 </head>
-<body class="p-6">
-<div class="max-w-6xl mx-auto">
-  <h1 class="text-2xl font-bold mb-6">Blog Editor <span class="text-[#A596DA]">LIVE</span></h1>
-  <div class="grid lg:grid-cols-2 gap-6">
-    <div class="glass rounded-xl p-5">
-      <input id="title" placeholder="Title" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10">
-      <select id="category" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10">
-        <option>Game Dev</option><option>Music Production</option><option>Daily Life</option>
-      </select>
-      <select id="subcategory" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10"></select>
-      <input id="date" type="date" class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10">
-      <textarea id="body" rows="6" placeholder="Content..." class="w-full mb-3 px-3 py-2 bg-black/30 rounded border border-white/10"></textarea>
-      <input type="file" id="files" multiple accept="image/*" class="mb-2 text-sm">
-      <div id="imgs" class="grid grid-cols-4 gap-2 mb-3"></div>
-      <button id="pub" class="w-full py-2 bg-[#A596DA] text-black font-bold rounded">Publish</button>
+<body class="min-h-screen p-4 md:p-8">
+<div class="max-w-7xl mx-auto">
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Editor</span> <span class="ml-2 text-xs px-2 py-1 rounded-full gradient text-black">PRO</span></h1>
+    <div class="flex gap-3"><a href="./" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-2"></i>View Site</a><button id="lockBtn" class="px-4 py-2 glass rounded-lg text-sm"><i class="fas fa-lock mr-2"></i>Lock</button></div>
+  </div>
+
+  <div class="grid xl:grid-cols-3 gap-6">
+    <!-- Left: Post Creator -->
+    <div class="xl:col-span-2 glass rounded-2xl p-6">
+      <h2 class="font-semibold mb-4 flex items-center gap-2"><i class="fas fa-pen text-[#A596DA]"></i> Create Post</h2>
+      <div class="space-y-4">
+        <input id="title" placeholder="Post title..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none text-lg">
+        <div class="grid md:grid-cols-3 gap-3">
+          <select id="category" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10"></select>
+          <select id="subcategory" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10"></select>
+          <input id="date" type="date" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10">
+        </div>
+        <div class="flex items-center gap-3">
+          <label class="text-sm opacity-70">Post Color:</label>
+          <input id="color" type="color" value="#A596DA" class="w-12 h-9 rounded-lg bg-black/40 border border-white/10 cursor-pointer">
+          <span class="text-xs opacity-50">Overrides category color</span>
+        </div>
+        <div>
+          <div class="flex gap-2 mb-2">
+            <input id="imgUrl" placeholder="Paste image URL or upload below" class="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm">
+            <button onclick="addUrl()" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10">Add URL</button>
+            <label class="px-4 py-2 glass rounded-lg text-sm cursor-pointer hover:bg-white/10"><i class="fas fa-upload mr-1"></i>Upload<input type="file" id="files" multiple accept="image/*" class="hidden"></label>
+          </div>
+          <div id="imgGrid" class="grid grid-cols-5 gap-2"></div>
+        </div>
+        <textarea id="body" rows="10" placeholder="Write your story... Markdown supported" class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none resize-none"></textarea>
+        <button id="publish" class="w-full py-3.5 rounded-xl gradient text-black font-bold text-lg hover:opacity-90 transition"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
+      </div>
     </div>
-    <div class="glass rounded-xl p-5">
-      <h2 class="font-semibold mb-3">Posts (<span id="cnt">0</span>)</h2>
-      <div id="list" class="space-y-2 max-h-[600px] overflow-auto"></div>
+
+    <!-- Right: Manager -->
+    <div class="space-y-6">
+      <div class="glass rounded-2xl p-5">
+        <h3 class="font-semibold mb-3 flex items-center justify-between">Categories <span id="catCount" class="text-xs opacity-60">0</span></h3>
+        <div id="catList" class="space-y-2 mb-3 max-h-40 overflow-auto"></div>
+        <div class="flex gap-2">
+          <input id="newCat" placeholder="New category" class="flex-1 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-sm">
+          <input id="newColor" type="color" value="#A596DA" class="w-8 h-8 rounded bg-black/30">
+          <button onclick="addCategory()" class="px-3 py-1.5 glass rounded text-xs">Add</button>
+        </div>
+        <input id="newSubs" placeholder="Subcategories (comma separated)" class="w-full mt-2 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-xs">
+      </div>
+
+      <div class="glass rounded-2xl p-5">
+        <h3 class="font-semibold mb-3">Live Posts (<span id="postCount">0</span>)</h3>
+        <div id="postList" class="space-y-2 max-h-80 overflow-auto"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script type="module">
+const PASS = "dennis2026"; // change me
+if(localStorage.getItem('editorPass')!==PASS){ if(prompt('Editor password:')!==PASS){document.body.innerHTML='<div class="h-screen flex items-center justify-center text-2xl">Access Denied</div>';throw new Error('locked')} else localStorage.setItem('editorPass',PASS)}
+document.getElementById('lockBtn').onclick=()=>{localStorage.removeItem('editorPass');location.reload()};
+
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 const cfg = {
   apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
@@ -45,79 +88,87 @@ const cfg = {
 const app = initializeApp(cfg);
 const db = getFirestore(app);
 
-const subs = {
-  'Game Dev':['Snowfall','Stuck In Time','Other Projects'],
-  'Music Production':['Snowfall','Originals','Remixes'],
-  'Daily Life':['Workflow','Thoughts','Updates','Gear']
-};
-const cat = document.getElementById('category');
-const sub = document.getElementById('subcategory');
-function upd(){ sub.innerHTML = subs[cat.value].map(s=>`<option>${s}</option>`).join(''); }
-cat.onchange=upd; upd();
-document.getElementById('date').valueAsDate = new Date();
+let categories = [];
+let images = [];
 
-let imgs=[];
-document.getElementById('files').onchange = e=>{
-  [...e.target.files].forEach(f=>{
-    const r=new FileReader();
-    r.onload=ev=>{imgs.push(ev.target.result); renderImgs();};
-    r.readAsDataURL(f);
-  });
-};
-function renderImgs(){
-  document.getElementById('imgs').innerHTML = imgs.map((im,i)=>`<div class="relative"><img src="${im}" class="h-16 w-full object-cover rounded"><button onclick="imgs.splice(${i},1);renderImgs()" class="absolute -top1 -right1 bg-red-600 w-5 h-5 rounded-full text-xs">×</button></div>`).join('');
+// Load categories
+onSnapshot(collection(db,'categories'), snap=>{
+  categories = snap.docs.map(d=>({id:d.id,...d.data()}));
+  document.getElementById('catCount').textContent = categories.length;
+  const catSel = document.getElementById('category');
+  catSel.innerHTML = categories.map(c=>`<option value="${c.name}" data-color="${c.color}">${c.name}</option>`).join('');
+  updateSubs();
+  renderCats();
+});
+function updateSubs(){
+  const cat = categories.find(c=>c.name===category.value);
+  subcategory.innerHTML = (cat?.subs||[]).map(s=>`<option>${s}</option>`).join('');
+  if(cat) color.value = cat.color;
 }
+category.onchange = updateSubs;
+date.valueAsDate = new Date();
+
+function renderCats(){
+  catList.innerHTML = categories.map(c=>`
+    <div class="flex items-center justify-between p-2 rounded bg-black/20 text-xs">
+      <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${c.color}"></div><span>${c.name}</span><span class="opacity-50">(${c.subs.length})</span></div>
+      <button onclick="delCat('${c.id}')" class="text-red-400 hover:text-red-300"><i class="fas fa-trash"></i></button>
+    </div>
+  `).join('');
+}
+window.delCat = async id=>{ if(confirm('Delete category?')) await deleteDoc(doc(db,'categories',id)); };
+
+window.addCategory = async ()=>{
+  const name = newCat.value.trim(); if(!name) return;
+  const subs = newSubs.value.split(',').map(s=>s.trim()).filter(Boolean);
+  const id = name.toLowerCase().replace(/\s+/g,'-');
+  await setDoc(doc(db,'categories',id), {id,name,color:newColor.value,subs});
+  newCat.value=''; newSubs.value='';
+};
+
+// Images
+files.onchange = e=>{ [...e.target.files].forEach(f=>{ const r=new FileReader(); r.onload=ev=>{images.push(ev.target.result); renderImgs()}; r.readAsDataURL(f); }); };
+function renderImgs(){ imgGrid.innerHTML = images.map((im,i)=>`<div class="relative group"><img src="${im}" class="w-full h-20 object-cover rounded-lg border border-white/10"><button onclick="images.splice(${i},1);renderImgs()" class="absolute -top-1 -right-1 w-5 h-5 bg-red-600 rounded-full text-[10px] opacity-0 group-hover:opacity-100">×</button></div>`).join(''); }
+window.addUrl = ()=>{ const u=imgUrl.value.trim(); if(u){images.push(u); imgUrl.value=''; renderImgs()} };
 window.renderImgs = renderImgs;
 
-document.getElementById('pub').onclick = async ()=>{
+// Publish
+publish.onclick = async ()=>{
   const data = {
     title: title.value.trim(),
-    category: cat.value,
-    subcategory: sub.value,
+    category: category.value,
+    subcategory: subcategory.value,
     date: date.value,
     displayDate: new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
     body: body.value.trim(),
-    images: imgs,
-    color: { 'Game Dev':'#A596DA','Music Production':'#ec4899','Daily Life':'#22c55e'}[cat.value],
+    images,
+    color: color.value,
     createdAt: serverTimestamp()
   };
-  if(!data.title||!data.body) return alert('need title/body');
+  if(!data.title||!data.body) return alert('Title and body required');
+  publish.disabled=true; publish.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
   await addDoc(collection(db,'posts'), data);
-  title.value=''; body.value=''; imgs=[]; renderImgs();
-  alert('Published!');
+  title.value=''; body.value=''; images=[]; renderImgs();
+  publish.disabled=false; publish.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
 };
 
-// LISTEN
+// Posts list
 onSnapshot(collection(db,'posts'), snap=>{
-  const posts = snap.docs.map(d=>({id:d.id, ...d.data()}));
-  document.getElementById('cnt').textContent = posts.length;
-  console.log('posts:', posts);
-  
-  const list = document.getElementById('list');
-  if(posts.length===0){ list.innerHTML='<div class="opacity-50 text-sm">No posts</div>'; return; }
-  
-  list.innerHTML = posts.map(p=>`
-    <div class="p-3 bg-black/30 rounded border border-white/10 flex justify-between items-start gap-3">
-      <div class="flex-1 min-w-0">
-        <div class="font-medium truncate">${p.title||'(no title)'}</div>
-        <div class="text-xs opacity-60">${p.category||'?'} • ${p.date||''}</div>
-        <div class="text-[11px] opacity-40 mt-1 truncate">${(p.body||'').substring(0,60)}</div>
+  const posts = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  postCount.textContent = posts.length;
+  postList.innerHTML = posts.map(p=>`
+    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5 hover:bg-white/5 transition">
+      <div class="flex justify-between items-start gap-2">
+        <div class="flex-1 min-w-0">
+          <div class="text-sm font-medium truncate">${p.title}</div>
+          <div class="text-[11px] opacity-60 flex items-center gap-2 mt-0.5"><span class="w-2 h-2 rounded-full" style="background:${p.color}"></span>${p.category} • ${p.displayDate||p.date}</div>
+        </div>
+        <button onclick="delPost('${p.id}','${p.title.replace(/'/g,"\'")}')" class="p-1.5 rounded hover:bg-red-500/20 text-red-400"><i class="fas fa-trash text-xs"></i></button>
       </div>
-      <button data-id="${p.id}" class="del px-2 py-1 bg-red-600/20 text-red-400 rounded text-xs hover:bg-red-600/30">Delete</button>
     </div>
   `).join('');
-  
-  list.querySelectorAll('.del').forEach(b=>{
-    b.onclick = async ()=>{
-      if(confirm('Delete "'+b.closest('div').querySelector('.font-medium').textContent+'"?')){
-        await deleteDoc(doc(db,'posts', b.dataset.id));
-      }
-    };
-  });
-}, err=>{
-  console.error(err);
-  document.getElementById('list').innerHTML = `<div class="text-red-400">Error: ${err.message}</div>`;
 });
+window.delPost = async (id,title)=>{ if(confirm(`Delete "${title}"?`)) await deleteDoc(doc(db,'posts',id)); };
 </script>
 </body>
 </html>
