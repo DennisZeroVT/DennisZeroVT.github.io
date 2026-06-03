@@ -161,6 +161,7 @@
     if (confirm('Delete post?')) await deleteDoc(doc(db, 'posts', id));
   }
   window.deletePost = deletePost;
+  window.editPost = (id)=>{ alert('Edit coming soon - for now delete and repost'); };
 
   window.addEventListener('DOMContentLoaded', init);
 </script>
