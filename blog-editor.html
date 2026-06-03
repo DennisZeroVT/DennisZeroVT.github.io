@@ -29,7 +29,7 @@
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="text-xs text-[#d6ccf7] uppercase">Category</label>
-            <select id="category" onchange="updateSubcats()" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10">
+            <select id="category" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10">
               <option>Game Dev</option>
               <option>Music Production</option>
               <option>Daily Life</option>
@@ -50,18 +50,17 @@
             <input id="color" type="color" value="#A596DA" class="w-full mt-1 h-[38px] px-1 py-1 rounded-lg bg-black/30 border border-white/10">
           </div>
         </div>
-                        <div>
+        <div>
           <label class="text-xs text-[#d6ccf7] uppercase">Images (multiple)</label>
           <div class="mt-1 flex gap-2">
-            <input id="imageUrl" placeholder="Paste image URL and press Add" class="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm">
-            <button onclick="addImageUrl()" class="px-3 py-2 rounded-lg glass text-sm">Add URL</button>
+            <input id="imageUrl" placeholder="Paste URL then Add" class="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm">
+            <button type="button" onclick="addImageUrl()" class="px-3 py-2 rounded-lg glass text-sm">Add</button>
             <label class="px-3 py-2 rounded-lg glass cursor-pointer text-sm hover:bg-white/10">
               <i class="fas fa-upload mr-1"></i> Upload
-              <input type="file" id="imageFile" accept="image/*" multiple class="hidden" onchange="handleImageUpload(event)">
+              <input type="file" id="imageFile" accept="image/*" multiple class="hidden">
             </label>
           </div>
-          <div id="imageGrid" class="mt-3 grid grid-cols-3 sm:grid-cols-4 gap-2"></div>
-          <p class="text-[10px] text-[#d6ccf7]/70 mt-1">Upload multiple files or paste URLs. They'll be embedded in the post. Keep total under 3MB for fast loading.</p>
+          <div id="imageGrid" class="mt-3 grid grid-cols-4 gap-2"></div>
         </div>
         <div>
           <label class="text-xs text-[#d6ccf7] uppercase">Content</label>
@@ -78,8 +77,8 @@
       <div class="flex items-center justify-between mb-4">
         <h2 class="font-semibold">Posts (<span id="count">0</span>)</h2>
         <div class="flex gap-2">
-          <button onclick="loadFromSite()" class="text-xs px-3 py-1 rounded glass hover:bg-white/10">Load posts.json</button>
-          <button onclick="exportJSON()" class="text-xs px-3 py-1 rounded bg-[#A596DA]/20 text-[#A596DA]">Export</button>
+          <button onclick="loadPosts()" class="text-xs px-3 py-1 rounded glass hover:bg-white/10">Load posts.json</button>
+          <button onclick="downloadJSON()" class="text-xs px-3 py-1 rounded bg-[#A596DA]/20 text-[#A596DA]">Download</button>
         </div>
       </div>
       <div id="posts-list" class="space-y-2 max-h-[340px] overflow-y-auto mb-4"></div>
@@ -92,24 +91,35 @@
 <script>
 let posts = [];
 let currentImages = [];
+
 const subcats = {
   'Game Dev': ['Snowfall', 'Stuck In Time', 'Other Projects'],
   'Music Production': ['Snowfall', 'Originals', 'Remixes', 'Soundtracks', 'Behind the Beat'],
   'Daily Life': ['Workflow', 'Thoughts', 'Updates', 'Gear']
 };
 
+function init() {
+  document.getElementById('category').addEventListener('change', updateSubcats);
+  document.getElementById('imageFile').addEventListener('change', handleImageUpload);
+  document.getElementById('date').valueAsDate = new Date();
+  updateSubcats();
+  loadPosts();
+}
 
-let currentImages = [];
+function updateSubcats() {
+  const cat = document.getElementById('category').value;
+  const sel = document.getElementById('subcategory');
+  sel.innerHTML = subcats[cat].map(s => `<option>${s}</option>`).join('');
+  const colors = {'Game Dev':'#A596DA','Music Production':'#ec4899','Daily Life':'#22c55e'};
+  document.getElementById('color').value = colors[cat];
+}
 
 function handleImageUpload(e) {
   const files = Array.from(e.target.files);
   files.forEach(file => {
-    if (file.size > 1.5 * 1024 * 1024) { alert(file.name + ' too large (>1.5MB)'); return; }
+    if (file.size > 1500000) { alert(file.name + ' >1.5MB, compress it'); return; }
     const reader = new FileReader();
-    reader.onload = function(ev) {
-      currentImages.push(ev.target.result);
-      renderImages();
-    };
+    reader.onload = ev => { currentImages.push(ev.target.result); renderImages(); };
     reader.readAsDataURL(file);
   });
   e.target.value = '';
@@ -127,26 +137,11 @@ function renderImages() {
   const grid = document.getElementById('imageGrid');
   grid.innerHTML = currentImages.map((img,i) => `
     <div class="relative group">
-      <img src="${img}" class="w-full h-20 object-cover rounded border border-white/10">
-      <button onclick="removeImage(${i})" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] opacity-0 group-hover:opacity-100">×</button>
+      <img src="${img}" class="w-full h-16 object-cover rounded border border-white/10">
+      <button onclick="currentImages.splice(${i},1); renderImages()" class="absolute -top1 -right-1 w-5 h-5 bg-red-600 rounded-full text-xs opacity-0 group-hover:opacity-100">×</button>
     </div>
   `).join('');
 }
-
-function removeImage(i) { currentImages.splice(i,1); renderImages(); }
-function clearImages() { currentImages = []; renderImages(); }
-
-function updateSubcats() {
-  const cat = document.getElementById('category').value;
-  const sel = document.getElementById('subcategory');
-  sel.innerHTML = subcats[cat].map(s => `<option>${s}</option>`).join('');
-  // Set color based on category
-  const colors = {'Game Dev':'#A596DA','Music Production':'#ec4899','Daily Life':'#22c55e'};
-  document.getElementById('color').value = colors[cat];
-}
-
-document.getElementById('date').valueAsDate = new Date();
-updateSubcats();
 
 function addPost() {
   const title = document.getElementById('title').value.trim();
@@ -156,103 +151,65 @@ function addPost() {
   const body = document.getElementById('body').value.trim();
   const color = document.getElementById('color').value;
   
+  if (!title || !body || !date) { alert('Title, date and content required'); return; }
   
-  if (!title || !body) { alert('Need title and content'); return; }
-  
-  const displayDate = new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  const id = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const displayDate = new Date(date+'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  const id = title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
   
   posts.unshift({ id, title, date, displayDate, category, subcategory, game: subcategory, color, body, images: [...currentImages] });
-  render();
+  renderPosts();
   clearForm();
 }
 
-function render() {
+function renderPosts() {
   document.getElementById('posts-list').innerHTML = posts.map((p,i) => `
-    <div class="p-2.5 rounded-lg bg-black/30 border border-white/5 flex justify-between">
-      <div>
-        <div class="text-sm font-medium">${p.title}</div>
-        <div class="text-[11px] text-[#d6ccf7]">${p.category} › ${p.subcategory} • ${p.displayDate}</div>
+    <div class="p-2.5 rounded-lg bg-black/30 border border-white/5 flex justify-between items-start">
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-medium truncate">${p.title}</div>
+        <div class="text-[11px] text-[#d6ccf7]">${p.category} › ${p.subcategory} • ${p.displayDate} ${p.images?.length ? '• '+p.images.length+' img' : ''}</div>
       </div>
-      <button onclick="posts.splice(${i},1);render()" class="text-red-400 ml-2"><i class="fas fa-trash text-xs"></i></button>
+      <button onclick="posts.splice(${i},1); renderPosts()" class="text-red-400 ml-2 shrink-0"><i class="fas fa-trash text-xs"></i></button>
     </div>
   `).join('');
   document.getElementById('count').textContent = posts.length;
   document.getElementById('output').value = JSON.stringify(posts, null, 2);
 }
 
-
-
-let currentImages = [];
-
-function handleImageUpload(e) {
-  const files = Array.from(e.target.files);
-  files.forEach(file => {
-    if (file.size > 1.5 * 1024 * 1024) { alert(file.name + ' too large (>1.5MB)'); return; }
-    const reader = new FileReader();
-    reader.onload = function(ev) {
-      currentImages.push(ev.target.result);
-      renderImages();
-    };
-    reader.readAsDataURL(file);
-  });
-  e.target.value = '';
-}
-
-function addImageUrl() {
-  const url = document.getElementById('imageUrl').value.trim();
-  if (!url) return;
-  currentImages.push(url);
-  document.getElementById('imageUrl').value = '';
+function clearForm() {
+  document.getElementById('title').value = '';
+  document.getElementById('body').value = '';
+  currentImages = [];
   renderImages();
 }
 
-function renderImages() {
-  const grid = document.getElementById('imageGrid');
-  grid.innerHTML = currentImages.map((img,i) => `
-    <div class="relative group">
-      <img src="${img}" class="w-full h-20 object-cover rounded border border-white/10">
-      <button onclick="removeImage(${i})" class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full text-[10px] opacity-0 group-hover:opacity-100">×</button>
-    </div>
-  `).join('');
+function copyOutput() {
+  navigator.clipboard.writeText(document.getElementById('output').value);
+  alert('Copied! Paste into posts.json on GitHub');
 }
 
-function removeImage(i) { currentImages.splice(i,1); renderImages(); }
-function clearImages() { currentImages = []; renderImages(); }
-
-function handleImageUpload_OLD(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  if (file.size > 2 * 1024 * 1024) { alert('Image too large (>2MB). Compress or use URL instead.'); return; }
-  const reader = new FileReader();
-  reader.onload = function(ev) {
-    document.getElementById('image').value = ev.target.result;
-    document.getElementById('previewImg').src = ev.target.result;
-    document.getElementById('imagePreview').classList.remove('hidden');
-  };
-  reader.readAsDataURL(file);
-}
-function clearImages() {
-  document.getElementById('image').value = '';
-  document.getElementById('imagePreview').classList.add('hidden');
-  document.getElementById('imageFile').value = '';
+function downloadJSON() {
+  const blob = new Blob([JSON.stringify(posts, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'posts.json';
+  a.click();
 }
 
-// Update preview when URL changes
-
-
-function clearForm(){ document.getElementById('title').value=''; document.getElementById('body').value=''; clearImages(); }
-function copyOutput(){ navigator.clipboard.writeText(document.getElementById('output').value); alert('Copied!'); }
-function exportJSON(){ render(); }
-
-async function loadFromSite(){
+async function loadPosts() {
   try {
-    const res = await fetch('./posts.json');
+    const res = await fetch('./posts.json?'+Date.now());
+    if (!res.ok) throw new Error('not found');
     posts = await res.json();
-    render();
-  } catch(e){ alert('No posts.json found'); }
+    renderPosts();
+  } catch(e) {
+    console.log('No posts.json yet, starting fresh');
+    posts = [];
+    renderPosts();
+  }
 }
-loadFromSite();
+
+window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
