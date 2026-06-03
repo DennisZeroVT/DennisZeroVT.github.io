@@ -1,0 +1,35 @@
+[
+  {
+    "id": "game-dev",
+    "name": "Game Dev",
+    "color": "#A596DA",
+    "subs": [
+      "Snowfall",
+      "Stuck In Time",
+      "Other Projects"
+    ]
+  },
+  {
+    "id": "music-production",
+    "name": "Music Production",
+    "color": "#ec4899",
+    "subs": [
+      "Snowfall",
+      "Originals",
+      "Remixes",
+      "Soundtracks",
+      "Behind the Beat"
+    ]
+  },
+  {
+    "id": "daily-life",
+    "name": "Daily Life",
+    "color": "#22c55e",
+    "subs": [
+      "Workflow",
+      "Thoughts",
+      "Updates",
+      "Gear"
+    ]
+  }
+]
