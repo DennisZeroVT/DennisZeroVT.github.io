@@ -1,217 +1,6 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<!-- Playables SDK -->
-<script>// Playables SDK v1.0.0
-// Game lifecycle bridge: rAF-based game-ready detection + event communication
-(function() {
-  'use strict';
-
-  // Idempotency: skip if already initialized (e.g., server-side injection
-  // followed by client-side inject-javascript via the Bloks webview component).
-  if (window.playablesSDK) return;
-
-  var HANDLER_NAME = 'playablesGameEventHandler';
-  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
-  var RAF_FRAME_THRESHOLD = 3;
-
-  var gameReadySent = false;
-  var firstInteractionSent = false;
-  var errorSent = false;
-  var frameCount = 0;
-  var originalRAF = window.requestAnimationFrame;
-
-  // --- Transport Layer ---
-
-  function hasIOSBridge() {
-    return !!(window.webkit &&
-              window.webkit.messageHandlers &&
-              window.webkit.messageHandlers[HANDLER_NAME]);
-  }
-
-  function hasAndroidBridge() {
-    return !!(window[ANDROID_BRIDGE_NAME] &&
-              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
-  }
-
-  function isInIframe() {
-    return !!(window.parent && window.parent !== window);
-  }
-
-  function sendEvent(eventName, payload) {
-    var message = {
-      type: eventName,
-      payload: payload || {},
-      timestamp: Date.now()
-    };
-
-    if (hasIOSBridge()) {
-      try {
-        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
-      } catch (e) { /* ignore */ }
-      return;
-    }
-
-    if (hasAndroidBridge()) {
-    try {
-      var p = payload || {};
-      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
-      p.timestamp = message.timestamp;
-      window[ANDROID_BRIDGE_NAME].postEvent(
-        eventName,
-        JSON.stringify(p)
-      );
-    } catch (e) { /* ignore */ }
-    return;
-  }
-
-    if (isInIframe()) {
-      try {
-        window.parent.postMessage(message, '*');
-      } catch (e) { /* ignore */ }
-      return;
-    }
-  }
-
-  // --- rAF Game-Ready Detection ---
-
-  function onFrame() {
-    if (gameReadySent) return;
-
-    frameCount++;
-    if (frameCount >= RAF_FRAME_THRESHOLD) {
-      gameReadySent = true;
-      sendEvent('game_ready', {
-        frame_count: frameCount,
-        detected_at: Date.now()
-      });
-      return;
-    }
-
-    originalRAF.call(window, onFrame);
-  }
-
-  if (originalRAF) {
-    window.requestAnimationFrame = function(callback) {
-      if (!gameReadySent) {
-        return originalRAF.call(window, function(timestamp) {
-          frameCount++;
-          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
-            gameReadySent = true;
-            sendEvent('game_ready', {
-              frame_count: frameCount,
-              detected_at: Date.now()
-            });
-          }
-          callback(timestamp);
-        });
-      }
-      return originalRAF.call(window, callback);
-    };
-  }
-
-  // --- First User Interaction Detection ---
-
-  function setupFirstInteractionDetection() {
-    var events = ['touchstart', 'mousedown', 'keydown'];
-
-    function onFirstInteraction() {
-      if (firstInteractionSent) return;
-      firstInteractionSent = true;
-      sendEvent('user_interaction_start', null);
-
-      for (var i = 0; i < events.length; i++) {
-        document.removeEventListener(events[i], onFirstInteraction, true);
-      }
-    }
-
-    for (var i = 0; i < events.length; i++) {
-      document.addEventListener(events[i], onFirstInteraction, true);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
-  } else {
-    setupFirstInteractionDetection();
-  }
-
-  // --- Auto Error Capture ---
-
-  window.addEventListener('error', function(event) {
-    if (errorSent) return;
-    errorSent = true;
-    sendEvent('error', {
-      message: event.message || 'Unknown error',
-      source: event.filename || '',
-      lineno: event.lineno || 0,
-      colno: event.colno || 0,
-      auto_captured: true
-    });
-  });
-
-  window.addEventListener('unhandledrejection', function(event) {
-    if (errorSent) return;
-    errorSent = true;
-    var reason = event.reason;
-    sendEvent('error', {
-      message: (reason instanceof Error) ? reason.message : String(reason),
-      type: 'unhandled_promise_rejection',
-      auto_captured: true
-    });
-  });
-
-  // --- Public API ---
-
-  window.playablesSDK = {
-    complete: function(score) {
-      sendEvent('game_ended', {
-        score: score,
-        completed: true
-      });
-    },
-
-    error: function(message) {
-      if (errorSent) return;
-      errorSent = true;
-      sendEvent('error', {
-        message: message || 'Unknown error',
-        auto_captured: false
-      });
-    },
-
-    sendEvent: function(eventName, payload) {
-      if (!eventName || typeof eventName !== 'string') return;
-      sendEvent(eventName, payload);
-    }
-  };
-
-  // Kick off rAF detection in case no game code calls rAF immediately
-  if (originalRAF) {
-    originalRAF.call(window, onFrame);
-  }
-})();</script>
-<!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
-(function() {
-  if (window.__playableTouchPatchInstalled) return;
-  window.__playableTouchPatchInstalled = true;
-  var origAdd = EventTarget.prototype.addEventListener;
-  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
-  EventTarget.prototype.addEventListener = function(type, listener, options) {
-    if (blockedTypes[type]) {
-      if (options === undefined || options === null) {
-        options = { passive: true };
-      } else if (typeof options === 'boolean') {
-        options = { capture: options, passive: true };
-      } else {
-        options = Object.assign({}, options, { passive: true });
-      }
-    }
-    return origAdd.call(this, type, listener, options);
-  };
-})();
-</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>DennisZeroVT | Music Producer &amp; Game Developer</title>
@@ -2819,39 +2608,44 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   function renderPosts(){
-    const c=document.getElementById('blog-posts-container');
+    const c = document.getElementById('blog-posts-container');
     if(!c) return;
-    let p=[...allPosts];
-    if(currentCat!=='All') p=p.filter(x=>x.category===currentCat);
-    if(currentSub!=='All') p=p.filter(x=>x.subcategory===currentSub);
-    if(p.length===0){ c.innerHTML='<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet.</div>'; return; }
-    c.innerHTML=p.map(post=>{
-      const cat=categories.find(x=>x.name===post.category);
-      const col=post.color||cat?.color||'#A596DA';
-      let html='';
+    let p = [...allPosts];
+    if(currentCat!=='All') p = p.filter(x=>x.category===currentCat);
+    if(currentSub!=='All') p = p.filter(x=>x.subcategory===currentSub);
+    if(p.length===0){ c.innerHTML='<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet in this category.</div>'; return; }
+    c.innerHTML = p.map(post=>{
+      const cat = categories.find(x=>x.name===post.category);
+      const col = post.color || cat?.color || '#A596DA';
+      
+      let contentHtml = '';
       if(post.blocks && Array.isArray(post.blocks) && post.blocks.length){
-        html=post.blocks.map(b=>{
+        contentHtml = post.blocks.map(b=>{
           if(b.type==='text'){
-            const t=String(b.value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
+            const t = String(b.value||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
 /g,'<br>');
             return `<p class="text-[var(--text-secondary)] leading-relaxed mb-4" style="opacity:1">${t}</p>`;
           }
-          if(b.type==='image'){
-            return `<div class="my-6"><img src="${b.value}" class="w-full max-h-[700px] object-contain rounded-xl border border-white/10 mx-auto block" style="opacity:1" loading="lazy"></div>`;
+          if(b.type==='image' && b.value){
+            return `<div class="my-6"><img src="${b.value}" class="w-full max-h-[600px] object-contain rounded-xl border border-white/10 mx-auto block cursor-pointer" style="opacity:1" onclick="window.open('${b.value}','_blank')"></div>`;
           }
           if(b.type==='divider'){
             return `<hr class="my-8 border-white/10" style="opacity:1">`;
           }
           return '';
         }).join('');
-      }else{
-        const body=String(post.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
+      } else {
+        const body = String(post.body||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/
 /g,'<br>');
-        const imgs=(post.images||[]).map(i=>`<div class="my-4"><img src="${i}" class="w-full max-h-[600px] object-contain rounded-xl border border-white/10 block"></div>`).join('');
-        html=`<p class="text-[var(--text-secondary)] leading-relaxed mb-4" style="opacity:1">${body}</p>${imgs}`;
+        const imgs = post.images||[];
+        const imgHtml = imgs.length===1 ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer block" style="max-height:500px;opacity:1" onclick="window.open('${imgs[0]}')"></div>` :
+          imgs.length>1 ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer block" style="opacity:1" onclick="window.open('${i}')"`).join('')}</div>` : '';
+        contentHtml = `<p class="text-[var(--text-secondary)] leading-relaxed mb-4" style="opacity:1">${body}</p>${imgHtml}`;
       }
-      return `<article class="blog-post glass rounded-2xl p-8 mb-8" style="opacity:1 !important; visibility:visible !important; transform:none !important"><div class="flex gap-2 items-center mb-3 text-xs"><span class="px-2.5 py-1 rounded-full" style="background:${col}22;color:${col};border:1px solid ${col}44">${post.category}</span><span class="opacity-60">${post.subcategory||''}</span><span class="ml-auto opacity-50">${post.displayDate||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text" style="opacity:1">${post.title}</h3>${html}</article>`;
+      
+      return `<article class="blog-post glass rounded-2xl p-8 mb-8 glow-hover" style="opacity:1 !important;transform:none !important;visibility:visible !important"><div class="flex gap-3 items-center mb-4 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text">${post.title}</h3>${contentHtml}</article>`;
     }).join('');
+  } ('');
   }
 
   document.addEventListener('DOMContentLoaded', async ()=>{
