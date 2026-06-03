@@ -2645,7 +2645,6 @@ document.addEventListener('DOMContentLoaded', function() {
       
       return `<article class="blog-post glass rounded-2xl p-8 mb-8 glow-hover" style="opacity:1 !important;transform:none !important;visibility:visible !important"><div class="flex gap-3 items-center mb-4 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text">${post.title}</h3>${contentHtml}</article>`;
     }).join('');
-  } ('');
   }
 
   document.addEventListener('DOMContentLoaded', async ()=>{
