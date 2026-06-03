@@ -2725,132 +2725,127 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+<script>
+// Load blog posts from posts.json
+let allPosts = [];
+let currentCategory = 'All';
+let currentSubcategory = 'All';
 
-<!-- Firebase -->
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-  import { getFirestore, collection, query, orderBy, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-  // TODO: Replace with your Firebase config
-  const firebaseConfig = {
-    "apiKey": "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
-    "authDomain": "denniszerovt-blog.firebaseapp.com",
-    "projectId": "denniszerovt-blog",
-    "storageBucket": "denniszerovt-blog.firebasestorage.app",
-    "messagingSenderId": "438217423363",
-    "appId": "1:438217423363:web:5db4e6e955494f87e6c36"
+const subcategories = {
+  'Game Dev': ['Snowfall', 'Stuck In Time', 'Other Projects'],
+  'Music Production': ['Snowfall', 'Originals', 'Remixes', 'Soundtracks'],
+  'Daily Life': ['Workflow', 'Thoughts', 'Updates']
 };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  let allPosts = [];
-  let currentCategory = 'All';
-  let currentSubcategory = 'All';
-
-  const subcategories = {
-    'Game Dev': ['Snowfall', 'Stuck In Time', 'Other Projects'],
-    'Music Production': ['Snowfall', 'Originals', 'Remixes', 'Soundtracks', 'Behind the Beat'],
-    'Daily Life': ['Workflow', 'Thoughts', 'Updates', 'Gear']
-  };
-
-  function setupFilters() {
-    document.querySelectorAll('.cat-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentCategory = btn.dataset.cat;
-        currentSubcategory = 'All';
-        document.querySelectorAll('.cat-btn').forEach(b => {
-          b.classList.remove('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
-          b.classList.add('border-white/10', 'text-[var(--text-secondary)]');
-        });
-        btn.classList.add('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
-        btn.classList.remove('border-white/10', 'text-[var(--text-secondary)]');
-        
-        const subContainer = document.getElementById('subcategory-filters');
-        if (currentCategory === 'All') {
-          subContainer.classList.add('hidden');
-        } else {
-          subContainer.classList.remove('hidden');
-          const subs = subcategories[currentCategory] || [];
-          subContainer.innerHTML = '<button data-sub="All" class="sub-btn px-3 py-1.5 rounded-full text-xs glass border border-[#A596DA] bg-[#A596DA]/20 text-[#d6ccf7]">All ' + currentCategory + '</button>' +
-            subs.map(s => `<button data-sub="${s}" class="sub-btn px-3 py-1.5 rounded-full text-xs glass border border-white/10 text-[var(--text-secondary)] hover:border-[#A596DA]/50">${s}</button>`).join('');
-          
-          subContainer.querySelectorAll('.sub-btn').forEach(sb => {
-            sb.addEventListener('click', () => {
-              currentSubcategory = sb.dataset.sub;
-              subContainer.querySelectorAll('.sub-btn').forEach(x => {
-                x.classList.remove('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
-                x.classList.add('border-white/10', 'text-[var(--text-secondary)]');
-              });
-              sb.classList.add('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
-              renderPosts();
-            });
-          });
-        }
-        renderPosts();
-      });
-    });
+async function loadBlogPosts() {
+  try {
+    const res = await fetch('./posts.json?v=' + Date.now());
+    allPosts = await res.json();
+    setupFilters();
+    renderPosts();
+  } catch (e) {
+    console.error('Failed to load posts:', e);
+    document.getElementById('blog-posts-container').innerHTML = '<p class="text-center text-[var(--text-secondary)]">Could not load posts. Make sure posts.json is uploaded.</p>';
   }
+}
 
-  function renderPosts() {
-    const container = document.getElementById('blog-posts-container');
-    if (!container) return;
+function setupFilters() {
+  document.querySelectorAll('.cat-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentCategory = btn.dataset.cat;
+      currentSubcategory = 'All';
+      
+      // Update button styles
+      document.querySelectorAll('.cat-btn').forEach(b => {
+        b.classList.remove('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
+        b.classList.add('border-white/10', 'text-[var(--text-secondary)]');
+      });
+      btn.classList.add('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
+      btn.classList.remove('border-white/10', 'text-[var(--text-secondary)]');
+      
+      // Show subcategories
+      const subContainer = document.getElementById('subcategory-filters');
+      if (currentCategory === 'All') {
+        subContainer.classList.add('hidden');
+      } else {
+        subContainer.classList.remove('hidden');
+        const subs = subcategories[currentCategory] || [];
+        subContainer.innerHTML = '<button data-sub="All" class="sub-btn px-3 py-1.5 rounded-full text-xs glass border border-[#A596DA] bg-[#A596DA]/20 text-[#d6ccf7]">All ' + currentCategory + '</button>' +
+          subs.map(s => `<button data-sub="${s}" class="sub-btn px-3 py-1.5 rounded-full text-xs glass border border-white/10 text-[var(--text-secondary)] hover:border-[#A596DA]/50">${s}</button>`).join('');
+        
+        subContainer.querySelectorAll('.sub-btn').forEach(sb => {
+          sb.addEventListener('click', () => {
+            currentSubcategory = sb.dataset.sub;
+            subContainer.querySelectorAll('.sub-btn').forEach(x => {
+              x.classList.remove('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
+              x.classList.add('border-white/10', 'text-[var(--text-secondary)]');
+            });
+            sb.classList.add('bg-[#A596DA]/20', 'text-[#d6ccf7]', 'border-[#A596DA]');
+            renderPosts();
+          });
+        });
+      }
+      renderPosts();
+    });
+  });
+}
+
+function renderPosts() {
+  const container = document.getElementById('blog-posts-container');
+  if (!container) return;
+  
+  let filtered = allPosts;
+  if (currentCategory !== 'All') {
+    filtered = filtered.filter(p => p.category === currentCategory);
+  }
+  if (currentSubcategory !== 'All') {
+    filtered = filtered.filter(p => p.subcategory === currentSubcategory);
+  }
+  
+  filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+  
+  if (filtered.length === 0) {
+    container.innerHTML = `<div class="text-center py-12 text-[var(--text-secondary)]">No posts in ${currentCategory}${currentSubcategory !== 'All' ? ' / ' + currentSubcategory : ''} yet.</div>`;
+    return;
+  }
+  
+      container.innerHTML = '';
+  filtered.forEach((post, index) => {
+    const article = document.createElement('article');
+    article.className = 'blog-post glass rounded-2xl p-8 glow-hover gradient-border' + (index === 0 ? ' active' : '');
+    const catColor = post.category === 'Game Dev' ? '#A596DA' : post.category === 'Music Production' ? '#ec4899' : '#22c55e';
     
-    let filtered = allPosts;
-    if (currentCategory !== 'All') filtered = filtered.filter(p => p.category === currentCategory);
-    if (currentSubcategory !== 'All') filtered = filtered.filter(p => p.subcategory === currentSubcategory);
-    
-    if (filtered.length === 0) {
-      container.innerHTML = `<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet. Write your first in the editor!</div>`;
-      return;
+        let imagesHtml = '';
+    if (post.images && post.images.length > 0) {
+      if (post.images.length === 1) {
+        imagesHtml = `<div class="mb-6"><img src="${post.images[0]}" alt="${post.title}" class="max-w-full h-auto rounded-xl border border-white/10 cursor-pointer mx-auto" style="max-height: 600px" onclick="window.open('${post.images[0]}','_blank')"></div>`;
+      } else {
+        imagesHtml = `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">` +
+          post.images.map(img => `<img src="${img}" alt="" class="w-full h-auto rounded-lg border border-white/10 cursor-pointer hover:opacity-90 transition" style="max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.3)" onclick="window.open('${img}','_blank')">`).join('') +
+          `</div>`;
+      }
     }
     
-    container.innerHTML = '';
-    filtered.forEach((post) => {
-      const article = document.createElement('article');
-      article.className = 'blog-post glass rounded-2xl p-8 glow-hover gradient-border';
-      const catColor = post.category === 'Game Dev' ? '#A596DA' : post.category === 'Music Production' ? '#ec4899' : '#22c55e';
-      
-      let imagesHtml = '';
-      if (post.images && post.images.length > 0) {
-        if (post.images.length === 1) {
-          imagesHtml = `<div class="mb-6"><img src="${post.images[0]}" alt="${post.title}" class="max-w-full h-auto rounded-xl border border-white/10 cursor-pointer mx-auto" style="max-height: 600px" onclick="window.open('${post.images[0]}','_blank')"></div>`;
-        } else {
-          imagesHtml = `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">` +
-            post.images.map(img => `<img src="${img}" class="w-full h-auto rounded-lg border border-white/10 cursor-pointer hover:opacity-90 transition" style="max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.3)" onclick="window.open('${img}','_blank')">`).join('') +
-            `</div>`;
-        }
-      }
-      
-      article.innerHTML = `
-        <div class="flex items-center gap-3 mb-4 text-sm text-[var(--text-secondary)] flex-wrap">
-          <span class="px-3 py-1 rounded-full font-medium" style="background:${catColor}20; color:${catColor}">${post.category}</span>
-          <span class="px-3 py-1 rounded-full bg-white/10">${post.subcategory}</span>
-          <span>•</span>
-          <span>${post.displayDate}</span>
-        </div>
-        <h2 class="text-3xl font-bold mb-4">${post.title}</h2>
-        ${imagesHtml}
-        <p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap">${post.body}</p>
-      `;
-      container.appendChild(article);
-    });
-  }
-
-  // REALTIME LISTENER
-  const q = query(collection(db, 'posts'), orderBy('date', 'desc'));
-  onSnapshot(q, (snapshot) => {
-    allPosts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    renderPosts();
-    setupFilters();
+    article.innerHTML = `
+      <div class="flex items-center gap-3 mb-4 text-sm text-[var(--text-secondary)] flex-wrap">
+        <span class="px-3 py-1 rounded-full font-medium" style="background:${catColor}20; color:${catColor}">${post.category}</span>
+        <span class="px-3 py-1 rounded-full bg-white/10">${post.subcategory}</span>
+        <span>•</span>
+        <span>${post.displayDate}</span>
+      </div>
+      <h2 class="text-3xl font-bold mb-4">${post.title}</h2>
+      ${imagesHtml}
+      <p class="text-[var(--text-secondary)] leading-relaxed mb-6 whitespace-pre-wrap">${post.body}</p>
+      <button class="text-[#A596DA] font-semibold hover:gap-3 flex items-center gap-2 transition-all">
+        Read Full Post <i class="fas fa-arrow-right"></i>
+      </button>
+    `;
+    container.appendChild(article);
   });
+}
 
-  // Initialize
-  document.addEventListener('DOMContentLoaded', () => {
-    setupFilters();
-  });
+document.addEventListener('DOMContentLoaded', loadBlogPosts);
 </script>
-
 
 
 </body>

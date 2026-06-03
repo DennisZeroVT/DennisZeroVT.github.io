@@ -4,67 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blog Writer – DennisZeroVT</title>
-<script src="https://cdn.tailwindcss.com">
-async function publishToGitHub() {
-  const user = document.getElementById('ghUser').value.trim();
-  const repo = document.getElementById('ghRepo').value.trim();
-  const token = document.getElementById('ghToken').value.trim();
-  const btn = document.getElementById('ghBtn');
-  
-  if (!user || !repo || !token) { alert('Fill username, repo, and token'); return; }
-  
-  // Save for next time
-  localStorage.setItem('ghUser', user);
-  localStorage.setItem('ghRepo', repo);
-  localStorage.setItem('ghToken', token);
-  
-  btn.disabled = true; btn.textContent = 'Publishing...';
-  
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(posts, null, 2))));
-  const url = `https://api.github.com/repos/${user}/${repo}/contents/posts.json`;
-  
-  try {
-    // Get current SHA
-    let sha = null;
-    const getRes = await fetch(url, { headers: { Authorization: `token ${token}` } });
-    if (getRes.ok) {
-      const data = await getRes.json();
-      sha = data.sha;
-    }
-    
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: `Update blog: ${posts[0]?.title || 'new post'}`,
-        content: content,
-        sha: sha,
-        branch: 'main'
-      })
-    });
-    
-    if (res.ok) {
-      btn.textContent = '✓ Published!';
-      setTimeout(()=>{ btn.textContent='Publish to GitHub'; btn.disabled=false; }, 3000);
-      alert('Published! GitHub Pages will update in ~30-60 seconds.');
-    } else {
-      const err = await res.json();
-      throw new Error(err.message);
-    }
-  } catch(e) {
-    alert('Error: ' + e.message);
-    btn.textContent = 'Publish to GitHub'; btn.disabled=false;
-  }
-}
-
-// Load saved settings
-window.addEventListener('load', () => {
-  document.getElementById('ghUser').value = localStorage.getItem('ghUser') || '';
-  document.getElementById('ghRepo').value = localStorage.getItem('ghRepo') || 'denniszerovt.github.io';
-  document.getElementById('ghToken').value = localStorage.getItem('ghToken') || '';
-});
-
-</script>
+<script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   body { background: #0a0a0f; color: #f5f5f5; font-family: Inter, system-ui; }
@@ -144,18 +84,6 @@ window.addEventListener('load', () => {
       <div id="posts-list" class="space-y-2 max-h-[340px] overflow-y-auto mb-4"></div>
       <textarea id="output" rows="10" class="w-full mt-1 px-3 py-2 rounded-lg bg-black/50 border border-white/10 font-mono text-xs" readonly></textarea>
       <button onclick="copyOutput()" class="mt-2 w-full py-2 rounded-lg bg-white/10 hover:bg-white/20 text-sm"><i class="fas fa-copy mr-2"></i>Copy JSON</button>
-      <div class="flex gap-2 mt-4 p-3 rounded-lg bg-[#A596DA]/10 border border-[#A596DA]/20">
-        <div class="flex-1">
-          <div class="text-xs font-semibold mb-1">GitHub Auto-Publish</div>
-          <div class="grid grid-cols-3 gap-2 text-xs">
-            <input id="ghUser" placeholder="username" class="px-2 py-1 rounded bg-black/30 border border-white/10">
-            <input id="ghRepo" placeholder="repo" class="px-2 py-1 rounded bg-black/30 border border-white/10">
-            <input id="ghToken" type="password" placeholder="token" class="px-2 py-1 rounded bg-black/30 border border-white/10">
-          </div>
-        </div>
-        <button onclick="publishToGitHub()" id="ghBtn" class="px-4 py-2 rounded-lg bg-green-600 text-white text-sm font-semibold hover:bg-green-700 self-end">Publish to GitHub</button>
-      </div>
-
     </div>
   </div>
 </div>
@@ -282,66 +210,6 @@ async function loadPosts() {
 }
 
 window.addEventListener('DOMContentLoaded', init);
-
-async function publishToGitHub() {
-  const user = document.getElementById('ghUser').value.trim();
-  const repo = document.getElementById('ghRepo').value.trim();
-  const token = document.getElementById('ghToken').value.trim();
-  const btn = document.getElementById('ghBtn');
-  
-  if (!user || !repo || !token) { alert('Fill username, repo, and token'); return; }
-  
-  // Save for next time
-  localStorage.setItem('ghUser', user);
-  localStorage.setItem('ghRepo', repo);
-  localStorage.setItem('ghToken', token);
-  
-  btn.disabled = true; btn.textContent = 'Publishing...';
-  
-  const content = btoa(unescape(encodeURIComponent(JSON.stringify(posts, null, 2))));
-  const url = `https://api.github.com/repos/${user}/${repo}/contents/posts.json`;
-  
-  try {
-    // Get current SHA
-    let sha = null;
-    const getRes = await fetch(url, { headers: { Authorization: `token ${token}` } });
-    if (getRes.ok) {
-      const data = await getRes.json();
-      sha = data.sha;
-    }
-    
-    const res = await fetch(url, {
-      method: 'PUT',
-      headers: { Authorization: `token ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: `Update blog: ${posts[0]?.title || 'new post'}`,
-        content: content,
-        sha: sha,
-        branch: 'main'
-      })
-    });
-    
-    if (res.ok) {
-      btn.textContent = '✓ Published!';
-      setTimeout(()=>{ btn.textContent='Publish to GitHub'; btn.disabled=false; }, 3000);
-      alert('Published! GitHub Pages will update in ~30-60 seconds.');
-    } else {
-      const err = await res.json();
-      throw new Error(err.message);
-    }
-  } catch(e) {
-    alert('Error: ' + e.message);
-    btn.textContent = 'Publish to GitHub'; btn.disabled=false;
-  }
-}
-
-// Load saved settings
-window.addEventListener('load', () => {
-  document.getElementById('ghUser').value = localStorage.getItem('ghUser') || '';
-  document.getElementById('ghRepo').value = localStorage.getItem('ghRepo') || 'denniszerovt.github.io';
-  document.getElementById('ghToken').value = localStorage.getItem('ghToken') || '';
-});
-
 </script>
 </body>
 </html>
