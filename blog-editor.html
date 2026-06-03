@@ -34,29 +34,15 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
           <input id="color" type="color" value="#A596DA" class="w-12 h-9 rounded-lg bg-black/40 border border-white/10 cursor-pointer">
           <span class="text-xs opacity-50">Overrides category color</span>
         </div>
-        
         <div>
           <div class="flex gap-2 mb-2">
             <input id="imgUrl" placeholder="Paste image URL or upload below" class="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm">
             <button id="addUrlBtn" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10">Add URL</button>
             <label class="px-4 py-2 glass rounded-lg text-sm cursor-pointer hover:bg-white/10"><i class="fas fa-upload mr-1"></i>Upload<input type="file" id="files" multiple accept="image/*" class="hidden"></label>
           </div>
-          <div id="imgGrid" class="grid grid-cols-5 gap-2 mb-4"></div>
+          <div id="imgGrid" class="grid grid-cols-5 gap-2"></div>
         </div>
-        
-        <div class="glass rounded-xl p-4">
-          <div class="flex items-center justify-between mb-3">
-            <h3 class="font-semibold text-sm">Content Blocks</h3>
-            <div class="flex gap-2">
-              <button id="addTextBlock" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-font mr-1"></i>Text</button>
-              <button id="addImageBlock" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-image mr-1"></i>Image</button>
-              <button id="addDividerBlock" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-minus mr-1"></i>Divider</button>
-            </div>
-          </div>
-          <div id="blocksContainer" class="space-y-3 min-h-[200px]"></div>
-          <p class="text-xs opacity-50 mt-2">Drag to reorder • Build your post in order</p>
-        </div>
-
+        <textarea id="body" rows="10" placeholder="Write your story..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none resize-none"></textarea>
         <button id="publish" class="w-full py-3.5 rounded-xl gradient text-black font-bold text-lg hover:opacity-90 transition"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
       </div>
     </div>
@@ -195,94 +181,8 @@ document.getElementById('addUrlBtn').onclick = ()=>{
 };
 
 // publish
-
-  let blocks = [];
-  let blockId = 0;
-  
-  const blocksContainer = document.getElementById('blocksContainer');
-  
-  function renderBlocks(){
-    blocksContainer.innerHTML = blocks.map((b,i)=>`
-      <div class="block-item glass rounded-lg p-3 border border-white/10" data-idx="${i}" draggable="true">
-        <div class="flex items-start gap-2">
-          <div class="cursor-move mt-1 opacity-50"><i class="fas fa-grip-vertical"></i></div>
-          <div class="flex-1">
-            ${b.type==='text'?`<textarea data-idx="${i}" class="block-text w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm resize-none" rows="3" placeholder="Write text...">${b.value||''}</textarea>`:''}
-            ${b.type==='image'?`<div><input data-idx="${i}" class="block-image w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm mb-2" placeholder="Image URL" value="${b.value||''}"><div class="flex gap-2"><label class="text-xs px-2 py-1 glass rounded cursor-pointer">Upload<input type="file" accept="image/*" class="hidden" onchange="uploadBlockImage(${i},this.files[0])"></label>${b.value?`<img src="${b.value}" class="h-12 rounded">`:''}</div></div>`:''}
-            ${b.type==='divider'?`<div class="text-center opacity-50 text-sm py-2"><i class="fas fa-minus"></i> Divider <i class="fas fa-minus"></i></div>`:''}
-          </div>
-          <button onclick="removeBlock(${i})" class="text-red-400 hover:text-red-300 px-2"><i class="fas fa-times"></i></button>
-        </div>
-      </div>
-    `).join('');
-    
-    document.querySelectorAll('.block-text').forEach(el=> el.oninput = e=> blocks[+e.target.dataset.idx].value = e.target.value);
-    document.querySelectorAll('.block-image').forEach(el=> el.oninput = e=> blocks[+e.target.dataset.idx].value = e.target.value);
-    
-    // drag
-    document.querySelectorAll('.block-item').forEach(item=>{
-      item.ondragstart = e=> e.dataTransfer.setData('text', item.dataset.idx);
-      item.ondragover = e=> e.preventDefault();
-      item.ondrop = e=> { e.preventDefault(); const from=+e.dataTransfer.getData('text'); const to=+item.dataset.idx; const b=blocks.splice(from,1)[0]; blocks.splice(to,0,b); renderBlocks(); };
-    });
-  }
-  
-  function addBlock(type){ blocks.push({id:++blockId,type,value:type==='text'?'':''}); renderBlocks(); }
-  function removeBlock(i){ blocks.splice(i,1); renderBlocks(); }
-  async function uploadBlockImage(i,file){ if(!file) return; const url = await uploadToImgur(file); blocks[i].value = url; renderBlocks(); }
-  
-  document.getElementById('addTextBlock').onclick = ()=> addBlock('text');
-  document.getElementById('addImageBlock').onclick = ()=> addBlock('image');
-  document.getElementById('addDividerBlock').onclick = ()=> addBlock('divider');
-  
-  // init with one text block
-  addBlock('text');
-
-  document.getElementById('publish').onclick = async ()=>{
-  const btn = 
-  let blocks = [];
-  let blockId = 0;
-  
-  const blocksContainer = document.getElementById('blocksContainer');
-  
-  function renderBlocks(){
-    blocksContainer.innerHTML = blocks.map((b,i)=>`
-      <div class="block-item glass rounded-lg p-3 border border-white/10" data-idx="${i}" draggable="true">
-        <div class="flex items-start gap-2">
-          <div class="cursor-move mt-1 opacity-50"><i class="fas fa-grip-vertical"></i></div>
-          <div class="flex-1">
-            ${b.type==='text'?`<textarea data-idx="${i}" class="block-text w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm resize-none" rows="3" placeholder="Write text...">${b.value||''}</textarea>`:''}
-            ${b.type==='image'?`<div><input data-idx="${i}" class="block-image w-full px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm mb-2" placeholder="Image URL" value="${b.value||''}"><div class="flex gap-2"><label class="text-xs px-2 py-1 glass rounded cursor-pointer">Upload<input type="file" accept="image/*" class="hidden" onchange="uploadBlockImage(${i},this.files[0])"></label>${b.value?`<img src="${b.value}" class="h-12 rounded">`:''}</div></div>`:''}
-            ${b.type==='divider'?`<div class="text-center opacity-50 text-sm py-2"><i class="fas fa-minus"></i> Divider <i class="fas fa-minus"></i></div>`:''}
-          </div>
-          <button onclick="removeBlock(${i})" class="text-red-400 hover:text-red-300 px-2"><i class="fas fa-times"></i></button>
-        </div>
-      </div>
-    `).join('');
-    
-    document.querySelectorAll('.block-text').forEach(el=> el.oninput = e=> blocks[+e.target.dataset.idx].value = e.target.value);
-    document.querySelectorAll('.block-image').forEach(el=> el.oninput = e=> blocks[+e.target.dataset.idx].value = e.target.value);
-    
-    // drag
-    document.querySelectorAll('.block-item').forEach(item=>{
-      item.ondragstart = e=> e.dataTransfer.setData('text', item.dataset.idx);
-      item.ondragover = e=> e.preventDefault();
-      item.ondrop = e=> { e.preventDefault(); const from=+e.dataTransfer.getData('text'); const to=+item.dataset.idx; const b=blocks.splice(from,1)[0]; blocks.splice(to,0,b); renderBlocks(); };
-    });
-  }
-  
-  function addBlock(type){ blocks.push({id:++blockId,type,value:type==='text'?'':''}); renderBlocks(); }
-  function removeBlock(i){ blocks.splice(i,1); renderBlocks(); }
-  async function uploadBlockImage(i,file){ if(!file) return; const url = await uploadToImgur(file); blocks[i].value = url; renderBlocks(); }
-  
-  document.getElementById('addTextBlock').onclick = ()=> addBlock('text');
-  document.getElementById('addImageBlock').onclick = ()=> addBlock('image');
-  document.getElementById('addDividerBlock').onclick = ()=> addBlock('divider');
-  
-  // init with one text block
-  addBlock('text');
-
-  document.getElementById('publish');
+document.getElementById('publish').onclick = async ()=>{
+  const btn = document.getElementById('publish');
   const data = {
     title: title.value.trim(),
     category: category.value,
