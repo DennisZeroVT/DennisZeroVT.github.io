@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Blog Editor Pro — Blocks</title>
+<title>Blog Editor Pro</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
@@ -10,110 +10,247 @@
 body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space Grotesk'}
 .glass{background:rgba(255,255,255,.05);backdrop-filter:blur(16px);border:1px solid rgba(165,150,218,.15)}
 .gradient{background:linear-gradient(135deg,#A596DA,#c4b5fd)}
-.block{transition:all .2s}
-.block:hover{border-color:rgba(165,150,218,.4)}
 </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
 <div class="max-w-7xl mx-auto">
-  <div class="flex items-center justify-between mb-6">
-    <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Editor</span> <span class="ml-2 text-xs px-2 py-1 rounded-full gradient text-black">BLOCKS</span></h1>
-    <div class="flex gap-2"><a href="./" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-2"></i>View</a><button id="lockBtn" class="px-4 py-2 glass rounded-lg text-sm"><i class="fas fa-lock mr-2"></i>Lock</button></div>
+  <div class="flex items-center justify-between mb-8">
+    <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Editor</span> <span class="ml-2 text-xs px-2 py-1 rounded-full gradient text-black">PRO</span></h1>
+    <div class="flex gap-3"><a href="./" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-2"></i>View Site</a><button id="lockBtn" class="px-4 py-2 glass rounded-lg text-sm"><i class="fas fa-lock mr-2"></i>Lock</button></div>
   </div>
 
   <div class="grid xl:grid-cols-3 gap-6">
-    <div class="xl:col-span-2 space-y-4">
-      <div class="glass rounded-2xl p-5">
-        <input id="title" placeholder="Post title..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none text-xl font-semibold mb-3">
-        <div class="grid md:grid-cols-4 gap-2">
-          <select id="category" class="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-sm"></select>
-          <select id="subcategory" class="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-sm"></select>
-          <input id="date" type="date" class="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-sm">
-          <input id="color" type="color" value="#A596DA" class="h-9 rounded-lg bg-black/40 border border-white/10">
+    <div class="xl:col-span-2 glass rounded-2xl p-6">
+      <h2 class="font-semibold mb-4 flex items-center gap-2"><i class="fas fa-pen text-[#A596DA]"></i> Create Post</h2>
+      <div class="space-y-4">
+        <input id="title" placeholder="Post title..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none text-lg">
+        <div class="grid md:grid-cols-3 gap-3">
+          <select id="category" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10"></select>
+          <select id="subcategory" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10"></select>
+          <input id="date" type="date" class="px-3 py-2.5 rounded-xl bg-black/40 border border-white/10">
         </div>
-      </div>
-
-      <div class="glass rounded-2xl p-5">
-        <div class="flex items-center justify-between mb-3">
-          <h2 class="font-semibold flex items-center gap-2"><i class="fas fa-layer-group text-[#A596DA]"></i> Content Blocks</h2>
-          <div class="flex gap-1.5">
-            <button id="addText" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-font mr-1"></i>Text</button>
-            <button id="addImage" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-image mr-1"></i>Image</button>
-            <button id="addDivider" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-minus mr-1"></i>Divider</button>
+        <div class="flex items-center gap-3">
+          <label class="text-sm opacity-70">Post Color:</label>
+          <input id="color" type="color" value="#A596DA" class="w-12 h-9 rounded-lg bg-black/40 border border-white/10 cursor-pointer">
+          <span class="text-xs opacity-50">Overrides category color</span>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-medium opacity-80">Content Blocks</span>
+            <div class="flex gap-1.5">
+              <button type="button" id="btnText" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-font mr-1"></i>Text</button>
+              <button type="button" id="btnImage" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-image mr-1"></i>Image</button>
+              <button type="button" id="btnDivider" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-minus mr-1"></i>Divider</button>
+            </div>
           </div>
+          <div id="blocks" class="space-y-3 min-h-[150px]"></div>
+          <input type="file" id="blockFile" accept="image/*" class="hidden" multiple>
         </div>
-        <div id="blocks" class="space-y-3 min-h-[200px]"></div>
-        <p class="text-xs opacity-50 mt-3">Tip: Add blocks in order — exactly like your screenshot. Images and text stay where you put them.</p>
+        <button id="publish" class="w-full py-3.5 rounded-xl gradient text-black font-bold text-lg hover:opacity-90 transition"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
       </div>
-
-      <button id="publish" class="w-full py-3.5 rounded-xl gradient text-black font-bold text-lg hover:opacity-90"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
     </div>
 
-    <div class="space-y-5">
-      <div class="glass rounded-2xl p-4">
-        <h3 class="font-semibold mb-2 text-sm">Categories <span id="catCount" class="opacity-60"></span></h3>
-        <div id="catList" class="space-y-1.5 max-h-48 overflow-auto mb-2"></div>
-        <div class="flex gap-1.5"><input id="newCat" placeholder="New" class="flex-1 px-2 py-1 rounded bg-black/30 border border-white/10 text-xs"><input id="newColor" type="color" value="#A596DA" class="w-7 h-7 rounded"><button id="addCatBtn" class="px-2 py-1 glass rounded text-xs">+</button></div>
-        <input id="newSubs" placeholder="subs, comma" class="w-full mt-1.5 px-2 py-1 rounded bg-black/30 border border-white/10 text-[11px]">
+    <div class="space-y-6">
+      <div class="glass rounded-2xl p-5">
+        <h3 class="font-semibold mb-3 flex items-center justify-between">Categories <span id="catCount" class="text-xs opacity-60">0</span></h3>
+        <div id="catList" class="space-y-2 mb-3 max-h-60 overflow-auto"></div>
+        <div class="flex gap-2">
+          <input id="newCat" placeholder="New category" class="flex-1 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-sm">
+          <input id="newColor" type="color" value="#A596DA" class="w-8 h-8 rounded bg-black/30">
+          <button id="addCatBtn" class="px-3 py-1.5 glass rounded text-xs">Add</button>
+        </div>
+        <input id="newSubs" placeholder="Subcategories (comma separated)" class="w-full mt-2 px-2 py-1.5 rounded bg-black/30 border border-white/10 text-xs">
       </div>
-      <div class="glass rounded-2xl p-4">
-        <h3 class="font-semibold mb-2 text-sm">Posts (<span id="postCount">0</span>)</h3>
-        <div id="postList" class="space-y-1.5 max-h-72 overflow-auto text-xs"></div>
+
+      <div class="glass rounded-2xl p-5">
+        <h3 class="font-semibold mb-3">Live Posts (<span id="postCount">0</span>)</h3>
+        <div id="postList" class="space-y-2 max-h-80 overflow-auto"></div>
       </div>
     </div>
   </div>
 </div>
 
-<input type="file" id="fileInput" accept="image/*" class="hidden" multiple>
-
 <script type="module">
-const PASS="dennis2026";
-if(localStorage.getItem('editorPass')!==PASS){if(prompt('Password:')!==PASS){document.body.innerHTML='<div class=h-screen flex items-center justify-center>Denied</div>';throw new Error()}else localStorage.setItem('editorPass',PASS)}
-lockBtn.onclick=()=>{localStorage.removeItem('editorPass');location.reload()};
+const PASS = "dennis2026";
+if(localStorage.getItem('editorPass')!==PASS){ 
+  const p = prompt('Editor password:');
+  if(p!==PASS){ document.body.innerHTML='<div class="h-screen flex items-center justify-center text-2xl">Access Denied</div>'; throw new Error('locked') } 
+  else localStorage.setItem('editorPass',PASS)
+}
+document.getElementById('lockBtn').onclick=()=>{localStorage.removeItem('editorPass');location.reload()};
 
-import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import {getFirestore,collection,addDoc,onSnapshot,deleteDoc,doc,setDoc,serverTimestamp,getDocs} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, collection, addDoc, onSnapshot, deleteDoc, doc, setDoc, serverTimestamp, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-const cfg={apiKey:"AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",authDomain:"denniszerovt-blog.firebaseapp.com",projectId:"denniszerovt-blog",storageBucket:"denniszerovt-blog.firebasestorage.app",messagingSenderId:"438217423363",appId:"1:438217423363:web:5db4e6e955494f87e6c36"};
-const app=initializeApp(cfg);const db=getFirestore(app);
+const cfg = {
+  apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
+  authDomain: "denniszerovt-blog.firebaseapp.com",
+  projectId: "denniszerovt-blog",
+  storageBucket: "denniszerovt-blog.firebasestorage.app",
+  messagingSenderId: "438217423363",
+  appId: "1:438217423363:web:5db4e6e955494f87e6c36"
+};
+const app = initializeApp(cfg);
+const db = getFirestore(app);
 
-let categories=[];let blocks=[];
-const defaults=[{id:'game-dev',name:'Game Dev',color:'#A596DA',subs:['Snowfall','Stuck In Time','Other Projects']},{id:'music-production',name:'Music Production',color:'#ec4899',subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},{id:'daily-life',name:'Daily Life',color:'#22c55e',subs:['Workflow','Thoughts','Updates','Gear']}];
-getDocs(collection(db,'categories')).then(s=>{if(s.empty)defaults.forEach(c=>setDoc(doc(db,'categories',c.id),c))});
+let categories = [];
+let blocks = [];
 
-onSnapshot(collection(db,'categories'),s=>{categories=s.docs.map(d=>({id:d.id,...d.data()}));catCount.textContent=categories.length;category.innerHTML=categories.map(c=>`<option>${c.name}</option>`).join('');updateSubs();renderCats();});
-function updateSubs(){const c=categories.find(x=>x.name===category.value);subcategory.innerHTML=(c?.subs||[]).map(s=>`<option>${s}</option>`).join('');if(c)color.value=c.color}
-category.onchange=updateSubs;date.valueAsDate=new Date();
+const defaults = [
+  {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
+  {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
+  {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
+];
 
-function renderCats(){catList.innerHTML=categories.map(c=>`<div class="flex justify-between items-center p-1.5 rounded bg-black/20 text-[11px]"><span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full" style="background:${c.color}"></span>${c.name}</span><div class="flex gap-1"><button data-e="${c.id}" class="opacity-60 hover:opacity-100">edit</button><button data-d="${c.id}" class="text-red-400 hover:underline">del</button></div></div>`).join('');catList.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>confirm('Delete?')&&deleteDoc(doc(db,'categories',b.dataset.d)));catList.querySelectorAll('[data-e]').forEach(b=>b.onclick=()=>{const c=categories.find(x=>x.id===b.dataset.e);const n=prompt('Name:',c.name);if(!n)return;const col=prompt('Color hex:',c.color)||c.color;const subs=prompt('Subs comma:',c.subs.join(', '))||'';setDoc(doc(db,'categories',c.id),{id:c.id,name:n,color:col,subs:subs.split(',').map(s=>s.trim()).filter(Boolean)})})}
-addCatBtn.onclick=async()=>{const n=newCat.value.trim();if(!n)return;const id=n.toLowerCase().replace(/[^a-z0-9]+/g,'-');await setDoc(doc(db,'categories',id),{id,name:n,color:newColor.value,subs:newSubs.value.split(',').map(s=>s.trim()).filter(Boolean)});newCat.value='';newSubs.value=''};
+// ensure defaults
+getDocs(collection(db,'categories')).then(snap=>{ if(snap.empty){ defaults.forEach(c=> setDoc(doc(db,'categories',c.id), c)); }});
+
+onSnapshot(collection(db,'categories'), snap=>{
+  categories = snap.docs.map(d=>({id:d.id,...d.data()}));
+  document.getElementById('catCount').textContent = categories.length;
+  const catSel = document.getElementById('category');
+  catSel.innerHTML = categories.map(c=>`<option value="${c.name}">${c.name}</option>`).join('');
+  updateSubs();
+  renderCats();
+});
+
+function updateSubs(){
+  const cat = categories.find(c=>c.name===category.value);
+  subcategory.innerHTML = (cat?.subs||[]).map(s=>`<option>${s}</option>`).join('');
+  if(cat) color.value = cat.color;
+}
+category.onchange = updateSubs;
+date.valueAsDate = new Date();
 
 function renderBlocks(){
-  blocksDiv=document.getElementById('blocks');
-  blocksDiv.innerHTML=blocks.map((b,i)=>{if(b.type==='text')return`<div class="block glass rounded-xl p-3 border border-white/10"><div class="flex justify-between mb-1.5"><span class="text-[10px] uppercase opacity-60">Text ${i+1}</span><div class="flex gap-1.5 text-[11px]"><button data-up="${i}" class="opacity-60 hover:opacity-100">↑</button><button data-down="${i}" class="opacity-60 hover:opacity-100">↓</button><button data-del="${i}" class="text-red-400">×</button></div></div><textarea data-txt="${i}" class="w-full h-24 p-2 rounded bg-black/30 border border-white/10 text-sm resize-y" placeholder="Write here...">${b.value||''}</textarea></div>`;if(b.type==='image')return`<div class="block glass rounded-xl p-3 border border-white/10"><div class="flex justify-between mb-1.5"><span class="text-[10px] uppercase opacity-60">Image ${i+1}</span><div class="flex gap-1.5 text-[11px]"><button data-up="${i}">↑</button><button data-down="${i}">↓</button><button data-del="${i}" class="text-red-400">×</button></div></div>${b.value?`<img src="${b.value}" class="max-h-48 rounded-lg mb-2 mx-auto">`:''}<div class="flex gap-1.5"><input data-url="${i}" value="${b.value||''}" placeholder="Image URL" class="flex-1 px-2 py-1 rounded bg-black/30 border border-white/10 text-xs"><button data-upimg="${i}" class="px-2 py-1 glass rounded text-[11px]">Upload</button></div></div>`;if(b.type==='divider')return`<div class="block glass rounded-xl p-2 border border-white/10 flex justify-between items-center"><span class="text-[10px] uppercase opacity-60">— Divider —</span><div class="flex gap-1.5 text-[11px]"><button data-up="${i}">↑</button><button data-down="${i}">↓</button><button data-del="${i}" class="text-red-400">×</button></div></div>`}).join('')||'<div class="text-center py-12 opacity-40 text-sm">No blocks yet. Click Text or Image above.</div>';
-  blocksDiv.querySelectorAll('[data-txt]').forEach(t=>t.oninput=e=>blocks[+t.dataset.txt].value=e.target.value);
-  blocksDiv.querySelectorAll('[data-url]').forEach(u=>u.oninput=e=>blocks[+u.dataset.url].value=e.target.value);
-  blocksDiv.querySelectorAll('[data-del]').forEach(d=>d.onclick=()=>{blocks.splice(+d.dataset.del,1);renderBlocks()});
-  blocksDiv.querySelectorAll('[data-up]').forEach(u=>u.onclick=()=>{const i=+u.dataset.up;if(i>0){[blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]];renderBlocks()}});
-  blocksDiv.querySelectorAll('[data-down]').forEach(d=>d.onclick=()=>{const i=+d.dataset.down;if(i<blocks.length-1){[blocks[i+1],blocks[i]]=[blocks[i],blocks[i+1]];renderBlocks()}});
-  blocksDiv.querySelectorAll('[data-upimg]').forEach(b=>b.onclick=()=>{fileInput.dataset.idx=b.dataset.upimg;fileInput.click()});
+  const wrap = document.getElementById('blocks');
+  if(!blocks.length){ wrap.innerHTML = '<div class="text-center py-8 opacity-40 text-sm border border-dashed border-white/10 rounded-xl">No blocks yet. Click Text or Image above.</div>'; return; }
+  wrap.innerHTML = blocks.map((b,i)=> {
+    if(b.type==='text') return `<div class="p-3 rounded-xl bg-black/30 border border-white/10"><div class="flex justify-between mb-2"><span class="text-[11px] uppercase tracking-wide opacity-60">Text Block ${i+1}</span><div class="flex gap-2"><button data-up="${i}" class="text-xs opacity-60 hover:opacity-100">↑</button><button data-down="${i}" class="text-xs opacity-60 hover:opacity-100">↓</button><button data-del="${i}" class="text-xs text-red-400 hover:text-red-300">✕</button></div></div><textarea data-idx="${i}" class="w-full h-28 p-2.5 rounded-lg bg-black/40 border border-white/10 text-sm resize-y" placeholder="Write here...">${b.value||''}</textarea></div>`;
+    if(b.type==='image') return `<div class="p-3 rounded-xl bg-black/30 border border-white/10"><div class="flex justify-between mb-2"><span class="text-[11px] uppercase tracking-wide opacity-60">Image Block ${i+1}</span><div class="flex gap-2"><button data-up="${i}" class="text-xs opacity-60 hover:opacity-100">↑</button><button data-down="${i}" class="text-xs opacity-60 hover:opacity-100">↓</button><button data-del="${i}" class="text-xs text-red-400 hover:text-red-300">✕</button></div></div>${b.value?`<img src="${b.value}" class="max-h-56 mx-auto rounded-lg mb-2 border border-white/10">`:''}<div class="flex gap-2"><input data-url="${i}" value="${b.value||''}" placeholder="Image URL" class="flex-1 px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs"><button data-upload="${i}" class="px-3 py-1.5 glass rounded-lg text-xs">Upload</button></div></div>`;
+    if(b.type==='divider') return `<div class="p-2.5 rounded-xl bg-black/20 border border-white/10 flex items-center justify-between"><span class="text-[11px] uppercase opacity-60">── Divider ──</span><div class="flex gap-2"><button data-up="${i}" class="text-xs opacity-60">↑</button><button data-down="${i}" class="text-xs opacity-60">↓</button><button data-del="${i}" class="text-xs text-red-400">✕</button></div></div>`;
+  }).join('');
+  wrap.querySelectorAll('[data-idx]').forEach(t=> t.oninput = e=> blocks[+t.dataset.idx].value = e.target.value);
+  wrap.querySelectorAll('[data-url]').forEach(u=> u.oninput = e=> blocks[+u.dataset.url].value = e.target.value);
+  wrap.querySelectorAll('[data-del]').forEach(d=> d.onclick = ()=>{ blocks.splice(+d.dataset.del,1); renderBlocks(); });
+  wrap.querySelectorAll('[data-up]').forEach(u=> u.onclick = ()=>{ const i=+u.dataset.up; if(i>0){ [blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]]; renderBlocks(); }});
+  wrap.querySelectorAll('[data-down]').forEach(d=> d.onclick = ()=>{ const i=+d.dataset.down; if(i<blocks.length-1){ [blocks[i],blocks[i+1]]=[blocks[i+1],blocks[i]]; renderBlocks(); }});
+  wrap.querySelectorAll('[data-upload]').forEach(b=> b.onclick = ()=>{ document.getElementById('blockFile').dataset.idx = b.dataset.upload; document.getElementById('blockFile').click(); });
 }
-addText.onclick=()=>{blocks.push({type:'text',value:''});renderBlocks()};
-addImage.onclick=()=>{blocks.push({type:'image',value:''});renderBlocks()};
-addDivider.onclick=()=>{blocks.push({type:'divider'});renderBlocks()};
-fileInput.onchange=e=>{[...e.target.files].forEach(f=>{const r=new FileReader();r.onload=ev=>{const idx=+fileInput.dataset.idx;if(!isNaN(idx))blocks[idx].value=ev.target.result;else blocks.push({type:'image',value:ev.target.result});renderBlocks()};r.readAsDataURL(f)})};renderBlocks();
+document.getElementById('btnText').onclick = ()=>{ blocks.push({type:'text',value:''}); renderBlocks(); };
+document.getElementById('btnImage').onclick = ()=>{ blocks.push({type:'image',value:''}); renderBlocks(); };
+document.getElementById('btnDivider').onclick = ()=>{ blocks.push({type:'divider'}); renderBlocks(); };
+document.getElementById('blockFile').onchange = e=> { [...e.target.files].forEach(f=>{ const r=new FileReader(); r.onload=ev=>{ const idx= +e.target.dataset.idx; if(!isNaN(idx)) blocks[idx].value = ev.target.result; else blocks.push({type:'image',value:ev.target.result}); renderBlocks(); }; r.readAsDataURL(f); }); };
+renderBlocks();
 
-publish.onclick=async()=>{
-  if(!title.value.trim())return alert('Title?');
-  if(blocks.length===0)return alert('Add at least one block');
-  publish.disabled=true;publish.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
-  const textBlocks=blocks.filter(b=>b.type==='text').map(b=>b.value).join('\n\n');
-  const imgBlocks=blocks.filter(b=>b.type==='image').map(b=>b.value);
-  await addDoc(collection(db,'posts'),{title:title.value.trim(),category:category.value,subcategory:subcategory.value,date:date.value,displayDate:new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),blocks,body:textBlocks,images:imgBlocks,color:color.value,createdAt:serverTimestamp()});
-  title.value='';blocks=[];renderBlocks();publish.disabled=false;publish.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
+
+function renderCats(){
+  const list = document.getElementById('catList');
+  list.innerHTML = categories.map(c=>`
+    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full" style="background:${c.color}"></div><span class="text-sm">${c.name}</span></div>
+        <div class="flex gap-2">
+          <button data-edit="${c.id}" class="text-[#A596DA] text-xs hover:underline">Edit</button>
+          <button data-del="${c.id}" class="text-red-400 text-xs hover:underline">Del</button>
+        </div>
+      </div>
+      <div id="edit-${c.id}" class="hidden mt-2 space-y-1">
+        <input id="n-${c.id}" value="${c.name}" class="w-full px-2 py-1 rounded bg-black/40 text-xs border border-white/10">
+        <div class="flex gap-1">
+          <input id="col-${c.id}" type="color" value="${c.color}" class="w-8 h-6">
+          <input id="s-${c.id}" value="${c.subs.join(', ')}" class="flex-1 px-2 py-1 rounded bg-black/40 text-xs border border-white/10">
+        </div>
+        <div class="flex gap-1">
+          <button data-save="${c.id}" class="flex-1 py-1 bg-[#A596DA]/20 text-[#A596DA] rounded text-xs">Save</button>
+          <button data-cancel="${c.id}" class="px-2 py-1 bg-white/10 rounded text-xs">Cancel</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  
+  list.querySelectorAll('[data-edit]').forEach(b=> b.onclick=()=> document.getElementById('edit-'+b.dataset.edit).classList.toggle('hidden'));
+  list.querySelectorAll('[data-cancel]').forEach(b=> b.onclick=()=> document.getElementById('edit-'+b.dataset.cancel).classList.add('hidden'));
+  list.querySelectorAll('[data-del]').forEach(b=> b.onclick=async()=>{ if(confirm('Delete category?')) await deleteDoc(doc(db,'categories',b.dataset.del)); });
+  list.querySelectorAll('[data-save]').forEach(b=> b.onclick=async()=>{
+    const id=b.dataset.save;
+    const name=document.getElementById('n-'+id).value.trim();
+    const col=document.getElementById('col-'+id).value;
+    const subs=document.getElementById('s-'+id).value.split(',').map(x=>x.trim()).filter(Boolean);
+    await setDoc(doc(db,'categories',id), {id,name,color:col,subs});
+  });
+}
+
+document.getElementById('addCatBtn').onclick = async ()=>{
+  const name = newCat.value.trim(); if(!name) return;
+  const id = name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
+  const subs = newSubs.value.split(',').map(s=>s.trim()).filter(Boolean);
+  await setDoc(doc(db,'categories',id), {id,name,color:newColor.value,subs});
+  newCat.value=''; newSubs.value='';
 };
 
-onSnapshot(collection(db,'posts'),s=>{const posts=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));postCount.textContent=posts.length;postList.innerHTML=posts.map(p=>`<div class="flex justify-between p-1.5 rounded bg-black/20"><span class="truncate">${p.title}</span><button data-p="${p.id}" class="text-red-400">del</button></div>`).join('');postList.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>confirm('Delete?')&&deleteDoc(doc(db,'posts',b.dataset.p)))});
+// images
+document.getElementById('files').onchange = e=>{
+  [...e.target.files].forEach(f=>{
+    const r=new FileReader();
+    r.onload=ev=>{ images.push(ev.target.result); renderImgs(); };
+    r.readAsDataURL(f);
+  });
+};
+function renderImgs(){
+  document.getElementById('imgGrid').innerHTML = images.map((im,i)=>`<div class="relative group"><img src="${im}" class="w-full h-20 object-cover rounded-lg border border-white/10"><button data-i="${i}" class="del-img absolute -top1 -right1 w-5 h-5 bg-red-600 rounded-full text-[10px] opacity-0 group-hover:opacity-100">×</button></div>`).join('');
+  document.querySelectorAll('.del-img').forEach(b=> b.onclick=()=>{ images.splice(parseInt(b.dataset.i),1); renderImgs(); });
+}
+document.getElementById('addUrlBtn').onclick = ()=>{
+  const u = imgUrl.value.trim(); if(u){ images.push(u); imgUrl.value=''; renderImgs(); }
+};
+
+// publish
+document.getElementById('publish').onclick = async ()=>{
+  const btn = document.getElementById('publish');
+  if(!title.value.trim()) return alert('Need title');
+  if(blocks.length===0) return alert('Add at least one block');
+  const textOnly = blocks.filter(b=>b.type==='text').map(b=>b.value).join('\n\n');
+  const imgsOnly = blocks.filter(b=>b.type==='image').map(b=>b.value);
+  const data = {
+    title: title.value.trim(),
+    category: category.value,
+    subcategory: subcategory.value,
+    date: date.value,
+    displayDate: new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
+    body: textOnly,
+    images: imgsOnly,
+    blocks: blocks,
+    color: color.value,
+    createdAt: serverTimestamp()
+  };
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
+  await addDoc(collection(db,'posts'), data);
+  title.value=''; blocks=[]; renderBlocks();
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
+};
+  if(!data.title||!data.body) return alert('Need title and body');
+  btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
+  await addDoc(collection(db,'posts'), data);
+  title.value=''; body.value=''; images=[]; renderImgs();
+  btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
+};
+
+// posts
+onSnapshot(collection(db,'posts'), snap=>{
+  const posts = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+  document.getElementById('postCount').textContent = posts.length;
+  document.getElementById('postList').innerHTML = posts.map(p=>`
+    <div class="p-2.5 rounded-lg bg-black/20 border border-white/5 flex justify-between items-start gap-2">
+      <div class="flex-1 min-w-0">
+        <div class="text-sm truncate">${p.title}</div>
+        <div class="text-[11px] opacity-60">${p.category} • ${p.displayDate||p.date}</div>
+      </div>
+      <button data-delp="${p.id}" class="text-red-400 hover:text-red-300 p-1"><i class="fas fa-trash text-xs"></i></button>
+    </div>
+  `).join('');
+  document.querySelectorAll('[data-delp]').forEach(b=> b.onclick=async()=>{ if(confirm('Delete post?')) await deleteDoc(doc(db,'posts',b.dataset.delp)); });
+});
 </script>
 </body>
 </html>
