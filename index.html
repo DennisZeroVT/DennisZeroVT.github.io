@@ -2658,10 +2658,15 @@ document.addEventListener('DOMContentLoaded', function() {
       renderPosts();
     });
 
+    
     onSnapshot(collection(db,'posts'), snap=>{
+      try{
       allPosts = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+      document.getElementById('blog-posts-container').innerHTML = '<div class="text-green-400">Loaded '+allPosts.length+' posts</div>';
       renderPosts();
-    });
+      }catch(e){ document.getElementById('blog-posts-container').innerHTML = '<div class="text-red-400">Error: '+e.message+'</div>'; }
+    }, err=>{ document.getElementById('blog-posts-container').innerHTML = '<div class="text-red-400">Firebase error: '+err.message+'</div>'; });
+
   });
 </script>
 
