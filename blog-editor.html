@@ -19,7 +19,7 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
 <div class="max-w-7xl mx-auto">
   <div class="flex items-center justify-between mb-8">
     <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Editor</span> <span class="ml-2 text-xs px-2 py-1 rounded-full gradient text-black">BLOCKS</span></h1>
-    <div class="flex gap-3"><a href="./" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-2"></i>View Site</a><button id="ghBtn" class="px-4 py-2 glass rounded-lg text-sm" title="Set GitHub token for infinite storage"><i class="fab fa-github mr-2"></i>GitHub</button><button id="lockBtn" class="px-4 py-2 glass rounded-lg text-sm"><i class="fas fa-lock mr-2"></i>Lock</button></div>
+    <div class="flex gap-3"><a href="./" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-2"></i>View Site</a><button id="ghBtn" onclick="setGitHubToken()" class="px-4 py-2 glass rounded-lg text-sm" title="Set GitHub token"><i class="fab fa-github mr-2"></i>GitHub</button><button id="lockBtn" class="px-4 py-2 glass rounded-lg text-sm"><i class="fas fa-lock mr-2"></i>Lock</button></div>
   </div>
 
   <div class="grid xl:grid-cols-3 gap-6">
@@ -396,6 +396,16 @@ addBlock('text',{content:'thje drums i used are addticve drums with a compressop
 addBlock('divider',{});
 addBlock('image',{src:''});
 addBlock('text',{content:'for the loud string is used the swam collection bc i have good control over them vibration and erxpression wise'});
+
+function setGitHubToken(){
+  const current = localStorage.getItem('github_pat') || '';
+  const t = prompt('GitHub Personal Access Token (repo scope):\nLeave empty to disable GitHub and use base64', current);
+  if(t !== null){
+    if(t.trim()){ localStorage.setItem('github_pat', t.trim()); alert('GitHub enabled! Uploads will commit to your repo.'); }
+    else { localStorage.removeItem('github_pat'); alert('GitHub disabled — using compressed base64'); }
+  }
+}
+
 </script>
 </body>
 </html>
