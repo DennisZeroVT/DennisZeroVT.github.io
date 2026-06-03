@@ -2815,13 +2815,13 @@ function renderPosts() {
     article.className = 'blog-post glass rounded-2xl p-8 glow-hover gradient-border' + (index === 0 ? ' active' : '');
     const catColor = post.category === 'Game Dev' ? '#A596DA' : post.category === 'Music Production' ? '#ec4899' : '#22c55e';
     
-    let imagesHtml = '';
+        let imagesHtml = '';
     if (post.images && post.images.length > 0) {
       if (post.images.length === 1) {
-        imagesHtml = `<div class="mb-6 -mx-2 sm:mx-0"><img src="${post.images[0]}" alt="${post.title}" class="w-full h-64 object-cover rounded-xl border border-white/10 cursor-pointer" onclick="window.open('${post.images[0]}','_blank')"></div>`;
+        imagesHtml = `<div class="mb-6"><img src="${post.images[0]}" alt="${post.title}" class="max-w-full h-auto rounded-xl border border-white/10 cursor-pointer mx-auto" style="max-height: 600px" onclick="window.open('${post.images[0]}','_blank')"></div>`;
       } else {
-        imagesHtml = `<div class="mb-6 grid grid-cols-2 md:grid-cols-3 gap-2 -mx-2 sm:mx-0">` +
-          post.images.map(img => `<img src="${img}" alt="" class="w-full h-32 md:h-40 object-cover rounded-lg border border-white/10 cursor-pointer hover:opacity-80 transition" onclick="window.open('${img}','_blank')">`).join('') +
+        imagesHtml = `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">` +
+          post.images.map(img => `<img src="${img}" alt="" class="w-full h-auto rounded-lg border border-white/10 cursor-pointer hover:opacity-90 transition" style="max-height: 400px; object-fit: contain; background: rgba(0,0,0,0.3)" onclick="window.open('${img}','_blank')">`).join('') +
           `</div>`;
       }
     }
