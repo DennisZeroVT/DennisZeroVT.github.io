@@ -19,7 +19,7 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
 <div class="max-w-7xl mx-auto">
   <div class="flex items-center justify-between mb-8">
     <h1 class="text-3xl font-bold">Blog <span class="text-[#A596DA]">Editor</span> <span class="ml-2 text-xs px-2 py-1 rounded-full gradient text-black">BLOCKS</span></h1>
-    <div class="flex gap-3"><a href="./" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-2"></i>View Site</a><button id="ghBtn" onclick="setGitHubToken()" class="px-4 py-2 glass rounded-lg text-sm" title="Set GitHub token"><i class="fab fa-github mr-2"></i>GitHub</button><button id="lockBtn" class="px-4 py-2 glass rounded-lg text-sm"><i class="fas fa-lock mr-2"></i>Lock</button></div>
+    <div class="flex gap-2 items-center"><a href="./" class="px-3 py-2 glass rounded-lg text-sm hover:bg-white/10"><i class="fas fa-eye mr-1"></i>View</a><input id="ghToken" placeholder="GitHub token (optional)" class="px-3 py-2 rounded-lg bg-black/40 border border-white/10 text-xs w-40 md:w-56" title="Paste Personal Access Token for auto-upload to GitHub"><button id="lockBtn" class="px-3 py-2 glass rounded-lg text-sm"><i class="fas fa-lock"></i></button></div>
   </div>
 
   <div class="grid xl:grid-cols-3 gap-6">
@@ -255,50 +255,40 @@ function renderBlocks(){
 document.querySelectorAll('.add-btn').forEach(b=> b.onclick=()=> addBlock(b.dataset.add));
 
 // === FIXED IMAGE SYSTEM WITH COMPRESSION ===
-// === GITHUB IMAGE HOSTING (optional, falls back to base64) ===
+
+// GitHub token field
+const ghInput = document.getElementById('ghToken');
+ghInput.value = localStorage.getItem('github_pat') || '';
+ghInput.onchange = ()=>{ const v = ghInput.value.trim(); if(v) localStorage.setItem('github_pat', v); else localStorage.removeItem('github_pat'); };
+
 const GITHUB_OWNER = 'denniszerovt';
 const GITHUB_REPO = 'denniszerovt.github.io';
 const GITHUB_PATH = 'images/posts';
 
-function getGitHubToken(){
-  return localStorage.getItem('github_pat') || '';
-}
-
-async function uploadToGitHub(file, maxW=1280, quality=0.75){
-  const token = getGitHubToken();
-  if(!token) return null; // no token, use base64
-  
-  return new Promise((resolve)=>{
-    const img = new Image();
-    img.onload = async ()=>{
-      const scale = Math.min(1, maxW / img.width);
-      const canvas = document.createElement('canvas');
-      canvas.width = Math.round(img.width*scale);
-      canvas.height = Math.round(img.height*scale);
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      canvas.toBlob(async (blob)=>{
-        const reader = new FileReader();
-        reader.onloadend = async ()=>{
-          const base64 = reader.result.split(',')[1];
-          const filename = `${Date.now()}_${file.name.replace(/[^a-z0-9.]/gi,'_')}.jpg`;
-          try{
-            const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}/${filename}`, {
-              method: 'PUT',
-              headers: {'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json'},
-              body: JSON.stringify({message: `upload ${filename}`, content: base64, branch: 'main'})
-            });
-            if(res.ok){
-              const url = `https://${GITHUB_OWNER}.github.io/${GITHUB_PATH}/${filename}`;
-              resolve({url});
-            } else { resolve(null); }
-          }catch{ resolve(null); }
-        };
-        reader.readAsDataURL(blob);
-      }, 'image/jpeg', quality);
-    };
-    img.src = URL.createObjectURL(file);
-  });
+async function uploadToGitHub(file){
+  const token = localStorage.getItem('github_pat');
+  if(!token) return null;
+  // compress to 1280
+  const img = new Image();
+  img.src = URL.createObjectURL(file);
+  await img.decode();
+  const scale = Math.min(1, 1280 / img.width);
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(img.width*scale);
+  canvas.height = Math.round(img.height*scale);
+  canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+  const blob = await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.78));
+  const b64 = await blob.arrayBuffer().then(b=>btoa(String.fromCharCode(...new Uint8Array(b))));
+  const filename = Date.now()+'_'+file.name.replace(/[^a-z0-9.]/gi,'_')+'.jpg';
+  try{
+    const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}/${filename}`,{
+      method:'PUT',
+      headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'},
+      body:JSON.stringify({message:'upload '+filename, content:b64, branch:'main'})
+    });
+    if(res.ok) return `https://${GITHUB_OWNER}.github.io/${GITHUB_PATH}/${filename}`;
+  }catch(e){ console.error(e); }
+  return null;
 }
 
 async function compressFile(file, maxW=1000, quality=0.55){
@@ -311,9 +301,11 @@ async function compressFile(file, maxW=1000, quality=0.55){
       canvas.height = Math.round(img.height*scale);
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      canvas.toBlob((blob)=>{
+      // try webp first (30% smaller), fallback to jpeg
+      canvas.toBlob(async (blob)=>{
+        if(!blob){ resolve(null); return; }
         const reader = new FileReader();
-        reader.onloadend = ()=> resolve({dataUrl: reader.result});
+        reader.onloadend = ()=> resolve({dataUrl: reader.result, size: blob.size});
         reader.readAsDataURL(blob);
       }, 'image/webp', quality);
     };
@@ -324,20 +316,19 @@ async function compressFile(file, maxW=1000, quality=0.55){
 document.getElementById('files').onchange = async e=>{
   for(const f of [...e.target.files]){
     const note = document.createElement('div');
-    note.className = 'text-xs opacity-60';
+    note.className = 'text-xs opacity-60 px-2';
     note.textContent = 'Uploading '+f.name+'...';
     document.getElementById('blocks').prepend(note);
     
-    let out = await uploadToGitHub(f);
-    if(out && out.url){
+    let url = await uploadToGitHub(f);
+    if(url){
       note.remove();
-      addBlock('image',{src: out.url});
+      addBlock('image',{src:url});
     } else {
-      // fallback to compressed base64
-      note.textContent = 'Compressing '+f.name+' (no GitHub token)...';
-      const comp = await compressFile(f);
+      note.textContent = 'Compressing '+f.name+'...';
+      const out = await compressFile(f);
       note.remove();
-      if(comp) addBlock('image',{src: comp.dataUrl});
+      if(out) addBlock('image',{src: out.dataUrl});
     }
   }
   e.target.value='';
@@ -396,16 +387,6 @@ addBlock('text',{content:'thje drums i used are addticve drums with a compressop
 addBlock('divider',{});
 addBlock('image',{src:''});
 addBlock('text',{content:'for the loud string is used the swam collection bc i have good control over them vibration and erxpression wise'});
-
-function setGitHubToken(){
-  const current = localStorage.getItem('github_pat') || '';
-  const t = prompt('GitHub Personal Access Token (repo scope):\nLeave empty to disable GitHub and use base64', current);
-  if(t !== null){
-    if(t.trim()){ localStorage.setItem('github_pat', t.trim()); alert('GitHub enabled! Uploads will commit to your repo.'); }
-    else { localStorage.removeItem('github_pat'); alert('GitHub disabled — using compressed base64'); }
-  }
-}
-
 </script>
 </body>
 </html>
