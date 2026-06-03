@@ -34,18 +34,15 @@ body{background:#0a0a0f;color:#f5f5f5;font-family:Inter} h1{font-family:'Space G
           <input id="color" type="color" value="#A596DA" class="w-12 h-9 rounded-lg bg-black/40 border border-white/10 cursor-pointer">
           <span class="text-xs opacity-50">Overrides category color</span>
         </div>
-        <div class="space-y-3">
-          <div class="flex items-center justify-between">
-            <span class="text-sm font-medium opacity-80">Content Blocks</span>
-            <div class="flex gap-1.5">
-              <button type="button" id="addTextBtn" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-font mr-1"></i>Text</button>
-              <button type="button" id="addImgBtn" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-image mr-1"></i>Image</button>
-              <button type="button" id="addDivBtn" class="px-3 py-1.5 glass rounded-lg text-xs hover:bg-white/10"><i class="fas fa-minus mr-1"></i>Divider</button>
-            </div>
+        <div>
+          <div class="flex gap-2 mb-2">
+            <input id="imgUrl" placeholder="Paste image URL or upload below" class="flex-1 px-3 py-2 rounded-lg bg-black/30 border border-white/10 text-sm">
+            <button id="addUrlBtn" class="px-4 py-2 glass rounded-lg text-sm hover:bg-white/10">Add URL</button>
+            <label class="px-4 py-2 glass rounded-lg text-sm cursor-pointer hover:bg-white/10"><i class="fas fa-upload mr-1"></i>Upload<input type="file" id="files" multiple accept="image/*" class="hidden"></label>
           </div>
-          <div id="blocks" class="space-y-3 min-h-[200px]"></div>
-          <input type="file" id="blockFile" accept="image/*" class="hidden" multiple>
+          <div id="imgGrid" class="grid grid-cols-5 gap-2"></div>
         </div>
+        <textarea id="body" rows="10" placeholder="Write your story..." class="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 focus:border-[#A596DA]/50 outline-none resize-none"></textarea>
         <button id="publish" class="w-full py-3.5 rounded-xl gradient text-black font-bold text-lg hover:opacity-90 transition"><i class="fas fa-bolt mr-2"></i>Publish Live</button>
       </div>
     </div>
@@ -94,7 +91,7 @@ const app = initializeApp(cfg);
 const db = getFirestore(app);
 
 let categories = [];
-let blocks = [];
+let images = [];
 
 const defaults = [
   {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
@@ -121,28 +118,6 @@ function updateSubs(){
 }
 category.onchange = updateSubs;
 date.valueAsDate = new Date();
-
-function renderBlocks(){
-  const wrap=document.getElementById('blocks');
-  if(!blocks.length){ wrap.innerHTML='<div class="text-center py-12 opacity-40 text-sm border border-dashed border-white/10 rounded-xl">No blocks yet. Click Text or Image above.</div>'; return; }
-  wrap.innerHTML=blocks.map((b,i)=>{
-    if(b.type==='text') return `<div class="p-3 rounded-xl bg-black/30 border border-white/10"><div class="flex justify-between items-center mb-2"><span class="text-[11px] uppercase tracking-wide opacity-60">Text ${i+1}</span><div class="flex gap-2"><button data-up="${i}" class="text-xs opacity-60 hover:opacity-100">↑</button><button data-down="${i}" class="text-xs opacity-60 hover:opacity-100">↓</button><button data-del="${i}" class="text-xs text-red-400">✕</button></div></div><textarea data-idx="${i}" class="w-full h-28 p-2.5 rounded-lg bg-black/40 border border-white/10 text-sm resize-y" placeholder="Write...">${b.value||''}</textarea></div>`;
-    if(b.type==='image') return `<div class="p-3 rounded-xl bg-black/30 border border-white/10"><div class="flex justify-between items-center mb-2"><span class="text-[11px] uppercase opacity-60">Image ${i+1}</span><div class="flex gap-2"><button data-up="${i}" class="text-xs opacity-60">↑</button><button data-down="${i}" class="text-xs opacity-60">↓</button><button data-del="${i}" class="text-xs text-red-400">✕</button></div></div>${b.value?`<img src="${b.value}" class="max-h-48 mx-auto rounded-lg mb-2 border border-white/10">`:''}<div class="flex gap-2"><input data-url="${i}" value="${b.value||''}" placeholder="Image URL" class="flex-1 px-2.5 py-1.5 rounded-lg bg-black/40 border border-white/10 text-xs"><button data-upimg="${i}" class="px-3 py-1.5 glass rounded-lg text-xs">Upload</button></div></div>`;
-    return `<div class="p-2 rounded-xl bg-black/20 border border-white/10 flex justify-between items-center"><span class="text-[11px] opacity-60">── DIVIDER ──</span><div class="flex gap-2"><button data-up="${i}" class="text-xs">↑</button><button data-down="${i}" class="text-xs">↓</button><button data-del="${i}" class="text-xs text-red-400">✕</button></div></div>`;
-  }).join('');
-  wrap.querySelectorAll('[data-idx]').forEach(t=>t.oninput=e=>blocks[+t.dataset.idx].value=e.target.value);
-  wrap.querySelectorAll('[data-url]').forEach(u=>u.oninput=e=>blocks[+u.dataset.url].value=e.target.value);
-  wrap.querySelectorAll('[data-del]').forEach(d=>d.onclick=()=>{blocks.splice(+d.dataset.del,1);renderBlocks()});
-  wrap.querySelectorAll('[data-up]').forEach(u=>u.onclick=()=>{const i=+u.dataset.up;if(i>0){[blocks[i-1],blocks[i]]=[blocks[i],blocks[i-1]];renderBlocks()}});
-  wrap.querySelectorAll('[data-down]').forEach(d=>d.onclick=()=>{const i=+d.dataset.down;if(i<blocks.length-1){[blocks[i],blocks[i+1]]=[blocks[i+1],blocks[i]];renderBlocks()}});
-  wrap.querySelectorAll('[data-upimg]').forEach(b=>b.onclick=()=>{blockFile.dataset.idx=b.dataset.upimg;blockFile.click()});
-}
-document.getElementById('addTextBtn').onclick=()=>{blocks.push({type:'text',value:''});renderBlocks()};
-document.getElementById('addImgBtn').onclick=()=>{blocks.push({type:'image',value:''});renderBlocks()};
-document.getElementById('addDivBtn').onclick=()=>{blocks.push({type:'divider'});renderBlocks()};
-document.getElementById('blockFile').onchange=e=>{[...e.target.files].forEach(f=>{const r=new FileReader();r.onload=ev=>{const idx=+e.target.dataset.idx;if(!isNaN(idx))blocks[idx].value=ev.target.result;else blocks.push({type:'image',value:ev.target.result});renderBlocks()};r.readAsDataURL(f)});};
-
-renderBlocks();
 
 function renderCats(){
   const list = document.getElementById('catList');
@@ -189,28 +164,40 @@ document.getElementById('addCatBtn').onclick = async ()=>{
   newCat.value=''; newSubs.value='';
 };
 
-
+// images
+document.getElementById('files').onchange = e=>{
+  [...e.target.files].forEach(f=>{
+    const r=new FileReader();
+    r.onload=ev=>{ images.push(ev.target.result); renderImgs(); };
+    r.readAsDataURL(f);
+  });
+};
+function renderImgs(){
+  document.getElementById('imgGrid').innerHTML = images.map((im,i)=>`<div class="relative group"><img src="${im}" class="w-full h-20 object-cover rounded-lg border border-white/10"><button data-i="${i}" class="del-img absolute -top1 -right1 w-5 h-5 bg-red-600 rounded-full text-[10px] opacity-0 group-hover:opacity-100">×</button></div>`).join('');
+  document.querySelectorAll('.del-img').forEach(b=> b.onclick=()=>{ images.splice(parseInt(b.dataset.i),1); renderImgs(); });
+}
+document.getElementById('addUrlBtn').onclick = ()=>{
+  const u = imgUrl.value.trim(); if(u){ images.push(u); imgUrl.value=''; renderImgs(); }
+};
 
 // publish
 document.getElementById('publish').onclick = async ()=>{
   const btn = document.getElementById('publish');
-  if(!title.value.trim()) return alert('Need title');
-  if(blocks.length===0) return alert('Add at least one block');
   const data = {
     title: title.value.trim(),
     category: category.value,
     subcategory: subcategory.value,
     date: date.value,
     displayDate: new Date(date.value+'T12:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}),
-    body: blocks.filter(b=>b.type==='text').map(b=>b.value).join('\n\n'),
-    images: blocks.filter(b=>b.type==='image').map(b=>b.value),
-    blocks: blocks,
+    body: body.value.trim(),
+    images,
     color: color.value,
     createdAt: serverTimestamp()
   };
+  if(!data.title||!data.body) return alert('Need title and body');
   btn.disabled=true; btn.innerHTML='<i class="fas fa-spinner fa-spin mr-2"></i>Publishing...';
   await addDoc(collection(db,'posts'), data);
-  title.value=''; blocks=[]; renderBlocks();
+  title.value=''; body.value=''; images=[]; renderImgs();
   btn.disabled=false; btn.innerHTML='<i class="fas fa-bolt mr-2"></i>Publish Live';
 };
 
