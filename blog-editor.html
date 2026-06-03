@@ -268,26 +268,26 @@ const GITHUB_PATH = 'images/posts';
 async function uploadToGitHub(file){
   const token = localStorage.getItem('github_pat');
   if(!token) return null;
-  // compress to 1280
-  const img = new Image();
-  img.src = URL.createObjectURL(file);
-  await img.decode();
-  const scale = Math.min(1, 1280 / img.width);
-  const canvas = document.createElement('canvas');
-  canvas.width = Math.round(img.width*scale);
-  canvas.height = Math.round(img.height*scale);
-  canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
-  const blob = await new Promise(r=>canvas.toBlob(r,'image/jpeg',0.78));
-  const b64 = await blob.arrayBuffer().then(b=>btoa(String.fromCharCode(...new Uint8Array(b))));
-  const filename = Date.now()+'_'+file.name.replace(/[^a-z0-9.]/gi,'_')+'.jpg';
   try{
+    const img = new Image();
+    img.src = URL.createObjectURL(file);
+    await img.decode();
+    const scale = Math.min(1, 1280 / img.width);
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.round(img.width*scale);
+    canvas.height = Math.round(img.height*scale);
+    canvas.getContext('2d').drawImage(img,0,0,canvas.width,canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg',0.78);
+    const b64 = dataUrl.split(',')[1];
+    const filename = Date.now()+'_'+file.name.replace(/[^a-z0-9.]/gi,'_')+'.jpg';
     const res = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}/${filename}`,{
       method:'PUT',
       headers:{'Authorization':'token '+token,'Accept':'application/vnd.github.v3+json'},
       body:JSON.stringify({message:'upload '+filename, content:b64, branch:'main'})
     });
     if(res.ok) return `https://${GITHUB_OWNER}.github.io/${GITHUB_PATH}/${filename}`;
-  }catch(e){ console.error(e); }
+    console.error('GitHub error', await res.text());
+  }catch(e){ console.error('upload failed', e); }
   return null;
 }
 
