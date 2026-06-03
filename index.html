@@ -2828,10 +2828,34 @@ document.addEventListener('DOMContentLoaded', function() {
     c.innerHTML = p.map(post=>{
       const cat = categories.find(x=>x.name===post.category);
       const col = post.color || cat?.color || '#A596DA';
+      
+      // NEW BLOCK RENDERER
+      const renderBlocks = () => {
+        if(!post.blocks || !Array.isArray(post.blocks) || post.blocks.length===0) return null;
+        return post.blocks.map(b=>{
+          if(b.type==='image' && b.src){
+            return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')"></div>`;
+          }
+          if(b.type==='text'){
+            const txt = (b.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+            return `<div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">${txt}</p></div>`;
+          }
+          if(b.type==='divider'){
+            return `<div class="my-8 w-full flex justify-center"><div class="h-[3px] w-full max-w-3xl rounded-full" style="background:${col};opacity:0.35"></div></div>`;
+          }
+          return '';
+        }).join('');
+      };
+
+      const blocksHtml = renderBlocks();
+      
+      // fallback for old posts
       const imgs = post.images||[];
       const imgHtml = imgs.length===1 ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>` :
         imgs.length>1 ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>` : '';
-      return `<article class="blog-post active glass rounded-2xl p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-4 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl font-bold mb-4 gradient-text">${post.title}</h3><p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${post.body}</p>${imgHtml}</article>`;
+      const legacyHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${(post.body||'').replace(/</g,'&lt;')}</p>${imgHtml}`;
+
+      return `<article class="blog-post active glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">${post.title}</h3>${blocksHtml || legacyHtml}</article>`;
     }).join('');
   }
 
