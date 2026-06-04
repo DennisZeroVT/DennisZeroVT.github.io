@@ -1595,7 +1595,7 @@ body.optimized .glow-hover {
 <script>
         // SONGS DATA
 
-        // ===== GITHUB DATA LOADER (replaces Firebase + consts) =====
+        // ===== GITHUB DATA LOADER (replaces Firebase + s) =====
         let SONGS = {};
         let ALBUMS = {};
         let personData = {};
@@ -1604,7 +1604,7 @@ body.optimized .glow-hover {
 
         async function loadAllData() {
           try {
-            const [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
+             [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
               fetch('./data/songs.json').then(r=>r.json()).catch(()=>[]),
               fetch('./data/people.json').then(r=>r.json()).catch(()=>[]),
               fetch('./data/albums.json').then(r=>r.json()).catch(()=>[]),
@@ -1669,7 +1669,7 @@ body.optimized .glow-hover {
 
 
 
-        const platformIcons = {
+         platformIcons = {
             spotify: '<i class="fab fa-spotify"></i>',
             apple: '<i class="fab fa-apple"></i>',
             tidal: '<i class="fas fa-music"></i>',
@@ -1682,7 +1682,7 @@ body.optimized .glow-hover {
         
         // Badge brand colors
         function getBadgeStyle(name) {
-            const map = {
+             map = {
                 'Spotify': {bg: '#1DB954', color: '#000'},
                 'Apple Music': {bg: '#FA243C', color: '#fff'},
                 'Apple': {bg: '#FA243C', color: '#fff'},
@@ -1699,15 +1699,15 @@ body.optimized .glow-hover {
         }
 
 function renderSongsGrid() {
-    const grid = document.getElementById('songs-grid');
+     grid = document.getElementById('songs-grid');
     if (!grid) return;
     grid.innerHTML = '';
     // Use Tailwind grid matching new site
     grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
     
     Object.keys(SONGS).forEach(key => {
-        const song = SONGS[key];
-        const card = document.createElement('div');
+         song = SONGS[key];
+         card = document.createElement('div');
         card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
         card.onclick = () => openSong(key);
         
@@ -1734,12 +1734,12 @@ function renderSongsGrid() {
 }
 
 function renderAlbumsGrid() {
-    const grid = document.getElementById('albums-grid');
+     grid = document.getElementById('albums-grid');
     if (!grid) return;
     grid.innerHTML = '';
     Object.keys(ALBUMS).forEach(key => {
-        const album = ALBUMS[key];
-        const card = document.createElement('div');
+         album = ALBUMS[key];
+         card = document.createElement('div');
         card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
         card.onclick = () => openAlbum(key);
         card.innerHTML = `
@@ -1770,8 +1770,8 @@ function renderAlbumsGrid() {
             document.getElementById(page).classList.add('active');
             
             // Hide/show home hero and featured projects
-            const homeHero = document.getElementById('home');
-            const featured = document.getElementById('featured-projects');
+             homeHero = document.getElementById('home');
+             featured = document.getElementById('featured-projects');
             if(page === 'home') {
                 if(homeHero) homeHero.style.display = 'block';
                 if(featured) featured.style.display = 'block';
@@ -1806,7 +1806,7 @@ function renderAlbumsGrid() {
         document.querySelectorAll('[data-page]').forEach(link => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
-                const page = link.getAttribute('data-page');
+                 page = link.getAttribute('data-page');
                 navigateTo(page);
             });
         });
@@ -1818,12 +1818,12 @@ function renderAlbumsGrid() {
         
         // Person Overlay System
         function openPersonOverlay(personId) {
-            const person = personData[personId];
+             person = personData[personId];
             if (!person) return;
             
-            const overlay = document.getElementById('person-overlay');
-            const header = document.getElementById('overlay-header');
-            const body = document.getElementById('overlay-body');
+             overlay = document.getElementById('person-overlay');
+             header = document.getElementById('overlay-header');
+             body = document.getElementById('overlay-body');
             
             header.innerHTML = `
                 <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color} flex items-center justify-center">
@@ -1873,14 +1873,14 @@ function renderAlbumsGrid() {
 
         // Song Overlay System
         function openSong(songId) {
-            const song = SONGS[songId];
+             song = SONGS[songId];
             if (!song) return;
             
-            const overlay = document.getElementById('song-overlay');
-            const header = document.getElementById('song-header');
-            const body = document.getElementById('song-body');
+             overlay = document.getElementById('song-overlay');
+             header = document.getElementById('song-header');
+             body = document.getElementById('song-body');
             
-            const coverSrc = document.getElementById(`cover-${songId.replace(/_/g, '')}`)?.src || song.coverImg;
+             coverSrc = document.getElementById(`cover-${songId.replace(/_/g, '')}`)?.src || song.coverImg;
             
             header.innerHTML = `
                 <div class="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-[#A596DA]/30 to-[#8B78CB]/10 flex items-center justify-center flex-shrink-0">
@@ -1893,11 +1893,11 @@ function renderAlbumsGrid() {
                 </div>
             `;
             
-            const streamingLinks = Object.keys(song.streaming).map(platform => {
-                const url = song.streaming[platform];
-                const icon = platformIcons[platform] || '<i class="fas fa-music"></i>';
-                const name = platform.charAt(0).toUpperCase() + platform.slice(1);
-                const colorMap = {
+             streamingLinks = Object.keys(song.streaming).map(platform => {
+                 url = song.streaming[platform];
+                 icon = platformIcons[platform] || '<i class="fas fa-music"></i>';
+                 name = platform.charAt(0).toUpperCase() + platform.slice(1);
+                 colorMap = {
                     spotify: {bg: '#1DB954', color: '#000', label: 'Spotify'},
                     apple: {bg: '#FA243C', color: '#fff', label: 'Apple'},
                     tidal: {bg: '#000000', color: '#fff', label: 'Tidal'},
@@ -1905,7 +1905,7 @@ function renderAlbumsGrid() {
                     amazon: {bg: '#FF9900', color: '#000', label: 'Amazon'},
                     deezer: {bg: '#00C7F2', color: '#000', label: 'Deezer'}
                 };
-                const style = colorMap[platform] || {bg: 'rgba(165,150,218,0.2)', color: '#A596DA', label: name};
+                 style = colorMap[platform] || {bg: 'rgba(165,150,218,0.2)', color: '#A596DA', label: name};
                 return `
                     <a href="${url}" target="_blank" class="badge-platform" style="background:${style.bg}; color:${style.color}; border-color:${style.bg}; font-weight:600;">
                         ${icon}
@@ -1926,7 +1926,7 @@ function renderAlbumsGrid() {
                 </div>
 
                 <div class="flex flex-wrap gap-2 mb-8">
-                    ${song.badges.map(b => { const s = getBadgeStyle(b); return `<span class="px-3 py-1 rounded-full text-sm font-medium" style="background:${s.bg};color:${s.color};box-shadow:0 0 8px ${s.bg}40">${b}</span>`; }).join('')}
+                    ${song.badges.map(b => {  s = getBadgeStyle(b); return `<span class="px-3 py-1 rounded-full text-sm font-medium" style="background:${s.bg};color:${s.color};box-shadow:0 0 8px ${s.bg}40">${b}</span>`; }).join('')}
                 </div>
                 
                 <div class="mb-8">
@@ -1978,7 +1978,7 @@ function renderAlbumsGrid() {
         
         // Blog Pagination
         let currentBlogPage = 0;
-        const blogPosts = document.querySelectorAll('.blog-post');
+         blogPosts = document.querySelectorAll('.blog-post');
         const blogPageBtns = document.querySelectorAll('.blog-page-btn');
         
         function showBlogPost(index) {
@@ -2516,32 +2516,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<script type="module">
-  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-  import { getFirestore, collection, onSnapshot, doc, setDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyANgUuiKzFOlFv3gesXvu9VQ36-aS7vhjs",
-    authDomain: "denniszerovt-blog.firebaseapp.com",
-    projectId: "denniszerovt-blog",
-    storageBucket: "denniszerovt-blog.firebasestorage.app",
-    messagingSenderId: "438217423363",
-    appId: "1:438217423363:web:5db4e6e955494f87e6c36"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  let allPosts = [];
-  let categories = [];
-  let currentCat = 'All';
-  let currentSub = 'All';
+<script>
   
-  let defaults = [
-    {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
-    {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
-    {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
-  ];
+  
+  
 
   // Load categories dynamically from GitHub - replaces Firebase
   (async function loadCategories(){
