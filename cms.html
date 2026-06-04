@@ -741,10 +741,27 @@ function renderBlogEditor(post){
           const f=e.target.files[0]; if(!f) return;
           try{ setStatus('Uploading image…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); renderBlocks(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
         };
-      }else{
+      }else if(bl.type==='video'){
+        body.innerHTML=`
+          <div style="display:grid;gap:10px">
+            <div class="upload"><label class="file-btn">Upload video<input type="file" accept="video/*"></label><span class="hint">${bl.src? 'Uploaded':'No file'}</span></div>
+            <div style="display:flex;align-items:center;gap:8px"><span class="hint">OR paste URL</span></div>
+            <input type="url" data-k="url" placeholder="YouTube, Vimeo, or MP4 URL" value="${esc(bl.url||'')}" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f0a1a;color:var(--text)">
+            <input type="text" data-k="caption" placeholder="Caption (optional)" value="${esc(bl.caption||'')}" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f0a1a;color:var(--text)">
+            ${bl.src?`<video class="img-prev" src="${bl.src}" controls style="max-height:240px"></video>`:bl.url?`<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#000"><iframe src="${getEmbedUrl(bl.url)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div>`:''}
+          </div>
+        `;
+        const fileInp=body.querySelector('input[type=file]');
+        if(fileInp){
+          fileInp.onchange=async e=>{
+            const f=e.target.files[0]; if(!f) return;
+            try{ setStatus('Uploading video…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; bl.url=''; setStatus('Video uploaded','ok'); renderBlocks(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
+          };
+        }
+      }else
         body.innerHTML=`<div class="divider-prev"></div><span class="hint">Visual separator</span>`;
       }
-      body.querySelectorAll('[data-k]').forEach(inp=>{ inp.oninput=()=>{ bl[inp.dataset.k]=inp.value } });
+      body.querySelectorAll('[data-k]').forEach(inp=>{ inp.oninput=()=>{ bl[inp.dataset.k]=inp.value; if(bl.type==='video' && inp.dataset.k==='url'){ renderBlocks(p) } } });
       wrap.appendChild(d);
     });
   }
