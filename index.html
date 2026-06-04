@@ -2590,6 +2590,20 @@ window.addEventListener('load', function() {
       collabsGrid.innerHTML = '';
       friendsGrid.innerHTML = '';
       
+      
+      // Populate personData for overlay
+      people.forEach(p => {
+        personData[p.id] = {
+          name: p.name,
+          role: p.role || '',
+          color: p.color || 'from-purple-500/30 to-purple-600/10',
+          icon: p.icon || 'fas fa-user',
+          bio: p.bio || '',
+          projects: p.projects || [],
+          links: p.links || {}
+        };
+      });
+      
       people.forEach(p => {
         const tags = (p.tags||[]).map(t=>t.toLowerCase());
         const isCollab = tags.includes('collab');
@@ -2605,7 +2619,7 @@ window.addEventListener('load', function() {
         const twitter = p.links?.twitter || '';
         
         const html = `
-          <div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin:12px;border:1px solid #333;">
+          <div class="person-card" onclick="openPersonOverlay('${p.id}')" style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin:12px;border:1px solid #333;cursor:pointer;">
             <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
             <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
               <img src="${tryJpg}" alt="${p.name}" 
