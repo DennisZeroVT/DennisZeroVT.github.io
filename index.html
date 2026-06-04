@@ -1799,47 +1799,62 @@ function renderAlbumsGrid() {
         });
         
         // Person Overlay System
-        function openPersonOverlay(personId) {
-             person = personData[personId];
+        window.openPersonOverlay = function(personId) {
+            const person = personData[personId];
             if (!person) return;
             
-             overlay = document.getElementById('person-overlay');
-             header = document.getElementById('overlay-header');
-             body = document.getElementById('overlay-body');
+            const overlay = document.getElementById('person-overlay');
+            const header = document.getElementById('overlay-header');
+            const body = document.getElementById('overlay-body');
             
             header.innerHTML = `
-                <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color} flex items-center justify-center">
-                    <i class="${person.icon} text-2xl"></i>
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color || 'from-purple-500/30 to-purple-600/10'} flex items-center justify-center">
+                    <i class="${person.icon || 'fas fa-user'} text-2xl"></i>
                 </div>
                 <div>
                     <h2 class="text-2xl font-bold">${person.name}</h2>
-                    <p class="text-[var(--accent)]">${person.role}</p>
+                    <p class="text-[var(--accent)]">${person.role || ''}</p>
                 </div>
             `;
             
-            let projectsHTML = person.projects.length > 0 ? `
+            const projects = person.projects || [];
+            let projectsHTML = projects.length > 0 ? `
                 <div class="mb-6">
                     <h3 class="font-bold mb-3 text-lg">Collaborated On:</h3>
                     <div class="flex flex-wrap gap-2">
-                        ${person.projects.map(p => `<span class="px-3 py-1 rounded-full glass text-sm">${p}</span>`).join('')}
+                        ${projects.map(p => `<span class="px-3 py-1 rounded-full glass text-sm">${p}</span>`).join('')}
                     </div>
                 </div>
             ` : '';
             
-            let linksHTML = `
+            const links = person.links || {};
+            const linkIcons = {
+                twitter: 'fab fa-twitter',
+                spotify: 'fab fa-spotify',
+                instagram: 'fab fa-instagram',
+                youtube: 'fab fa-youtube',
+                github: 'fab fa-github'
+            };
+            
+            let linksHTML = '';
+            if (Object.keys(links).length > 0) {
+                linksHTML = `
                 <div class="flex gap-4">
-                    ${person.links.map(link => `
-                        <a href="${link.url}" target="_blank" class="w-12 h-12 rounded-lg glass flex items-center justify-center text-[var(--text-secondary)] hover:text-[#A596DA] glow-hover">
-                            <i class="${link.icon} text-xl"></i>
+                    ${Object.entries(links).map(([key, url]) => `
+                        <a href="${url}" target="_blank" class="w-12 h-12 rounded-lg glass flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors" onclick="event.stopPropagation()">
+                            <i class="${linkIcons[key] || 'fas fa-link'} text-xl"></i>
                         </a>
                     `).join('')}
                 </div>
-            `;
+                `;
+            }
             
             body.innerHTML = `
-                <p class="text-[var(--text-secondary)] leading-relaxed mb-6">${person.bio}</p>
                 ${projectsHTML}
-                <h3 class="font-bold mb-3 text-lg">Connect:</h3>
+                <div class="mb-6">
+                    <h3 class="font-bold mb-3 text-lg">About</h3>
+                    <p class="text-[var(--text-secondary)] leading-relaxed">${person.bio || ''}</p>
+                </div>
                 ${linksHTML}
             `;
             
@@ -1847,7 +1862,7 @@ function renderAlbumsGrid() {
             document.body.style.overflow = 'hidden';
         }
         
-        function closePersonOverlay(event) {
+        window.closePersonOverlay = function(event) {
             if (event && event.target !== event.currentTarget) return;
             document.getElementById('person-overlay').classList.remove('active');
             document.body.style.overflow = '';
@@ -2593,15 +2608,7 @@ window.addEventListener('load', function() {
       
       // Populate personData for overlay
       people.forEach(p => {
-        personData[p.id] = {
-          name: p.name,
-          role: p.role || '',
-          color: p.color || 'from-purple-500/30 to-purple-600/10',
-          icon: p.icon || 'fas fa-user',
-          bio: p.bio || '',
-          projects: p.projects || [],
-          links: p.links || {}
-        };
+        personData[p.id] = p;
       });
       
       people.forEach(p => {
@@ -2619,7 +2626,7 @@ window.addEventListener('load', function() {
         const twitter = p.links?.twitter || '';
         
         const html = `
-          <div class="person-card" onclick="openPersonOverlay('${p.id}')" style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin:12px;border:1px solid #333;cursor:pointer;">
+          <div class="person-card" onclick="openPersonOverlay('${p.id}')" style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin:12px;border:1px solid #333;">
             <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
             <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
               <img src="${tryJpg}" alt="${p.name}" 
