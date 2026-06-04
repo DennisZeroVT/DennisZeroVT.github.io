@@ -2657,10 +2657,93 @@ window.addEventListener('load', function() {
 });
 </script>
 
+
 <!-- Rhythm Game Data -->
 <script src="https://denniszerovt.github.io/data/data.js"></script>
-<script src="https://denniszerovt.github.io/data/fill.js"></script>
+<script>
+// Make fill.js reusable
+window.fillRhythmData = function() {
+  const d = (typeof DATA !== 'undefined') ? DATA : window.DATA;
+  if (!d) { console.error('fillRhythmData: DATA not found - check data.js loaded'); return false; }
 
+  const fmt  = n  => (typeof n === 'number') ? n.toLocaleString('nl-NL') : (n || '');
+  const set  = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const secs = s  => { const h = Math.floor(s/3600), m = Math.floor((s%3600)/60); return h ? `${h}u ${m}m` : `${m}m`; };
+
+  try {
+    // OSU STANDARD
+    if (d.osuStandard) {
+      const o = d.osuStandard;
+      set('osu-panel-rank', '#' + fmt(o.rank));
+      set('osu-panel-country', '#' + fmt(o.countryRank));
+      set('osu-panel-pp', fmt(o.pp) + 'pp');
+      set('osu-panel-acc', o.acc.toFixed(2) + '%');
+      set('osu-panel-plays', fmt(o.plays));
+      set('osu-panel-time', secs(o.seconds));
+      set('osu-panel-ranked', fmt(o.rankedScore));
+      set('overview-std-rank', '#' + fmt(o.rank));
+      set('overview-std-pp', fmt(o.pp));
+      set('overview-std-acc', o.acc.toFixed(2) + '%');
+      const og = o.grades || {};
+      set('osu-panel-g-ss', og.SS ?? 0); set('osu-panel-g-ssh', og.SSH ?? 0);
+      set('osu-panel-g-s', og.S ?? 0); set('osu-panel-g-sh', og.SH ?? 0); set('osu-panel-g-a', og.A ?? 0);
+    }
+    // OSU MANIA
+    if (d.osuMania) {
+      const m = d.osuMania;
+      set('mania-panel-rank', '#' + fmt(m.rank)); set('mania-panel-country', '#' + fmt(m.countryRank));
+      set('mania-panel-pp', fmt(m.pp) + 'pp'); set('mania-panel-acc', m.acc.toFixed(2) + '%');
+      set('mania-panel-plays', fmt(m.plays)); set('mania-panel-time', secs(m.seconds));
+      set('overview-mania-rank', '#' + fmt(m.rank)); set('overview-mania-pp', fmt(m.pp));
+      set('overview-mania-acc', m.acc.toFixed(2) + '%');
+      const mg = m.grades || {};
+      set('mania-panel-g-ss', mg.SS ?? 0); set('mania-panel-g-ssh', mg.SSH ?? 0);
+      set('mania-panel-g-s', mg.S ?? 0); set('mania-panel-g-sh', mg.SH ?? 0); set('mania-panel-g-a', mg.A ?? 0);
+    }
+    // ETTERNA
+    if (d.etterna) {
+      const e = d.etterna, ss = e.skillsets || {};
+      set('etterna-username', e.username || ''); set('etterna-rank', '#' + fmt(e.rank));
+      set('etterna-overall', (e.overall || 0).toFixed(2)); set('overview-etterna-rank', '#' + fmt(e.rank));
+      set('overview-etterna-overall', (e.overall || 0).toFixed(2));
+      set('etterna-stream', (ss.stream||0).toFixed(2)); set('etterna-jumpstream', (ss.jumpstream||0).toFixed(2));
+      set('etterna-handstream', (ss.handstream||0).toFixed(2)); set('etterna-jacks', (ss.jacks||0).toFixed(2));
+      set('etterna-chordjacks', (ss.chordjacks||0).toFixed(2)); set('etterna-stamina', (ss.stamina||0).toFixed(2));
+      set('etterna-technical', (ss.technical||0).toFixed(2));
+    }
+    // FFR
+    if (d.ffr) {
+      const f = d.ffr;
+      set('ffr-username', f.username); set('ffr-rank', '#' + fmt(f.rank));
+      set('ffr-avg-rank', fmt(f.avgRank)); set('ffr-skill', 'Lv.' + f.skillRating.toFixed(2));
+      set('ffr-global', `#${fmt(f.globalRank)} global • #${f.countryRankNL} NL`);
+    }
+    console.log('✓ fillRhythmData: filled', Object.keys(d).length, 'games');
+    return true;
+  } catch(e) {
+    console.error('fillRhythmData error:', e);
+    return false;
+  }
+};
+
+// Run on load
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    if (window.DATA) window.fillRhythmData();
+  }, 200);
+});
+
+// Run when navigating to rhythm
+const _nav = window.navigateTo;
+if (typeof _nav === 'function') {
+  window.navigateTo = function(page) {
+    _nav(page);
+    if (page === 'rhythm' || page === 'games') {
+      setTimeout(window.fillRhythmData, 150);
+    }
+  };
+}
+</script>
 </body>
 
 
