@@ -687,6 +687,7 @@ function renderBlogEditor(post){
         <div class="row">
           <button class="btn small" data-add="text">+ Text</button>
           <button class="btn small" data-add="image">+ Image</button>
+          <button class="btn small" data-add="video">+ Video</button>
           <button class="btn small" data-add="divider">+ Divider</button>
         </div>
         <div class="blocks" id="blocks"></div>
@@ -700,9 +701,20 @@ function renderBlogEditor(post){
     s.innerHTML=[''].concat(found?found.subs:[]).map(x=>`<option>${esc(x)}</option>`).join('');
   };
   $('#f_color').oninput=e=>{ e.target.nextElementSibling.textContent=e.target.value };
-  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:{type:'divider'}); renderBlocks(post); });
+  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:b.dataset.add==='video'?{type:'video',url:'',caption:''}:{type:'divider'}); renderBlocks(post); });
 
+
+  function getEmbedUrl(url){
+    if(!url) return '';
+    try{
+      if(url.includes('youtube.com/watch')){ const u=new URL(url); const v=u.searchParams.get('v'); return v?`https://www.youtube.com/embed/${v}`:url; }
+      if(url.includes('youtu.be/')){ const id=url.split('youtu.be/')[1].split(/[?&]/)[0]; return `https://www.youtube.com/embed/${id}`; }
+      if(url.includes('vimeo.com/')){ const id=url.split('vimeo.com/')[1].split(/[?&]/)[0]; return `https://player.vimeo.com/video/${id}`; }
+      return url;
+    }catch(e){ return url }
+  }
   function renderBlocks(p){
+
     const wrap = $('#blocks'); wrap.innerHTML='';
     (p.blocks||[]).forEach((bl,i)=>{
       const d=document.createElement('div'); d.className='block';
