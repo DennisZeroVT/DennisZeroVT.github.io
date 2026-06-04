@@ -1658,6 +1658,7 @@ body.optimized .glow-hover {
             if (typeof initializeMusic === 'function') initializeMusic();
             if (typeof renderPeople === 'function') renderPeople();
             if (typeof renderSongsGrid === 'function') renderSongsGrid();
+            if (typeof renderAlbumsGrid === 'function') renderAlbumsGrid();
 
           } catch (e) {
             console.error('Failed to load data:', e);
@@ -2050,8 +2051,6 @@ function updateTabletViz() {
 // Initialize
         window.addEventListener('load', () => {
             updateTabletViz();
-            renderSongsGrid();
-        renderAlbumsGrid();
             const hash = window.location.hash.substring(1);
             if (hash && document.getElementById(hash)) {
                 navigateTo(hash);
@@ -2512,48 +2511,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
-<!-- Firebase -->
-
-
-
+<!-- Blog / Categories rendering (JSON-only, no Firebase) -->
 <script>
-  
-  
-  
-
-  // Load categories dynamically from GitHub - replaces Firebase
-  (async function loadCategories(){
-    try {
-      const res = await fetch('./data/categories.json?v=' + Date.now());
-      if(res.ok) {
-        const data = await res.json();
-        if(Array.isArray(data) && data.length > 0) {
-          defaults = data;
-          console.log('✓ Categories loaded from GitHub:', defaults);
-          // Trigger re-render if functions exist
-          if(typeof window.renderBlog === 'function') window.renderBlog();
-          if(typeof window.initFilters === 'function') window.initFilters();
-          document.dispatchEvent(new CustomEvent('categories:loaded', {detail: defaults}));
-        }
-      }
-    } catch(e) {
-      console.log('Using default categories');
-    }
-  })();
-
-  async function ensureDefaults(){
-    const snap = await getDocs(collection(db,'categories'));
-    if(snap.empty){
-      for(const c of defaults){ await setDoc(doc(db,'categories',c.id), c); }
-    }
-  }
+  // State for blog/category filters
+  let currentCat = 'All';
+  let currentSub = 'All';
 
   function renderCategories(){
     const wrap = document.getElementById('category-filters');
     if(!wrap) return;
     wrap.innerHTML = '';
-    
-    const makeBtn = (name, isActive, color)=>{
+
+    const makeBtn = (name, isActive, color) => {
       const btn = document.createElement('button');
       btn.dataset.cat = name;
       btn.className = 'cat-btn px-4 py-2 rounded-full glass text-sm font-medium border transition';
@@ -2565,12 +2534,12 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.classList.add('border-white/10','hover:border-[#A596DA]/50','text-[var(--text-secondary)]');
       }
       btn.textContent = name;
-      btn.onclick = ()=> selectCat(name);
+      btn.onclick = () => selectCat(name);
       return btn;
     };
-    
-    wrap.appendChild(makeBtn('All', currentCat==='All', '#A596DA'));
-    categories.forEach(c=> wrap.appendChild(makeBtn(c.name, currentCat===c.name, c.color)));
+
+    wrap.appendChild(makeBtn('All', currentCat === 'All', '#A596DA'));
+    categories.forEach(c => wrap.appendChild(makeBtn(c.name, currentCat === c.name, c.color)));
   }
 
   function selectCat(name){
@@ -2584,20 +2553,20 @@ document.addEventListener('DOMContentLoaded', function() {
   function renderSubs(){
     const sub = document.getElementById('subcategory-filters');
     if(!sub) return;
-    const cat = categories.find(c=>c.name===currentCat);
-    if(!cat || currentCat==='All'){ sub.classList.add('hidden'); sub.innerHTML=''; return; }
+    const cat = categories.find(c => c.name === currentCat);
+    if(!cat || currentCat === 'All'){ sub.classList.add('hidden'); sub.innerHTML = ''; return; }
     sub.classList.remove('hidden');
     sub.innerHTML = '';
     const allBtn = document.createElement('button');
-    allBtn.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub==='All' ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10');
+    allBtn.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === 'All' ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10');
     allBtn.textContent = `All ${currentCat}`;
-    allBtn.onclick = ()=>{ currentSub='All'; renderSubs(); renderPosts(); };
+    allBtn.onclick = () => { currentSub = 'All'; renderSubs(); renderPosts(); };
     sub.appendChild(allBtn);
-    cat.subs.forEach(s=>{
+    cat.subs.forEach(s => {
       const b = document.createElement('button');
-      b.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub===s ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10 hover:border-[#A596DA]/30');
+      b.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === s ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10 hover:border-[#A596DA]/30');
       b.textContent = s;
-      b.onclick = ()=>{ currentSub=s; renderSubs(); renderPosts(); };
+      b.onclick = () => { currentSub = s; renderSubs(); renderPosts(); };
       sub.appendChild(b);
     });
   }
@@ -2606,25 +2575,27 @@ document.addEventListener('DOMContentLoaded', function() {
     const c = document.getElementById('blog-posts-container');
     if(!c) return;
     let p = [...allPosts];
-    if(currentCat!=='All') p = p.filter(x=>x.category===currentCat);
-    if(currentSub!=='All') p = p.filter(x=>x.subcategory===currentSub);
-    if(p.length===0){ c.innerHTML='<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet in this category.</div>'; return; }
-    c.innerHTML = p.map(post=>{
-      const cat = categories.find(x=>x.name===post.category);
+    if(currentCat !== 'All') p = p.filter(x => x.category === currentCat);
+    if(currentSub !== 'All') p = p.filter(x => x.subcategory === currentSub);
+    if(p.length === 0){
+      c.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet in this category.</div>';
+      return;
+    }
+    c.innerHTML = p.map(post => {
+      const cat = categories.find(x => x.name === post.category);
       const col = post.color || cat?.color || '#A596DA';
-      
-      // NEW BLOCK RENDERER
+
       const renderBlocks = () => {
-        if(!post.blocks || !Array.isArray(post.blocks) || post.blocks.length===0) return null;
-        return post.blocks.map(b=>{
-          if(b.type==='image' && b.src){
+        if(!post.blocks || !Array.isArray(post.blocks) || post.blocks.length === 0) return null;
+        return post.blocks.map(b => {
+          if(b.type === 'image' && b.src){
             return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')"></div>`;
           }
-          if(b.type==='text'){
+          if(b.type === 'text'){
             const txt = (b.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
             return `<div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">${txt}</p></div>`;
           }
-          if(b.type==='divider'){
+          if(b.type === 'divider'){
             return `<div class="my-8 w-full flex justify-center"><div class="h-[3px] w-full max-w-3xl rounded-full" style="background:${col};opacity:0.35"></div></div>`;
           }
           return '';
@@ -2632,33 +2603,17 @@ document.addEventListener('DOMContentLoaded', function() {
       };
 
       const blocksHtml = renderBlocks();
-      
-      // fallback for old posts
-      const imgs = post.images||[];
-      const imgHtml = imgs.length===1 ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>` :
-        imgs.length>1 ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>` : '';
+      const imgs = post.images || [];
+      const imgHtml = imgs.length === 1
+        ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>`
+        : imgs.length > 1
+          ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>`
+          : '';
       const legacyHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${(post.body||'').replace(/</g,'&lt;')}</p>${imgHtml}`;
 
       return `<article class="blog-post active glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">${post.title}</h3>${blocksHtml || legacyHtml}</article>`;
     }).join('');
   }
-
-  document.addEventListener('DOMContentLoaded', async ()=>{
-    await ensureDefaults();
-    
-    onSnapshot(collection(db,'categories'), snap=>{
-      categories = snap.docs.map(d=>d.data());
-      if(categories.length===0) categories = defaults;
-      renderCategories();
-      renderSubs();
-      renderPosts();
-    });
-
-    onSnapshot(collection(db,'posts'), snap=>{
-      allPosts = snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-      renderPosts();
-    });
-  });
 </script>
 
 
