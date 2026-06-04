@@ -1646,6 +1646,56 @@ body.optimized .glow-hover {
           }
         }
 
+        // Rhythm page data loader (separate from main data)
+        async function loadRhythmData() {
+          try {
+            const [dataRes, fillRes] = await Promise.all([
+              fetch('https://denniszerovt.github.io/data/data.js').then(r => r.text()).catch(() => '{}'),
+              fetch('https://denniszerovt.github.io/data/fill.js').then(r => r.text()).catch(() => '{}')
+            ]);
+            
+            // Parse JS files (could be JSON or JS objects)
+            try {
+              window.rhythmData = dataRes.trim().startsWith('{') || dataRes.trim().startsWith('[') 
+                ? JSON.parse(dataRes) 
+                : eval('(' + dataRes + ')');
+            } catch(e) { 
+              console.warn('Failed to parse data.js', e);
+              window.rhythmData = {}; 
+            }
+            
+            try {
+              window.rhythmFill = fillRes.trim().startsWith('{') || fillRes.trim().startsWith('[')
+                ? JSON.parse(fillRes)
+                : eval('(' + fillRes + ')');
+            } catch(e) { 
+              console.warn('Failed to parse fill.js', e);
+              window.rhythmFill = {}; 
+            }
+            
+            console.log('Rhythm data loaded');
+            
+            // Trigger rhythm page render if on that page
+            if (typeof renderRhythmPage === 'function') {
+              renderRhythmPage();
+            }
+          } catch(e) {
+            console.error('Failed to load rhythm data:', e);
+          }
+        }
+        
+        // Load rhythm data when navigating to rhythm page
+        const originalNavigate = window.navigateTo;
+        window.navigateTo = function(page) {
+          if (originalNavigate) originalNavigate(page);
+          if (page === 'rhythm' || page === 'games') {
+            if (!window.rhythmData) {
+              loadRhythmData();
+            }
+          }
+        };
+
+
         // Load everything on page load
         document.addEventListener('DOMContentLoaded', loadAllData);
 
