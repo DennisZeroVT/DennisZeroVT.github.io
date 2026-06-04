@@ -1,1 +1,25 @@
-[]
+[
+  {
+    "id": "album-1780532205221",
+    "name": "Solo EP 💿",
+    "artist": "Dennis Zero VT",
+    "year": 2026,
+    "cover": "",
+    "status": "In Progress",
+    "description": "So|o ep",
+    "tracklist": [
+      {
+        "name": "Snowfall",
+        "duration": "",
+        "status": "planned",
+        "key": "snowfall"
+      },
+      {
+        "name": "Stuck in tims",
+        "duration": "",
+        "status": "planned",
+        "key": "stuck_in_time"
+      }
+    ]
+  }
+]
