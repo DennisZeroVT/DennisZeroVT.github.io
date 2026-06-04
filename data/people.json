@@ -1,26 +1,5 @@
 [
   {
-    "id": "person-1780532408406",
-    "name": "New Person",
-    "handle": "",
-    "role": "",
-    "avatar": "",
-    "bio": "",
-    "tags": [
-      "friend"
-    ],
-    "links": {
-      "twitter": "",
-      "spotify": "",
-      "instagram": "",
-      "website": ""
-    },
-    "projects": [],
-    "color": "text-purple-400",
-    "icon": "👤",
-    "showOnHome": true
-  },
-  {
     "id": "erik",
     "name": "Erik",
     "handle": "eri_k416",
