@@ -1603,77 +1603,549 @@ body.optimized .glow-hover {
         let categories = [];
 
         
-
-
 function renderPeople() {
   const collabsGrid = document.querySelector('#collabs .people-grid');
   const friendsGrid = document.querySelector('#friends .people-grid');
-  if (!collabsGrid || !friendsGrid) {
-    console.log('Grids not found');
-    return;
-  }
+  if (!collabsGrid || !friendsGrid) return;
   
   collabsGrid.innerHTML = '';
   friendsGrid.innerHTML = '';
-  
-  console.log('Rendering', Object.keys(personData).length, 'people');
   
   Object.values(personData).forEach(person => {
     const tags = person.tags || [];
     const isCollab = tags.includes('collab');
     const isFriend = tags.includes('friend');
+    const avatar = person.avatar || `Friends/${person.id}.jpg`;
+    const twitter = person.links?.twitter || '';
     
-    // Build card HTML with ALL CMS fields
-    const avatar = person.avatar || `Friends/${person.id}.png`;
-    const handle = person.handle || '';
-    const role = person.role || '';
-    const bio = person.bio || '';
-    const color = person.color || 'from-[#A596DA]/30 to-[#8B78CB]/10';
-    const twitter = person.links && person.links.twitter ? person.links.twitter : '';
-    const spotify = person.links && person.links.spotify ? person.links.spotify : '';
-    
-    const cardHTML = `
-      <div class="person-card ${person.id}" onclick="openPersonOverlay && openPersonOverlay('${person.id}')">
-        <div class="person-banner"><div class="person-banner-bg bg-gradient-to-br ${color}"></div></div>
-        <div class="person-avatar-wrap">
-          <img alt="${person.name}" loading="lazy" src="${avatar}" onerror="this.onerror=null; this.src='https://via.placeholder.com/150/A596DA/ffffff?text=${person.name.charAt(0)}'"/>
-        </div>
+    const createCard = () => {
+      const div = document.createElement('div');
+      div.className = 'person-card ' + person.id;
+      div.onclick = () => window.openPersonOverlay && window.openPersonOverlay(person.id);
+      div.innerHTML = `
+        <div class="person-banner"><div class="person-banner-bg bg-gradient-to-br ${person.color||'from-[#A596DA]/30 to-[#8B78CB]/10'}"></div></div>
+        <div class="person-avatar-wrap"><img alt="${person.name}" loading="lazy" src="${avatar}" onerror="this.style.opacity='0.3'"/></div>
         <div class="person-body">
           <div class="person-name">${person.name}</div>
-          <div class="person-handle">${handle}</div>
-          <span class="person-role">${role}</span>
-          <p class="person-bio">${bio}</p>
-          ${person.projects && person.projects.length ? `<div class="person-tags">${person.projects.map(p=>`<span class="p-tag">${p}</span>`).join('')}</div>` : ''}
-          ${twitter ? `<a class="twitter-btn" href="${twitter}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632Z"/></svg> Twitter</a>` : ''}
-        </div>
-      </div>
-    `;
+          <div class="person-handle">${person.handle||''}</div>
+          <span class="person-role">${person.role||''}</span>
+          <p class="person-bio">${person.bio||''}</p>
+          ${person.projects?.length ? `<div class="person-tags">${person.projects.map(p=>`<span class="p-tag">${p}</span>`).join('')}</div>` : ''}
+          ${twitter ? `<a class="twitter-btn" href="${twitter}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5-6.6-5.1 6.6H2.7l7.7-8.8L1.2 2.2H8l4.3 5.6 5.9-5.6z"/></svg> Twitter</a>` : ''}
+        </div>`;
+      return div;
+    };
     
-    // Add to collabs
-    if (isCollab) {
-      const div = document.createElement('div');
-      div.innerHTML = cardHTML;
-      collabsGrid.appendChild(div.firstElementChild);
-    }
-    
-    // Add to friends
-    if (isFriend) {
-      const div = document.createElement('div');
-      div.innerHTML = cardHTML;
-      friendsGrid.appendChild(div.firstElementChild);
-    }
-    
-    // Default if no tags
-    if (!isCollab && !isFriend) {
-      const div = document.createElement('div');
-      div.innerHTML = cardHTML;
-      friendsGrid.appendChild(div.firstElementChild);
-    }
+    if (isCollab) collabsGrid.appendChild(createCard());
+    if (isFriend) friendsGrid.appendChild(createCard());
+    if (!isCollab && !isFriend) friendsGrid.appendChild(createCard());
   });
-  
-  console.log('Collabs:', collabsGrid.children.length, 'Friends:', friendsGrid.children.length);
 }
 
+async function loadAllData() {
+          try {
+            const [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
+              fetch('./data/songs.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/people.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/albums.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/posts.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/categories.json').then(r=>r.json()).catch(()=>[])
+            ]);
+
+            // Convert arrays to the format your site expects
+            SONGS = Object.fromEntries(songsData.map(s => [s.id, {
+              name: s.title,
+              artist: s.artist,
+              year: s.year,
+              src: s.audio,
+              cover: s.coverEmoji || '🎵',
+              coverImg: s.cover,
+              badges: s.badges || [],
+              streaming: s.streaming || {},
+              about: s.about || '',
+              thoughts: s.thoughts || '',
+              Miscellaneous: s.miscellaneous || '',
+              behindTheScenes: s.behindTheScenes || ''
+            }]));
+
+            personData = Object.fromEntries(peopleData.map(p => [p.id, {
+              name: p.name,
+              role: p.role,
+              color: p.color || 'from-purple-500/30 to-purple-600/10',
+              icon: p.icon || 'fas fa-user',
+              bio: p.bio,
+              links: Object.entries(p.links || {}).map(([k,v]) => ({
+                name: k.charAt(0).toUpperCase() + k.slice(1),
+                icon: `fab fa-${k}`,
+                url: v
+              })),
+              projects: p.projects || []
+            }]));
+
+            ALBUMS = Object.fromEntries(albumsData.map(a => [a.id, a]));
+            renderPeople();
+
+            allPosts = postsData.sort((a,b) => new Date(b.date) - new Date(a.date));
+            categories = catsData.length ? catsData : [
+              {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
+              {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
+              {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
+            ];
+
+            // Now initialize your site
+            if (typeof renderCategories === 'function') renderCategories();
+            if (typeof renderSubs === 'function') renderSubs();
+            if (typeof renderPosts === 'function') renderPosts();
+            if (typeof initializeMusic === 'function') initializeMusic();
+            if (typeof renderPeople === 'function') renderPeople();
+            if (typeof renderSongsGrid === 'function') renderSongsGrid();
+
+          } catch (e) {
+            console.error('Failed to load data:', e);
+          }
+        }
+
+        // Load everything on page load
+        document.addEventListener('DOMContentLoaded', loadAllData);
+
+
+
+        const platformIcons = {
+            spotify: '<i class="fab fa-spotify"></i>',
+            apple: '<i class="fab fa-apple"></i>',
+            tidal: '<i class="fas fa-music"></i>',
+            youtube: '<i class="fab fa-youtube"></i>',
+            amazon: '<i class="fab fa-amazon"></i>',
+            deezer: '<i class="fas fa-record-vinyl"></i>'
+        };
+
+        // Render Songs Grid
+        
+        // Badge brand colors
+        function getBadgeStyle(name) {
+            const map = {
+                'Spotify': {bg: '#1DB954', color: '#000'},
+                'Apple Music': {bg: '#FA243C', color: '#fff'},
+                'Apple': {bg: '#FA243C', color: '#fff'},
+                'Deezer': {bg: '#00C7F2', color: '#000'},
+                'Tidal': {bg: '#000000', color: '#fff'},
+                'Amazon': {bg: '#FF9900', color: '#000'},
+                'YouTube Music': {bg: '#FF0000', color: '#fff'},
+                'YouTube': {bg: '#FF0000', color: '#fff'},
+                'Released': {bg: '#A596DA', color: '#000'},
+                'Available': {bg: '#A596DA', color: '#000'},
+                'Spotify': {bg: '#1DB954', color: '#fff'}
+            };
+            return map[name] || {bg: 'var(--bg-card-hover)', color: 'var(--text-secondary)'};
+        }
+
+function renderSongsGrid() {
+    const grid = document.getElementById('songs-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    // Use Tailwind grid matching new site
+    grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+    
+    Object.keys(SONGS).forEach(key => {
+        const song = SONGS[key];
+        const card = document.createElement('div');
+        card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
+        card.onclick = () => openSong(key);
+        
+        card.innerHTML = `
+            <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+                ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
+                <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">${song.cover || '🎵'}</div>
+                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                    <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold text-white truncate">${song.name}</h3>
+                <p class="text-sm text-[var(--text-secondary)] mt-1">${song.year || ''} • ${song.artist}</p>
+                <div class="flex gap-1.5 mt-3 flex-wrap">
+                    ${(song.badges || []).slice(0,3).map(b => `<span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">${b}</span>`).join('')}
+                </div>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderAlbumsGrid() {
+    const grid = document.getElementById('albums-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    Object.keys(ALBUMS).forEach(key => {
+        const album = ALBUMS[key];
+        const card = document.createElement('div');
+        card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
+        card.onclick = () => openAlbum(key);
+        card.innerHTML = `
+            <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+                ${album.coverImg ? `<img src="${album.coverImg}" alt="${album.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60"></div>
+                <div class="absolute bottom-3 left-3">
+                    <span class="px-2 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] text-[10px] font-medium backdrop-blur">${album.status}</span>
+                </div>
+            </div>
+            <div class="p-4">
+                <h3 class="font-semibold text-white truncate">${album.name}</h3>
+                <p class="text-sm text-[var(--text-secondary)] mt-1">${album.year} • ${album.tracks} tracks</p>
+            </div>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+
+
+        // Page Navigation System
+        function navigateTo(page) {
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.getElementById(page).classList.add('active');
+            
+            // Hide/show home hero and featured projects
+            const homeHero = document.getElementById('home');
+            const featured = document.getElementById('featured-projects');
+            if(page === 'home') {
+                if(homeHero) homeHero.style.display = 'block';
+                if(featured) featured.style.display = 'block';
+            } else {
+                if(homeHero) homeHero.style.display = 'none';
+                if(featured) featured.style.display = 'none';
+            }
+            
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                link.classList.add('text-[var(--text-secondary)]');
+            });
+            
+            document.querySelectorAll('.nav-link[data-page="' + page + '"]').forEach(link => {
+                link.classList.add('active');
+                link.classList.remove('text-[var(--text-secondary)]');
+            });
+            
+            document.querySelectorAll('.nav-link-mobile').forEach(link => {
+                if (link.getAttribute('data-page') === page) {
+                    link.classList.remove('text-[var(--text-secondary)]');
+                } else {
+                    link.classList.add('text-[var(--text-secondary)]');
+                }
+            });
+            
+            document.getElementById('mobile-menu').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Nav link clicks
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.getAttribute('data-page');
+                navigateTo(page);
+            });
+        });
+        
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+        
+        // Person Overlay System
+        function openPersonOverlay(personId) {
+            const person = personData[personId];
+            if (!person) return;
+            
+            const overlay = document.getElementById('person-overlay');
+            const header = document.getElementById('overlay-header');
+            const body = document.getElementById('overlay-body');
+            
+            header.innerHTML = `
+                <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color} flex items-center justify-center">
+                    <i class="${person.icon} text-2xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold">${person.name}</h2>
+                    <p class="text-[var(--accent)]">${person.role}</p>
+                </div>
+            `;
+            
+            let projectsHTML = person.projects.length > 0 ? `
+                <div class="mb-6">
+                    <h3 class="font-bold mb-3 text-lg">Collaborated On:</h3>
+                    <div class="flex flex-wrap gap-2">
+                        ${person.projects.map(p => `<span class="px-3 py-1 rounded-full glass text-sm">${p}</span>`).join('')}
+                    </div>
+                </div>
+            ` : '';
+            
+            let linksHTML = `
+                <div class="flex gap-4">
+                    ${person.links.map(link => `
+                        <a href="${link.url}" target="_blank" class="w-12 h-12 rounded-lg glass flex items-center justify-center text-[var(--text-secondary)] hover:text-[#A596DA] glow-hover">
+                            <i class="${link.icon} text-xl"></i>
+                        </a>
+                    `).join('')}
+                </div>
+            `;
+            
+            body.innerHTML = `
+                <p class="text-[var(--text-secondary)] leading-relaxed mb-6">${person.bio}</p>
+                ${projectsHTML}
+                <h3 class="font-bold mb-3 text-lg">Connect:</h3>
+                ${linksHTML}
+            `;
+            
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePersonOverlay(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('person-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Song Overlay System
+        function openSong(songId) {
+            const song = SONGS[songId];
+            if (!song) return;
+            
+            const overlay = document.getElementById('song-overlay');
+            const header = document.getElementById('song-header');
+            const body = document.getElementById('song-body');
+            
+            const coverSrc = document.getElementById(`cover-${songId.replace(/_/g, '')}`)?.src || song.coverImg;
+            
+            header.innerHTML = `
+                <div class="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-[#A596DA]/30 to-[#8B78CB]/10 flex items-center justify-center flex-shrink-0">
+                    <img src="${coverSrc}" alt="${song.name}" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="text-4xl" style="display:none;">${song.cover}</div>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-bold">${song.name}</h2>
+                    <p class="text-[var(--accent)] text-lg">${song.artist} • ${song.year}</p>
+                </div>
+            `;
+            
+            const streamingLinks = Object.keys(song.streaming).map(platform => {
+                const url = song.streaming[platform];
+                const icon = platformIcons[platform] || '<i class="fas fa-music"></i>';
+                const name = platform.charAt(0).toUpperCase() + platform.slice(1);
+                const colorMap = {
+                    spotify: {bg: '#1DB954', color: '#000', label: 'Spotify'},
+                    apple: {bg: '#FA243C', color: '#fff', label: 'Apple'},
+                    tidal: {bg: '#000000', color: '#fff', label: 'Tidal'},
+                    youtube: {bg: '#FF0000', color: '#fff', label: 'Youtube'},
+                    amazon: {bg: '#FF9900', color: '#000', label: 'Amazon'},
+                    deezer: {bg: '#00C7F2', color: '#000', label: 'Deezer'}
+                };
+                const style = colorMap[platform] || {bg: 'rgba(165,150,218,0.2)', color: '#A596DA', label: name};
+                return `
+                    <a href="${url}" target="_blank" class="badge-platform" style="background:${style.bg}; color:${style.color}; border-color:${style.bg}; font-weight:600;">
+                        ${icon}
+                        <span>${style.label}</span>
+                    </a>
+                `;
+            }).join('');
+            
+            body.innerHTML = `
+                <div class="mb-6">
+                    <div class="dz-player" data-src="${song.src}">
+  <button class="dz-play" aria-label="Play"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>
+  <div class="dz-time">0:00</div>
+  <div class="dz-progress"><div class="dz-progress-bg"></div><div class="dz-progress-fill"></div><div class="dz-progress-handle"></div></div>
+  <div class="dz-duration">0:00</div>
+  <audio preload="metadata" style="display:none"></audio>
+</div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mb-8">
+                    ${song.badges.map(b => { const s = getBadgeStyle(b); return `<span class="px-3 py-1 rounded-full text-sm font-medium" style="background:${s.bg};color:${s.color};box-shadow:0 0 8px ${s.bg}40">${b}</span>`; }).join('')}
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-3 gradient-text">About the Song</h3>
+                    <p class="text-[var(--text-secondary)] leading-relaxed">${song.about}</p>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-3 gradient-text">My Thoughts</h3>
+                    <p class="text-[var(--text-secondary)] leading-relaxed">${song.thoughts}</p>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-3 gradient-text">Miscellaneous</h3>
+                    <p class="text-[var(--text-secondary)] leading-relaxed">${song.Miscellaneous}</p>
+                </div>
+                
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold mb-3 gradient-text">Behind The Scenes</h3>
+                    <p class="text-[var(--text-secondary)] leading-relaxed">${song.behindTheScenes}</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4 gradient-text">Listen On:</h3>
+                    <div class="flex flex-wrap gap-3">
+                        ${streamingLinks}
+                    </div>
+                </div>
+            `;
+            
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSongOverlay(event) {
+            if (event && event.target !== event.currentTarget) return;
+            document.getElementById('song-overlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Go to song function for references
+        function goToSong(songId) {
+            closePersonOverlay();
+            navigateTo('music');
+            setTimeout(() => {
+                openSong(songId);
+            }, 300);
+        }
+        
+        // Blog Pagination
+        let currentBlogPage = 0;
+        const blogPosts = document.querySelectorAll('.blog-post');
+        const blogPageBtns = document.querySelectorAll('.blog-page-btn');
+        
+        function showBlogPost(index) {
+            blogPosts.forEach(post => post.classList.remove('active'));
+            blogPageBtns.forEach(btn => {
+                btn.classList.remove('bg-[#A596DA]', 'text-white');
+                btn.classList.add('glass');
+            });
+            
+            if (blogPosts[index]) {
+                blogPosts[index].classList.add('active');
+            }
+            if (blogPageBtns[index]) {
+                blogPageBtns[index].classList.add('bg-[#A596DA]', 'text-white');
+                blogPageBtns[index].classList.remove('glass');
+            }
+            currentBlogPage = index;
+        }
+        
+        function changeBlogPage(direction) {
+            const newIndex = currentBlogPage + direction;
+            if (newIndex >= 0 && newIndex < blogPosts.length) {
+                showBlogPost(newIndex);
+            }
+        }
+        
+        // Handle ESC key for overlay
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closePersonOverlay();
+                closeSongOverlay();
+            }
+        });
+        
+        
+function updateTabletViz() {
+  const full = TABLET.full;
+  const act = TABLET.active;
+  const ratioFull = (full.w / full.h).toFixed(2);
+  const ratioAct = (act.w / act.h).toFixed(4);
+  
+  const modelEl = document.getElementById('tablet-model');
+  const specsEl = document.getElementById('tablet-specs');
+  if (modelEl) modelEl.textContent = TABLET.model + ' — area';
+  if (specsEl) specsEl.textContent = 'Full: ' + full.w + '×' + full.h + 'mm (' + ratioFull + ') • Active: ' + act.w + '×' + act.h + 'mm (' + ratioAct + ')';
+  
+  const viz = document.getElementById('tablet-viz');
+  if (!viz) return;
+  
+  const scale = 240 / full.w;
+  const actW = act.w * scale;
+  const actH = act.h * scale;
+  const offsetX = (act.x || 0) * scale;
+  const offsetY = (full.h - act.h - (act.y || 0)) * scale;
+  
+  viz.innerHTML = '<div class="absolute inset-0 border-2 border-white/70"></div>' +
+    '<div class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-white/70 font-mono">' + full.w + 'mm</div>' +
+    '<div class="absolute -left-8 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-white/70 font-mono">' + full.h + 'mm</div>' +
+    '<div class="absolute bg-[#A596DA]" style="width:' + actW + 'px; height:' + actH + 'px; left:' + offsetX + 'px; bottom:' + offsetY + 'px;">' +
+      '<div class="absolute -top-4 left-1/2 -translate-x-1/2 text-[9px] text-black/70 font-mono">' + act.w + 'mm</div>' +
+      '<div class="absolute -left-6 top-1/2 -translate-y-1/2 -rotate-90 text-[9px] text-black/70 font-mono">' + act.h + 'mm</div>' +
+      '<div class="absolute inset-0 flex flex-col items-center justify-center">' +
+        '<div class="w-1 h-1 bg-black rounded-full mb-0.5"></div>' +
+        '<div class="text-[10px] text-black font-mono font-bold">' + ratioAct + '</div>' +
+      '</div>' +
+    '</div>';
+}
+
+// Initialize
+        window.addEventListener('load', () => {
+            updateTabletViz();
+            renderSongsGrid();
+        renderAlbumsGrid();
+            const hash = window.location.hash.substring(1);
+            if (hash && document.getElementById(hash)) {
+                navigateTo(hash);
+            }
+        });
+    </script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();
+    // Rhythm tabs
+    document.addEventListener('click', function(e) {
+        if (e.target.matches('.rhythm-tab')) {
+            document.querySelectorAll('.rhythm-tab').forEach(btn => {
+                btn.classList.remove('active', 'bg-[#A596DA]/20', 'text-[#A596DA]');
+                btn.classList.add('bg-white/5');
+            });
+            e.target.classList.add('active', 'bg-[#A596DA]/20', 'text-[#A596DA]');
+            e.target.classList.remove('bg-white/5');
+            
+            document.querySelectorAll('.rhythm-panel').forEach(p => p.classList.add('hidden'));
+            const target = e.target.dataset.rhythm;
+            document.getElementById('rhythm-' + target).classList.remove('hidden');
+        }
+    });
+</script>
+<script src="data.js"></script>
+<script src="fill.js"></script>
+<script>
+function initDZPlayer(song){
+  const p = document.querySelector('.dz-player');
+  if(!p) return;
+  const audio = p.querySelector('audio');
+  const play = p.querySelector('.dz-play');
+  const fill = p.querySelector('.dz-progress-fill');
+  const handle = p.querySelector('.dz-progress-handle');
+  const bar = p.querySelector('.dz-progress');
+  const time = p.querySelector('.dz-time');
+  const dur = p.querySelector('.dz-duration');
+  const fmt = s => { if(!isFinite(s)) return '0:00'; const m=Math.floor(s/60), sec=Math.floor(s%60).toString().padStart(2,'0'); return m+':'+sec; };
+  audio.src = song.src;
+  audio.load();
+  play.onclick = async () => { try { if(audio.paused){ await audio.play(); } else { audio.pause(); } } catch(e){ console.log('Play blocked',e); } };
+  audio.onplay = ()=> play.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>';
+  audio.onpause = ()=> play.innerHTML='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+  audio.ontimeupdate = ()=>{ const pct = audio.duration? audio.currentTime/audio.duration*100 : 0; fill.style.width = pct+'%'; handle.style.left = pct+'%'; time.textContent = fmt(audio.currentTime); };
+  audio.onloadedmetadata = ()=> dur.textContent = fmt(audio.duration);
+  let drag=false;
+  const seek = e => { const r=bar.getBoundingClientRect(); const x=((e.clientX||e.touches?.[0]?.clientX)-r.left); if(audio.duration) audio.currentTime = Math.max(0,Math.min(x/r.width,1))*audio.duration; };
+  bar.onmousedown = e=>{drag=true; seek(e)};
+  window.addEventListener('mousemove', e=>drag&&seek(e));
+  window.addEventListener('mouseup', ()=>drag=false);
+  bar.ontouchstart = e=>{drag=true; seek(e)};
+  window.addEventListener('touchmove', e=>drag&&seek(e));
+  window.addEventListener('touchend', ()=>drag=false);
+}
 
 </script>
 <!-- Polished Song Overlay -->
@@ -2239,3 +2711,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
 </body>
 </html>
+*
