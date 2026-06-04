@@ -355,6 +355,7 @@ input[type="color"]{width:44px;height:38px;padding:0;border-radius:8px;border:1p
       <button class="tab active" data-tab="blog">BLOG</button>
       <button class="tab" data-tab="songs">SONGS</button>
       <button class="tab" data-tab="people">PEOPLE</button>
+      <button class="tab" data-tab="categories">CATEGORIES</button>
       <button class="tab" data-tab="albums">ALBUMS</button>
     </nav>
     <div class="connect">
@@ -407,11 +408,11 @@ const UPLOADS = {
   people: 'Friends/'
 };
 
-const FALLBACK_CATEGORIES = {
-  "Game Dev": ["Unity","Devlog","Tutorial"],
-  "Music Production": ["FL Studio","Release","Behind the Scenes"],
-  "Daily Life": ["Thoughts","Update"]
-};
+const FALLBACK_CATEGORIES = [
+  {"id":"game-dev","name":"Game Dev","color":"#A596DA","subs":["Snowfall","Stuck In Time","Other Projects"]},
+  {"id":"music-production","name":"Music Production","color":"#ec4899","subs":["Snowfall","Originals","Remixes","Soundtracks","Behind the Beat"]},
+  {"id":"daily-life","name":"Daily Life","color":"#22c55e","subs":["Workflow","Thoughts","Updates","Gear"]}
+];
 const FALLBACK_POSTS = [
   { id:"welcome-2025", title:"Welcome to the new CMS", category:"Daily Life", subcategory:"Update", date:"2025-01-15", color:"#A596DA", blocks:[{type:"text",content:"This is a glassmorphism CMS synced directly to GitHub. Write with blocks, upload images, and publish instantly."},{type:"divider"},{type:"text",content:"Legacy posts with body/images are auto-converted."}]} 
 ];
@@ -454,7 +455,7 @@ const state = {
   token: localStorage.getItem('dzcms_token')||'',
   connected:false,
   shas:{},
-  data:{ posts:[], songs:[], people:[], albums:[], categories:{} },
+  data:{ posts:[], songs:[], people:[], albums:[], categories:[] },
   tab:'blog',
   currentId:null,
   dirty:false
@@ -593,6 +594,8 @@ function renderList(){
       if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent=it.coverEmoji||'🎵';
     } else if(state.tab==='people'){
       if(it.avatar){ const img=document.createElement('img'); img.src=it.avatar; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent=it.icon||'👤';
+    } else if(state.tab==='categories'){
+      thumb.style.background = it.color+'20'; thumb.style.borderColor = it.color+'40'; thumb.style.color = it.color; thumb.textContent = it.name.charAt(0); thumb.style.fontWeight='700';
     } else {
       if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent='💿';
     }
@@ -602,6 +605,7 @@ function renderList(){
     if(state.tab==='blog') s.innerHTML=`<span>${it.category||''}</span> • <span>${it.date||''}</span>`;
     else if(state.tab==='songs') s.innerHTML=`<span>${it.artist||''}</span> • <span>${it.year||''}</span>`;
     else if(state.tab==='people'){ s.innerHTML=''; (it.tags||[]).forEach(tag=>{ const b=document.createElement('span'); b.className='badge '+tag; b.textContent=tag; s.appendChild(b); }); }
+    else if(state.tab==='categories'){ s.innerHTML=`<span class="badge" style="background:${it.color}20;color:${it.color};border-color:${it.color}40">${it.id}</span> • <span>${it.subs.length} subs</span>`; }
     else s.innerHTML=`<span>${it.status||''}</span> • <span>${it.year||''}</span>`;
     meta.appendChild(t); meta.appendChild(s);
     div.appendChild(thumb); div.appendChild(meta);
@@ -609,7 +613,7 @@ function renderList(){
   });
 }
 function getCurrentArray(){
-  return state.tab==='blog'?state.data.posts:state.tab==='songs'?state.data.songs:state.tab==='people'?state.data.people:state.data.albums;
+  return state.tab==='blog'?state.data.posts:state.tab==='songs'?state.data.songs:state.tab==='people'?state.data.people:state.tab==='categories'?state.data.categories:state.data.albums;
 }
 function getCurrentItem(){
   return getCurrentArray().find(x=>x.id===state.currentId);
@@ -624,6 +628,7 @@ function renderEditor(){
   if(state.tab==='blog') renderBlogEditor(item);
   else if(state.tab==='songs') renderSongEditor(item);
   else if(state.tab==='people') renderPeopleEditor(item);
+  else if(state.tab==='categories') renderCategoryEditor(item);
   else renderAlbumEditor(item);
 }
 
@@ -815,6 +820,29 @@ async function savePerson(){
   try{ setStatus('Saving person…','work'); const arr=state.data.people; const i=arr.findIndex(x=>x.id===p.id); if(i>=0) arr[i]=p; else arr.push(p); await putFile(PATHS.people, arr, `person: ${p.name}`); setStatus('Person saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
 }
 async function deletePerson(){ const p=getCurrentItem(); if(!p||!confirm('Delete person?')) return; try{ setStatus('Deleting…','work'); state.data.people=state.data.people.filter(x=>x.id!==p.id); await putFile(PATHS.people, state.data.people, `delete person: ${p.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
+
+function renderCategoryEditor(item){
+  editorShell('Edit Category', saveCategories, ()=>deleteItem('categories'));
+  const wrap = document.createElement('div'); wrap.className='form';
+  wrap.innerHTML = `
+    <div class="field"><label>ID (slug)</label><input type="text" value="${item.id||''}" oninput="item.id=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'-');state.dirty=true"><div class="hint">lowercase-with-dashes</div></div>
+    <div class="field"><label>Name</label><input type="text" value="${item.name||''}" oninput="item.name=this.value;state.dirty=true;document.getElementById('catPrev').textContent=this.value"></div>
+    <div class="field"><label>Color</label><div class="color-row"><input type="color" value="${item.color||'#A596DA'}" oninput="item.color=this.value;state.dirty=true;updateCatPreview()"><input type="text" value="${item.color||'#A596DA'}" oninput="item.color=this.value;state.dirty=true;updateCatPreview()"></div></div>
+    <div class="field"><label>Preview</label><div style="padding:10px;background:rgba(0,0,0,.3);border-radius:8px"><span class="badge" id="catPrev" style="background:${(item.color||'#A596DA')}20;color:${item.color||'#A596DA'};border-color:${(item.color||'#A596DA')}40">${item.name||''}</span></div></div>
+    <div class="field full"><label>Subcategories</label><div id="subsList" class="chips" style="min-height:42px;padding:8px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(--border)"></div><div class="row" style="margin-top:8px"><input type="text" id="newSub" placeholder="Add subcategory..." style="flex:1"><button class="btn small" onclick="addCategorySub()">+ Add</button></div></div>
+  `;
+  document.querySelector('.ed-body').appendChild(wrap);
+  renderSubs();
+  document.getElementById('newSub').addEventListener('keydown', e=>{ if(e.key==='Enter'){ addCategorySub(); e.preventDefault(); }});
+  window.updateCatPreview = ()=>{ const p=document.getElementById('catPrev'); if(p){ p.style.background=item.color+'20'; p.style.color=item.color; p.style.borderColor=item.color+'40'; } };
+}
+function renderSubs(){
+  const item = getCurrentItem(); const box = document.getElementById('subsList'); if(!box) return;
+  box.innerHTML = (item.subs||[]).map((s,i)=>`<span class="chip" onclick="removeCategorySub(${i})">${s} ×</span>`).join('') || '<span class="hint">No subs yet</span>';
+}
+function addCategorySub(){ const item=getCurrentItem(); const inp=document.getElementById('newSub'); const v=inp.value.trim(); if(!v) return; item.subs=item.subs||[]; item.subs.push(v); inp.value=''; state.dirty=true; renderSubs(); renderList(); }
+function removeCategorySub(i){ const item=getCurrentItem(); item.subs.splice(i,1); state.dirty=true; renderSubs(); renderList(); }
+async function saveCategories(){ try{ setStatus('Saving categories.json…','work'); await putFile(PATHS.categories, state.data.categories, 'cms: update categories'); setStatus('Categories saved ✓','ok'); state.dirty=false; }catch(e){ setStatus('Save failed: '+e.message,'err'); } }
 
 function renderAlbumEditor(a){
   const body = editorShell('Edit Album', saveAlbum, deleteAlbum);
