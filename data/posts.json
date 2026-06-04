@@ -1,1 +1,16 @@
-[]
+[
+  {
+    "id": "post-1780543536115",
+    "title": "New Post",
+    "category": "Daily Life",
+    "subcategory": "Thoughts",
+    "date": "2026-06-04",
+    "color": "#a596da",
+    "blocks": [
+      {
+        "type": "text",
+        "content": "Hi"
+      }
+    ]
+  }
+]
