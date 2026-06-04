@@ -1757,131 +1757,80 @@ body.optimized .glow-hover {
 </footer>
 <script>
         // SONGS DATA
-        const SONGS = {
-          snowfall: {
-            name:'Snowfall', artist:'Dennis van Wijngaarden', year:'2025',
-            src:'SongData/Songs/snowfall.mp3', cover:'🌨️', coverImg:'SongData/AlbumArt/snowfall.png',
-            badges:['Released','Spotify','Apple Music','Tidal','Amazon','YouTube Music','Deezer'],
-            streaming:{
-              spotify:'https://open.spotify.com/track/0TxrNlfNSlwuncbt0wpVH6?utm_source=generator',
-              apple:'https://music.apple.com/be/album/snowfall-single/1840250772?l=nl',
-              tidal:'https://tidal.com/album/460721208/track/460721209',
-              youtube:'https://music.youtube.com/watch?v=9dDbeq0VEbc&si=c9Cb4I4bC4nwWi7e',
-              amazon:'https://music.amazon.com/albums/B0FNKT4Z2X',
-              deezer:'https://link.deezer.com/s/337CFXi1lRmRShDNd2jGO'
-            },
-            about:`Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track.`,
-            thoughts:`This was the first time I ever wrote lyrics for a song. I didn't plan it that way — I just wanted to make something for Erik and the words came naturally. I remember sitting with the melody for a long time before anything clicked. When it finally did, it felt like the song wrote itself.`,
-            Miscellaneous:`The track is the first song I ever released. It was released on Spotify in 2025`,
-            behindTheScenes:`I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic.`
-          },
-          stuck_in_time: {
-            name:'Stuck In Time', artist:'Dennis van Wijngaarden', year:'2026',
-            src:'SongData/Songs/stuckintime.mp3', cover:'🕒', coverImg:'SongData/AlbumArt/stuckintime.png',
-            badges:['Released','Spotify','Apple Music','Tidal','Amazon','YouTube Music','Deezer'],
-            streaming:{
-              spotify:'https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x?si=994999e942f14ba4',
-              apple:'https://music.apple.com/be/album/stuck-in-time-single/1893337152?l=nl',
-              tidal:'http://tidal.com/album/514925638/track/514925640',
-              youtube:'https://music.youtube.com/watch?v=pMVXcz9Ztpc&si=tf1PjhIUzJvQK1KT',
-              amazon:'https://music.amazon.com/tracks/B0GWS3FN2G?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_tyzyaI4xxzICjl1682gmmG0om',
-              deezer:'https://link.deezer.com/s/337CHhi5HVwqcozgsSI4d'
-            },
-            about:`Stuck In Time is about the feeling of being trapped in a cycle — staying the same while everything else moves on. It's a reflection on change, growth, and the fear of being left behind.`,
-            thoughts:`This song was inspired by a lot of personal experiences and conversations with friends. I wanted to capture that bittersweet feeling of nostalgia mixed with the anxiety of change. The lyrics came from a place of vulnerability, and I hope they resonate with anyone who's ever felt stuck in a moment they can't escape.`,
-            Miscellaneous:`the harmonies in the song is sang by me its actualy one of the first time i used my own voice in my song.`,
-            behindTheScenes:`i went back in cubase for this one. The drums were recorded live by my friend Kula i met during an idol group project, which added a lot of energy to the track. I built the produced the song to finish and i send the mockup drums to kula and told him you can put your own spin to the drums and he killed it, like i put a half time section in it before the key change and he went insane on the half time section and his drums conbined with my guitars and the song just came alive, it was a really fun process and i hope to work with him again in the future.`
+
+        // ===== GITHUB DATA LOADER (replaces Firebase + consts) =====
+        let SONGS = {};
+        let ALBUMS = {};
+        let personData = {};
+        let allPosts = [];
+        let categories = [];
+
+        async function loadAllData() {
+          try {
+            const [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
+              fetch('./data/songs.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/people.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/albums.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/posts.json').then(r=>r.json()).catch(()=>[]),
+              fetch('./data/categories.json').then(r=>r.json()).catch(()=>[])
+            ]);
+
+            // Convert arrays to the format your site expects
+            SONGS = Object.fromEntries(songsData.map(s => [s.id, {
+              name: s.title,
+              artist: s.artist,
+              year: s.year,
+              src: s.audio,
+              cover: s.coverEmoji || '🎵',
+              coverImg: s.cover,
+              badges: s.badges || [],
+              streaming: s.streaming || {},
+              about: s.about || '',
+              thoughts: s.thoughts || '',
+              Miscellaneous: s.miscellaneous || '',
+              behindTheScenes: s.behindTheScenes || ''
+            }]));
+
+            personData = Object.fromEntries(peopleData.map(p => [p.id, {
+              name: p.name,
+              role: p.role,
+              color: p.color || 'from-purple-500/30 to-purple-600/10',
+              icon: p.icon || 'fas fa-user',
+              bio: p.bio,
+              links: Object.entries(p.links || {}).map(([k,v]) => ({
+                name: k.charAt(0).toUpperCase() + k.slice(1),
+                icon: `fab fa-${k}`,
+                url: v
+              })),
+              projects: p.projects || []
+            }]));
+
+            ALBUMS = Object.fromEntries(albumsData.map(a => [a.id, a]));
+
+            allPosts = postsData.sort((a,b) => new Date(b.date) - new Date(a.date));
+            categories = catsData.length ? catsData : [
+              {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
+              {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
+              {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
+            ];
+
+            // Now initialize your site
+            if (typeof renderCategories === 'function') renderCategories();
+            if (typeof renderSubs === 'function') renderSubs();
+            if (typeof renderPosts === 'function') renderPosts();
+            if (typeof initializeMusic === 'function') initializeMusic();
+            if (typeof renderPeople === 'function') renderPeople();
+            if (typeof renderSongsGrid === 'function') renderSongsGrid();
+
+          } catch (e) {
+            console.error('Failed to load data:', e);
           }
-        };
-        const ALBUMS = {
-          solo_ep: {
-            name: 'Solo EP 💿',
-            artist: 'Dennis van Wijngaarden',
-            year: '2026',
-            coverImg: 'SongData/AlbumArt/stuckintime.png',
-            status: 'In Progress',
-            description: 'A collection of solo tracks i made on the side. It includes my released singles and some new songs I\'m working on.',
-            tracks: 3,
-            released: 2,
-            inProgress: 1,
-            tracklist: [
-              {name: 'Snowfall', duration: '3:24', status: 'released', key: 'snowfall'},
-              {name: 'Till the End', duration: '3:51', status: 'released', key: 'till_the_end'},
-              {name: 'Untitled #3', duration: '—', status: 'wip'}
-            ]
-          }
-        };
+        }
 
-// ===== TABLET CONFIG - EDIT HERE LIKE OTD =====
-const TABLET = {
-  model: 'Wacom CTL-4100WL',
-  full: { w: 152, h: 95 },
-  active: { w: 135.111, h: 76, x: 8.5, y: 9.5 },
-  display: { w: 1920, h: 1080 }
-};
-// ==============================================
+        // Load everything on page load
+        document.addEventListener('DOMContentLoaded', loadAllData);
 
 
-        // Person data for overlays
-        const personData = {
-            erik: {
-                name: 'Erik',
-                role: 'Friend // eri_k416',
-                color: 'from-blue-500/30 to-blue-600/10',
-                icon: 'fas fa-snowflake',
-                bio: 'Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry atmosphere, the lyrics, the melancholy. He was the reason I wrote vocals for the very first time.',
-                links: [
-                    { name: 'Twitter', icon: 'fab fa-x-twitter', url: 'https://x.com/eri_k416?s=20' },
-                    { name: 'Spotify', icon: 'fab fa-spotify', url: 'https://open.spotify.com/track/0TxrNlfNSlwuncbt0wpVH6' }
-                ],
-                projects: ['Snowfall']
-            },
-            kula: {
-                name: 'Kula',
-                role: 'Friend, Drummer // @mee_yawwwwww',
-                color: 'from-[#A596DA]/30 to-[#8B78CB]/10',
-                icon: 'fas fa-drum',
-                bio: 'Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music and he turned out to be a really chill guy. He mentioned wanting to be part of something, so I invited him to play drums on my single Stuck In Time. We worked well together, and I will likely ask him to handle the drums again in future projects.',
-                links: [
-                    { name: 'Twitter', icon: 'fab fa-x-twitter', url: 'https://x.com/mee_yawwwwww?s=20' },
-                    { name: 'Spotify', icon: 'fab fa-spotify', url: 'https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x' }
-                ],
-                projects: ['Stuck In Time']
-            },
-            vivid: {
-                name: 'Vivid',
-                role: 'best Friend, // @vivid_exile',
-                color: 'from-pink-500/30 to-pink-600/10',
-                icon: 'fas fa-guitar',
-                bio: 'An ex-military veteran I met in my very first Discord server. Despite a troubled past he showed incredible strength and kindness. we became friends and helped each other through a lot. as he became my first friend when i came out of my shell, He was the person who got me back into streaming and introduced me to a whole new circle of people — including Erik',
-                links: [
-                    { name: 'Twitter', icon: 'fab fa-x-twitter', url: 'https://x.com/vivid_exile?s=20' },
-                ],
-                projects: []
-            }, 
-            skylar: {
-                name: 'Skylar',
-                role: 'Friend, // @skylar_corgi',
-                color: 'from-purple-500/30 to-purple-600/10',
-                icon: 'fas fa-guitar',
-                bio: 'Skylar is a best friend i met trough vivid on vivid first stream she and vivid are great support',
-                links: [
-                    { name: 'Twitter', icon: 'fab fa-x-twitter', url: 'https://x.com/skylar_corgi?s=20' },
-                ],
-                projects: []
-            },        
-            nox: {
-                name: 'Nox',
-                role: 'Friend, // @Nox_Daemon',
-                color: 'from-blue-500/30 to-blue-600/10',
-                icon: 'fas fa-guitar',
-                bio: 'Nox is a friend i met trough vivid again lol, i saw vivid inetracting with nox a lot and weeks later she became on of my friends aswell,',
-                links: [
-                    { name: 'Twitter', icon: 'fab fa-x-twitter', url: 'https://x.com/Nox_Daemon?s=20' },
-                ],
-                projects: []
-            },               
-        };
 
         const platformIcons = {
             spotify: '<i class="fab fa-spotify"></i>',
