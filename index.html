@@ -1602,47 +1602,7 @@ body.optimized .glow-hover {
         let allPosts = [];
         let categories = [];
 
-        
-function renderPeople() {
-  const collabsGrid = document.querySelector('#collabs .people-grid');
-  const friendsGrid = document.querySelector('#friends .people-grid');
-  if (!collabsGrid || !friendsGrid) return;
-  
-  collabsGrid.innerHTML = '';
-  friendsGrid.innerHTML = '';
-  
-  Object.values(personData).forEach(person => {
-    const tags = person.tags || [];
-    const isCollab = tags.includes('collab');
-    const isFriend = tags.includes('friend');
-    const avatar = person.avatar || `Friends/${person.id}.jpg`;
-    const twitter = person.links?.twitter || '';
-    
-    const createCard = () => {
-      const div = document.createElement('div');
-      div.className = 'person-card ' + person.id;
-      div.onclick = () => window.openPersonOverlay && window.openPersonOverlay(person.id);
-      div.innerHTML = `
-        <div class="person-banner"><div class="person-banner-bg bg-gradient-to-br ${person.color||'from-[#A596DA]/30 to-[#8B78CB]/10'}"></div></div>
-        <div class="person-avatar-wrap"><img alt="${person.name}" loading="lazy" src="${avatar}" onerror="this.style.opacity='0.3'"/></div>
-        <div class="person-body">
-          <div class="person-name">${person.name}</div>
-          <div class="person-handle">${person.handle||''}</div>
-          <span class="person-role">${person.role||''}</span>
-          <p class="person-bio">${person.bio||''}</p>
-          ${person.projects?.length ? `<div class="person-tags">${person.projects.map(p=>`<span class="p-tag">${p}</span>`).join('')}</div>` : ''}
-          ${twitter ? `<a class="twitter-btn" href="${twitter}" target="_blank" rel="noopener" onclick="event.stopPropagation()"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5-6.6-5.1 6.6H2.7l7.7-8.8L1.2 2.2H8l4.3 5.6 5.9-5.6z"/></svg> Twitter</a>` : ''}
-        </div>`;
-      return div;
-    };
-    
-    if (isCollab) collabsGrid.appendChild(createCard());
-    if (isFriend) friendsGrid.appendChild(createCard());
-    if (!isCollab && !isFriend) friendsGrid.appendChild(createCard());
-  });
-}
-
-async function loadAllData() {
+        async function loadAllData() {
           try {
             const [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
               fetch('./data/songs.json').then(r=>r.json()).catch(()=>[]),
@@ -1683,7 +1643,6 @@ async function loadAllData() {
             }]));
 
             ALBUMS = Object.fromEntries(albumsData.map(a => [a.id, a]));
-            renderPeople();
 
             allPosts = postsData.sort((a,b) => new Date(b.date) - new Date(a.date));
             categories = catsData.length ? catsData : [
@@ -2709,6 +2668,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+<script>
+// People renderer - runs after page load, won't break hamburger
+window.addEventListener('load', function() {
+  setTimeout(async function() {
+    try {
+      const res = await fetch('./data/people.json');
+      const people = await res.json();
+      
+      const collabsGrid = document.querySelector('#collabs .people-grid');
+      const friendsGrid = document.querySelector('#friends .people-grid');
+      if (!collabsGrid || !friendsGrid) return;
+      
+      collabsGrid.innerHTML = '';
+      friendsGrid.innerHTML = '';
+      
+      people.forEach(p => {
+        const tags = (p.tags||[]).map(t=>t.toLowerCase());
+        const isCollab = tags.includes('collab');
+        const isFriend = tags.includes('friend');
+        const avatar = p.avatar || '';
+        const twitter = p.links?.twitter || '';
+        
+        const html = `
+          <div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;margin:12px;border:1px solid #333;">
+            <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);opacity:0.3;"></div>
+            <div style="padding:16px;margin-top:-30px;">
+              <img src="${avatar}" alt="${p.name}" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;" 
+                   onerror="this.src='https://via.placeholder.com/70/A596DA/fff?text=${p.name[0]}'">
+              <h3 style="margin:10px 0 4px;color:white;">${p.name}</h3>
+              <div style="color:#A596DA;font-size:0.85em;">${p.handle||''}</div>
+              <div style="margin:6px 0;font-size:0.8em;color:#aaa;">${p.role||''}</div>
+              <p style="color:#ccc;font-size:0.85em;margin:8px 0;">${(p.bio||'').substring(0,120)}</p>
+              ${twitter ? `<a href="${twitter}" target="_blank" style="display:inline-block;margin-top:8px;padding:6px 12px;background:#1DA1F2;color:white;text-decoration:none;border-radius:16px;font-size:0.8em;">Twitter</a>` : ''}
+            </div>
+          </div>
+        `;
+        
+        if (isCollab) {
+          const d = document.createElement('div'); d.innerHTML = html; collabsGrid.appendChild(d.firstElementChild);
+        }
+        if (isFriend) {
+          const d = document.createElement('div'); d.innerHTML = html; friendsGrid.appendChild(d.firstElementChild);
+        }
+      });
+    } catch(e) {
+      console.log('People load failed', e);
+    }
+  }, 500);
+});
+</script>
 </body>
+
 </html>
-*
