@@ -1602,7 +1602,67 @@ body.optimized .glow-hover {
         let allPosts = [];
         let categories = [];
 
-        async function loadAllData() {
+        
+
+function renderPeople() {
+  const collabsGrid = document.querySelector('#collabs .people-grid');
+  const friendsGrid = document.querySelector('#friends .people-grid');
+  if (!collabsGrid || !friendsGrid) return;
+  
+  collabsGrid.innerHTML = '';
+  friendsGrid.innerHTML = '';
+  
+  Object.values(personData).forEach(person => {
+    const tags = person.tags || [];
+    const isCollab = tags.includes('collab');
+    const isFriend = tags.includes('friend');
+    
+    // Create card
+    const card = document.createElement('div');
+    card.className = 'person-card ' + person.id;
+    card.onclick = () => openPersonOverlay && openPersonOverlay(person.id);
+    
+    // Use CMS fields exactly
+    const avatar = person.avatar || `Friends/${person.id}.jpg`;
+    const handle = person.handle || '';
+    const role = person.role || '';
+    const bio = person.bio || '';
+    const color = person.color || 'from-[#A596DA]/30 to-[#8B78CB]/10';
+    const icon = person.icon || 'fas fa-user';
+    
+    card.innerHTML = `
+      <div class="person-banner"><div class="person-banner-bg bg-gradient-to-br ${color}"></div></div>
+      <div class="person-avatar-wrap">
+        <img alt="${person.name}" loading="lazy" src="${avatar}" onerror="this.style.display='none'"/>
+      </div>
+      <div class="person-body">
+        <div class="person-name">${person.name}</div>
+        <div class="person-handle">${handle ? '// ' + handle.replace('@','') : ''}</div>
+        <span class="person-role">${role}</span>
+        <p class="person-bio">${bio}</p>
+        ${person.projects && person.projects.length ? `<div class="person-tags">${person.projects.map(p=>`<span class="p-tag">${p}</span>`).join('')}</div>` : ''}
+      </div>
+    `;
+    
+    // Add to appropriate grids based on tags
+    // If has both tags, show in BOTH
+    if (isCollab) {
+      collabsGrid.appendChild(card.cloneNode(true));
+    }
+    if (isFriend) {
+      // If also collab, we already cloned, so use original for friends
+      const targetCard = isCollab ? card : card;
+      friendsGrid.appendChild(targetCard);
+    }
+    // If no tags, default to friends
+    if (!isCollab && !isFriend) {
+      friendsGrid.appendChild(card);
+    }
+  });
+}
+
+
+async function loadAllData() {
           try {
             const [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
               fetch('./data/songs.json').then(r=>r.json()).catch(()=>[]),
@@ -1643,15 +1703,8 @@ body.optimized .glow-hover {
             }]));
 
             ALBUMS = Object.fromEntries(albumsData.map(a => [a.id, a]));
-            
-            // Render everything from JSON
-            if (typeof renderPeople === 'function') renderPeople();
-            if (typeof renderPosts === 'function') renderPosts();
-            if (typeof renderCategories === 'function') renderCategories();
-            if (typeof renderSubs === 'function') renderSubs();
-            if (typeof renderSongsGrid === 'function') renderSongsGrid();
-            if (typeof initializeMusic === 'function') initializeMusic();
-        
+            renderPeople();
+            if (typeof initializeMusic === "function") initializeMusic();
 
             allPosts = postsData.sort((a,b) => new Date(b.date) - new Date(a.date));
             categories = catsData.length ? catsData : [
