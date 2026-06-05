@@ -1822,7 +1822,22 @@ function renderAlbumsGrid() {
                 <div class="mb-6">
                     <h3 class="font-bold mb-3 text-lg">Collaborated On:</h3>
                     <div class="flex flex-wrap gap-2">
-                        ${projects.map(p => `<span class="px-3 py-1 rounded-full glass text-sm">${p}</span>`).join('')}
+                        ${projects.map(p => {
+                            // Find matching song
+                            const song = Object.values(songData || {}).find(s => 
+                                s.title && s.title.toLowerCase() === p.toLowerCase()
+                            );
+                            const role = person.role.includes('Drummer') ? 'drummer' : 
+                                        person.role.includes('Friend') ? 'collaborator' :
+                                        person.role.toLowerCase().split(',')[0].trim();
+                            
+                            if(song){
+                                return `<button onclick="closePersonOverlay(); setTimeout(()=>openSongOverlay('${song.id}'), 300)" class="px-3 py-1 rounded-full glass text-sm hover:bg-[var(--accent)]/20 transition-colors cursor-pointer">
+                                    <i class="fas fa-music mr-1"></i>${role} on "${p}"
+                                </button>`;
+                            }
+                            return `<span class="px-3 py-1 rounded-full glass text-sm">${p}</span>`;
+                        }).join('')}
                     </div>
                 </div>
             ` : '';
