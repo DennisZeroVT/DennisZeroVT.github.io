@@ -355,9 +355,8 @@ input[type="color"]{width:44px;height:38px;padding:0;border-radius:8px;border:1p
       <button class="tab active" data-tab="blog">BLOG</button>
       <button class="tab" data-tab="songs">SONGS</button>
       <button class="tab" data-tab="people">PEOPLE</button>
-      <button class="tab" data-tab="albums">ALBUMS</button>
       <button class="tab" data-tab="categories">CATEGORIES</button>
-      <button class="tab" data-tab="images">🖼 IMAGES</button>
+      <button class="tab" data-tab="albums">ALBUMS</button>
     </nav>
     <div class="connect">
       <input id="token" type="password" placeholder="GitHub token (ghp_...)" autocomplete="off">
@@ -410,9 +409,9 @@ const UPLOADS = {
 };
 
 const FALLBACK_CATEGORIES = [
-  { id:"game-dev",          name:"Game Dev",          color:"#A596DA", subs:["Snowfall","Stuck In Time","Other Projects"] },
-  { id:"music-production",  name:"Music Production",  color:"#ec4899", subs:["Snowfall","Originals","Remixes","Soundtracks","Behind the Beat"] },
-  { id:"daily-life",        name:"Daily Life",        color:"#22c55e", subs:["Workflow","Thoughts","Updates","Gear"] }
+  {"id":"game-dev","name":"Game Dev","color":"#A596DA","subs":["Snowfall","Stuck In Time","Other Projects"]},
+  {"id":"music-production","name":"Music Production","color":"#ec4899","subs":["Snowfall","Originals","Remixes","Soundtracks","Behind the Beat"]},
+  {"id":"daily-life","name":"Daily Life","color":"#22c55e","subs":["Workflow","Thoughts","Updates","Gear"]}
 ];
 const FALLBACK_POSTS = [
   { id:"welcome-2025", title:"Welcome to the new CMS", category:"Daily Life", subcategory:"Update", date:"2025-01-15", color:"#A596DA", blocks:[{type:"text",content:"This is a glassmorphism CMS synced directly to GitHub. Write with blocks, upload images, and publish instantly."},{type:"divider"},{type:"text",content:"Legacy posts with body/images are auto-converted."}]} 
@@ -442,11 +441,11 @@ const FALLBACK_SONGS = [
   }
 ];
 const FALLBACK_PEOPLE = [
-  { id:"erik", name:"Erik", handle:"erikmusic", role:"Vocalist & Friend", avatar:"https://denniszerovt.github.io/Friends/erik.png", bio:"Incredible vocalist who worked on Snowfall.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, projects:["Snowfall"], color:"text-purple-400", icon:"🎤", showOnHome:true },
-  { id:"kula", name:"Kula", handle:"kuladrums", role:"Drummer", avatar:"https://denniszerovt.github.io/Friends/kula.png", bio:"Drum wizard behind Stuck In Time.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, projects:["Stuck In Time"], color:"text-blue-400", icon:"🥁", showOnHome:true },
-  { id:"vivid", name:"Vivid", handle:"vivid", role:"Friend", avatar:"https://denniszerovt.github.io/Friends/vivid.png", bio:"", tags:["friend"], links:{}, projects:[], color:"text-pink-400", icon:"✨", showOnHome:true },
-  { id:"skylar", name:"Skylar", handle:"skylar", role:"Friend", avatar:"https://denniszerovt.github.io/Friends/skylar.png", bio:"", tags:["friend"], links:{}, projects:[], color:"text-cyan-400", icon:"☁️", showOnHome:true },
-  { id:"nox", name:"Nox", handle:"nox", role:"Friend", avatar:"https://denniszerovt.github.io/Friends/nox.png", bio:"", tags:["friend"], links:{}, projects:[], color:"text-gray-400", icon:"🌙", showOnHome:true }
+  { id:"erik",   name:"Erik",   handle:"eri_k416",       role:"Friend // eri_k416",         avatar:"https://denniszerovt.github.io/Friends/erik.jpg",   bio:"Erik was the subject and inspiration for Snowfall.",  tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Snowfall",       songId:"snowfall",     role:"Inspiration", note:"His character Viona shaped the whole mood"}],                                         color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-snowflake", showOnHome:true },
+  { id:"kula",   name:"Kula",   handle:"@mee_yawwwwww",  role:"Friend, Drummer // @mee_yawwwwww", avatar:"https://denniszerovt.github.io/Friends/kula.jpg", bio:"Kula is a musician and drummer I met during an idol group project.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Stuck In Time", songId:"stuck_in_time", role:"Drums",        note:"Recorded live drums; killed the half-time section"}], color:"from-[#A596DA]/30 to-[#8B78CB]/10", icon:"fas fa-drum",      showOnHome:true },
+  { id:"vivid",  name:"Vivid",  handle:"@vivid_exile",   role:"Best Friend // @vivid_exile", avatar:"https://denniszerovt.github.io/Friends/vivid.jpg",  bio:"An ex-military veteran I met in my very first Discord server.", tags:["friend"], links:{}, credits:[], color:"from-pink-500/30 to-pink-600/10",   icon:"fas fa-guitar",    showOnHome:true },
+  { id:"skylar", name:"Skylar", handle:"@skylar_corgi",  role:"Friend // @skylar_corgi",     avatar:"https://denniszerovt.github.io/Friends/skylar.jpg", bio:"Skylar is a best friend I met through Vivid.",        tags:["friend"], links:{}, credits:[], color:"from-purple-500/30 to-purple-600/10", icon:"fas fa-guitar",    showOnHome:true },
+  { id:"nox",    name:"Nox",    handle:"@Nox_Daemon",    role:"Friend // @Nox_Daemon",       avatar:"https://denniszerovt.github.io/Friends/nox.jpg",    bio:"Nox is a friend I met through Vivid.",                tags:["friend"], links:{}, credits:[], color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-guitar",    showOnHome:true }
 ];
 const FALLBACK_ALBUMS = [
   { id:"solo-ep", name:"Solo EP", artist:"Dennis Zero VT", year:2025, cover:"https://denniszerovt.github.io/SongData/AlbumArt/solo-ep.png", status:"Released", description:"My first solo collection.", tracklist:[{name:"Snowfall",duration:"3:24",status:"released",key:"snowfall"},{name:"Stuck In Time",duration:"4:11",status:"released",key:"stuck-in-time"},{name:"Midnight Drive",duration:"2:58",status:"planned",key:""}] }
@@ -573,22 +572,14 @@ function renderTabs(){
   document.querySelectorAll('.tab').forEach(b=>{
     b.classList.toggle('active', b.dataset.tab===state.tab);
   });
-  listTitle.textContent = state.tab==='blog'?'Blog Posts':state.tab==='songs'?'Songs':state.tab==='people'?'People':state.tab==='categories'?'Categories':state.tab==='images'?'Image Scanner':'Albums';
+  listTitle.textContent = state.tab==='blog'?'Blog Posts':state.tab==='songs'?'Songs':state.tab==='people'?'People':'Albums';
 }
 function renderList(){
   listEl.innerHTML='';
-
-  // Images tab has its own full-editor UI, no list needed
-  if(state.tab==='images'){
-    listEl.innerHTML='<div class="hint" style="padding:14px;text-align:center">Use the scanner panel →</div>';
-    return;
-  }
-
   const data = getCurrentArray();
   const items = [...data].sort((a,b)=>{
     if(state.tab==='blog') return (b.date||'').localeCompare(a.date||'');
     if(state.tab==='songs' || state.tab==='albums') return (b.year||0)-(a.year||0);
-    if(state.tab==='categories') return (a.name||'').localeCompare(b.name||'');
     return (a.name||'').localeCompare(b.name||'');
   });
   items.forEach(it=>{
@@ -604,7 +595,7 @@ function renderList(){
     } else if(state.tab==='people'){
       if(it.avatar){ const img=document.createElement('img'); img.src=it.avatar; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent=it.icon||'👤';
     } else if(state.tab==='categories'){
-      thumb.innerHTML=`<div style="width:100%;height:100%;background:${it.color||'#A596DA'}22;display:grid;place-items:center;font-size:18px;">🏷</div>`;
+      thumb.style.background = it.color+'20'; thumb.style.borderColor = it.color+'40'; thumb.style.color = it.color; thumb.textContent = it.name.charAt(0); thumb.style.fontWeight='700';
     } else {
       if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent='💿';
     }
@@ -614,7 +605,7 @@ function renderList(){
     if(state.tab==='blog') s.innerHTML=`<span>${it.category||''}</span> • <span>${it.date||''}</span>`;
     else if(state.tab==='songs') s.innerHTML=`<span>${it.artist||''}</span> • <span>${it.year||''}</span>`;
     else if(state.tab==='people'){ s.innerHTML=''; (it.tags||[]).forEach(tag=>{ const b=document.createElement('span'); b.className='badge '+tag; b.textContent=tag; s.appendChild(b); }); }
-    else if(state.tab==='categories') s.innerHTML=`<span>${(it.subs||[]).length} subcategories</span>`;
+    else if(state.tab==='categories'){ s.innerHTML=`<span class="badge" style="background:${it.color}20;color:${it.color};border-color:${it.color}40">${it.id}</span> • <span>${it.subs.length} subs</span>`; }
     else s.innerHTML=`<span>${it.status||''}</span> • <span>${it.year||''}</span>`;
     meta.appendChild(t); meta.appendChild(s);
     div.appendChild(thumb); div.appendChild(meta);
@@ -622,11 +613,7 @@ function renderList(){
   });
 }
 function getCurrentArray(){
-  if(state.tab==='blog') return state.data.posts;
-  if(state.tab==='songs') return state.data.songs;
-  if(state.tab==='people') return state.data.people;
-  if(state.tab==='categories') return state.data.categories||[];
-  return state.data.albums;
+  return state.tab==='blog'?state.data.posts:state.tab==='songs'?state.data.songs:state.tab==='people'?state.data.people:state.tab==='categories'?state.data.categories:state.data.albums;
 }
 function getCurrentItem(){
   return getCurrentArray().find(x=>x.id===state.currentId);
@@ -634,15 +621,6 @@ function getCurrentItem(){
 
 function renderEditor(){
   const item = getCurrentItem();
-  if(state.tab==='images'){ renderImageScanner(); return; }
-  if(state.tab==='categories'){
-    if(!item){
-      editorEl.innerHTML=`<div class="empty"><div class="big">🏷</div><div>Select a category or create new<br><span class="hint">Categories control blog post filtering</span></div></div>`;
-      return;
-    }
-    renderCategoryEditor(item);
-    return;
-  }
   if(!item){
     editorEl.innerHTML=`<div class="empty"><div class="big">✦</div><div>Select an item or create new<br><span class="hint">Data is stored in /data/*.json</span></div></div>`;
     return;
@@ -650,6 +628,7 @@ function renderEditor(){
   if(state.tab==='blog') renderBlogEditor(item);
   else if(state.tab==='songs') renderSongEditor(item);
   else if(state.tab==='people') renderPeopleEditor(item);
+  else if(state.tab==='categories') renderCategoryEditor(item);
   else renderAlbumEditor(item);
 }
 
@@ -671,15 +650,13 @@ function editorShell(title, saveFn, delFn){
 
 function renderBlogEditor(post){
   const body = editorShell('Edit Blog Post', saveBlog, deleteBlog);
-  const cats = (state.data.categories||FALLBACK_CATEGORIES);
-  const catNames = cats.map(c=>c.name);
-  const curCat = cats.find(c=>c.name===post.category) || cats[0];
-  const subs = curCat ? curCat.subs : [];
+  const cats = Object.keys(state.data.categories||FALLBACK_CATEGORIES);
+  const subs = (state.data.categories?.[post.category]||[]);
   body.innerHTML = `
     <div class="form">
       <div class="field"><label>Title</label><input id="f_title" type="text" value="${esc(post.title||'')}"></div>
       <div class="field"><label>Date</label><input id="f_date" type="date" value="${post.date||today()}"></div>
-      <div class="field"><label>Category</label><select id="f_cat">${catNames.map(c=>`<option ${c===post.category?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="field"><label>Category</label><select id="f_cat">${cats.map(c=>`<option ${c===post.category?'selected':''}>${c}</option>`).join('')}</select></div>
       <div class="field"><label>Subcategory</label><select id="f_sub">${[''].concat(subs).map(s=>`<option ${s===post.subcategory?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
       <div class="field full"><label>Color</label><div class="color-row"><input id="f_color" type="color" value="${post.color||'#A596DA'}"><span class="hint">${post.color||'#A596DA'}</span></div></div>
       <div class="field full">
@@ -687,34 +664,17 @@ function renderBlogEditor(post){
         <div class="row">
           <button class="btn small" data-add="text">+ Text</button>
           <button class="btn small" data-add="image">+ Image</button>
-          <button class="btn small" data-add="video">+ Video</button>
           <button class="btn small" data-add="divider">+ Divider</button>
         </div>
         <div class="blocks" id="blocks"></div>
       </div>
     </div>
   `;
-  $('#f_cat').onchange=e=>{
-    post.category=e.target.value;
-    const found = (state.data.categories||FALLBACK_CATEGORIES).find(c=>c.name===post.category);
-    const s=$('#f_sub');
-    s.innerHTML=[''].concat(found?found.subs:[]).map(x=>`<option>${esc(x)}</option>`).join('');
-  };
+  $('#f_cat').onchange=e=>{ post.category=e.target.value; const s=$('#f_sub'); s.innerHTML=[''].concat(state.data.categories[post.category]||[]).map(x=>`<option>${esc(x)}</option>`).join(''); };
   $('#f_color').oninput=e=>{ e.target.nextElementSibling.textContent=e.target.value };
-  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:b.dataset.add==='video'?{type:'video',url:'',caption:''}:{type:'divider'}); renderBlocks(post); });
+  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:{type:'divider'}); renderBlocks(post); });
 
-
-  function getEmbedUrl(url){
-    if(!url) return '';
-    try{
-      if(url.includes('youtube.com/watch')){ const u=new URL(url); const v=u.searchParams.get('v'); return v?`https://www.youtube.com/embed/${v}`:url; }
-      if(url.includes('youtu.be/')){ const id=url.split('youtu.be/')[1].split(/[?&]/)[0]; return `https://www.youtube.com/embed/${id}`; }
-      if(url.includes('vimeo.com/')){ const id=url.split('vimeo.com/')[1].split(/[?&]/)[0]; return `https://player.vimeo.com/video/${id}`; }
-      return url;
-    }catch(e){ return url }
-  }
   function renderBlocks(p){
-
     const wrap = $('#blocks'); wrap.innerHTML='';
     (p.blocks||[]).forEach((bl,i)=>{
       const d=document.createElement('div'); d.className='block';
@@ -741,27 +701,10 @@ function renderBlogEditor(post){
           const f=e.target.files[0]; if(!f) return;
           try{ setStatus('Uploading image…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); renderBlocks(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
         };
-      }else if(bl.type==='video'){
-        body.innerHTML=`
-          <div style="display:grid;gap:10px">
-            <div class="upload"><label class="file-btn">Upload video<input type="file" accept="video/*"></label><span class="hint">${bl.src? 'Uploaded':'No file'}</span></div>
-            <div style="display:flex;align-items:center;gap:8px"><span class="hint">OR paste URL</span></div>
-            <input type="url" data-k="url" placeholder="YouTube, Vimeo, or MP4 URL" value="${esc(bl.url||'')}" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f0a1a;color:var(--text)">
-            <input type="text" data-k="caption" placeholder="Caption (optional)" value="${esc(bl.caption||'')}" style="width:100%;padding:8px;border-radius:8px;border:1px solid var(--border);background:#0f0a1a;color:var(--text)">
-            ${bl.src?`<video class="img-prev" src="${bl.src}" controls style="max-height:240px"></video>`:bl.url?`<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:12px;background:#000"><iframe src="${getEmbedUrl(bl.url)}" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allowfullscreen></iframe></div>`:''}
-          </div>
-        `;
-        const fileInp=body.querySelector('input[type=file]');
-        if(fileInp){
-          fileInp.onchange=async e=>{
-            const f=e.target.files[0]; if(!f) return;
-            try{ setStatus('Uploading video…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; bl.url=''; setStatus('Video uploaded','ok'); renderBlocks(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
-          };
-        }
-      }else
+      }else{
         body.innerHTML=`<div class="divider-prev"></div><span class="hint">Visual separator</span>`;
       }
-      body.querySelectorAll('[data-k]').forEach(inp=>{ inp.oninput=()=>{ bl[inp.dataset.k]=inp.value; if(bl.type==='video' && inp.dataset.k==='url'){ renderBlocks(p) } } });
+      body.querySelectorAll('[data-k]').forEach(inp=>{ inp.oninput=()=>{ bl[inp.dataset.k]=inp.value } });
       wrap.appendChild(d);
     });
   }
@@ -837,25 +780,54 @@ async function saveSong(){
 }
 async function deleteSong(){ const s=getCurrentItem(); if(!s||!confirm('Delete song?')) return; try{ setStatus('Deleting…','work'); state.data.songs=state.data.songs.filter(x=>x.id!==s.id); await putFile(PATHS.songs, state.data.songs, `delete song: ${s.title}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
+// CREDIT ROLE OPTIONS — add more as needed
+const CREDIT_ROLES = [
+  'Drums', 'Guitar', 'Bass', 'Piano / Keys', 'Vocals', 'Backing Vocals',
+  'Lyrics', 'Melody', 'Mixing', 'Mastering', 'Artwork', 'Inspiration',
+  'Producer', 'Co-producer', 'Songwriter', 'Featured Artist', 'Other'
+];
+
 function renderPeopleEditor(p){
   const body = editorShell('Edit Person', savePerson, deletePerson);
-  body.innerHTML=`
+
+  // Normalise: support legacy "projects" array (strings) → credits objects
+  if (!p.credits && p.projects) {
+    p.credits = (p.projects || []).map(title => ({ song: title, songId: '', role: 'Collaborator', note: '' }));
+  }
+  p.credits = p.credits || [];
+
+  body.innerHTML = `
     <div class="alert warn">Avatars upload to <b>Friends/</b>. Use square PNG for best results.</div>
     <div class="form">
       <div class="field"><label>Name</label><input id="p_name" value="${esc(p.name||'')}"></div>
       <div class="field"><label>Handle</label><input id="p_handle" value="${esc(p.handle||'')}"></div>
-      <div class="field"><label>Role</label><input id="p_role" value="${esc(p.role||'')}"></div>
-      <div class="field"><label>Icon (emoji)</label><input id="p_icon" value="${esc(p.icon||'👤')}"></div>
+      <div class="field"><label>Role / tagline</label><input id="p_role" value="${esc(p.role||'')}"></div>
+      <div class="field"><label>Icon (Font Awesome class or emoji)</label><input id="p_icon" value="${esc(p.icon||'👤')}"></div>
       <div class="field full"><label>Avatar</label>
         <div class="upload"><label class="file-btn">Upload avatar<input type="file" accept="image/*" id="p_avfile"></label><span class="hint">${p.avatar?'Uploaded':''}</span></div>
-        ${p.avatar?`<img class="img-prev" src="${p.avatar}" style="max-height:120px" onclick="showImg('${p.avatar}')">`:''}
+        ${p.avatar ? `<img class="img-prev" src="${p.avatar}" style="max-height:120px" onclick="showImg('${p.avatar}')">` : ''}
         <input id="p_avatar" type="text" value="${esc(p.avatar||'')}" placeholder="Avatar URL" style="margin-top:8px">
       </div>
       <div class="field full"><label>Bio</label><textarea id="p_bio">${esc(p.bio||'')}</textarea></div>
-      <div class="field"><label>Tags</label><div class="row"><label class="switch"><input type="checkbox" id="p_friend" ${p.tags?.includes('friend')?'checked':''}><span>friend</span></label><label class="switch"><input type="checkbox" id="p_collab" ${p.tags?.includes('collab')?'checked':''}><span>collab</span></label></div></div>
+      <div class="field">
+        <label>Tags</label>
+        <div class="row">
+          <label class="switch"><input type="checkbox" id="p_friend" ${p.tags?.includes('friend')?'checked':''}><span>friend</span></label>
+          <label class="switch"><input type="checkbox" id="p_collab" ${p.tags?.includes('collab')?'checked':''}><span>collab</span></label>
+        </div>
+      </div>
       <div class="field"><label>Show on Home</label><label class="switch"><input type="checkbox" id="p_home" ${p.showOnHome?'checked':''}><span>Visible</span></label></div>
-      <div class="field"><label>Color class</label><input id="p_color" value="${esc(p.color||'text-purple-400')}" placeholder="text-purple-400"></div>
-      <div class="field"><label>Projects (comma)</label><input id="p_projects" value="${esc((p.projects||[]).join(', '))}"></div>
+      <div class="field"><label>Color class</label><input id="p_color" value="${esc(p.color||'from-purple-500/30 to-purple-600/10')}" placeholder="from-purple-500/30 to-purple-600/10"></div>
+
+      <!-- ── CREDITS ── -->
+      <div class="field full">
+        <label>Credits (what they did on each song)</label>
+        <div id="p_credits_wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:6px"></div>
+        <button class="btn small" id="p_addcredit" style="margin-top:10px;align-self:flex-start">+ Add Credit</button>
+        <div class="hint" style="margin-top:6px">Each credit links this person to a specific song with their exact contribution.</div>
+      </div>
+
+      <!-- ── LINKS ── -->
       <div class="field full"><label>Links</label>
         <div class="links-grid">
           ${['twitter','spotify','instagram','website'].map(k=>`<div><label class="hint">${k}</label><input id="p_${k}" value="${esc(p.links?.[k]||'')}"></div>`).join('')}
@@ -863,20 +835,134 @@ function renderPeopleEditor(p){
       </div>
     </div>
   `;
-  $('#p_avfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading avatar…','work'); const url=await uploadFile(f, `${UPLOADS.people}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#p_avatar').value=url; setStatus('Avatar uploaded','ok'); }catch{ setStatus('Upload failed','err') } };
+
+  // Avatar upload
+  $('#p_avfile').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { setStatus('Uploading avatar…','work'); const url = await uploadFile(f, `${UPLOADS.people}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#p_avatar').value = url; setStatus('Avatar uploaded','ok'); }
+    catch { setStatus('Upload failed','err'); }
+  };
+
+  // ── Credit row renderer ──
+  function renderCreditRows() {
+    const wrap = $('#p_credits_wrap');
+    wrap.innerHTML = '';
+    p.credits.forEach((cr, i) => {
+      const songOptions = (state.data.songs || []).map(s =>
+        `<option value="${s.id}" ${cr.songId === s.id ? 'selected' : ''}>${esc(s.title)}</option>`
+      ).join('');
+      const roleOptions = CREDIT_ROLES.map(r =>
+        `<option value="${r}" ${cr.role === r ? 'selected' : ''}>${r}</option>`
+      ).join('');
+
+      const row = document.createElement('div');
+      row.style.cssText = 'background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr 1fr 32px;gap:8px;align-items:start';
+      row.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label class="hint">Song</label>
+          <select class="cr_song">
+            <option value="">— pick a song —</option>
+            ${songOptions}
+          </select>
+          <input class="cr_song_title" type="text" placeholder="Or type title manually" value="${esc(cr.song||'')}" style="margin-top:4px;font-size:12px;opacity:.7">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label class="hint">Role / Contribution</label>
+          <select class="cr_role">
+            ${roleOptions}
+            ${!CREDIT_ROLES.includes(cr.role) && cr.role ? `<option value="${esc(cr.role)}" selected>${esc(cr.role)}</option>` : ''}
+          </select>
+          <input class="cr_note" type="text" placeholder="Short note (optional)" value="${esc(cr.note||'')}" style="margin-top:4px;font-size:12px;opacity:.7">
+        </div>
+        <div class="icon" title="Remove" style="margin-top:20px">✕</div>
+      `;
+
+      // Sync song dropdown → title
+      const songSel  = row.querySelector('.cr_song');
+      const songTitle = row.querySelector('.cr_song_title');
+      const roleSel  = row.querySelector('.cr_role');
+      const noteInp  = row.querySelector('.cr_note');
+      const delBtn   = row.querySelector('.icon');
+
+      songSel.onchange = () => {
+        const found = (state.data.songs||[]).find(s => s.id === songSel.value);
+        if (found) { cr.songId = found.id; cr.song = found.title; songTitle.value = found.title; }
+        else { cr.songId = ''; }
+      };
+      songTitle.oninput = () => { cr.song = songTitle.value; };
+      roleSel.onchange  = () => { cr.role = roleSel.value; };
+      noteInp.oninput   = () => { cr.note = noteInp.value; };
+      delBtn.onclick    = () => { p.credits.splice(i, 1); renderCreditRows(); };
+
+      wrap.appendChild(row);
+    });
+  }
+
+  renderCreditRows();
+  $('#p_addcredit').onclick = () => {
+    p.credits.push({ song: '', songId: '', role: 'Collaborator', note: '' });
+    renderCreditRows();
+  };
 }
+
 async function savePerson(){
-  const p=getCurrentItem(); if(!p) return;
-  p.name=$('#p_name').value.trim(); p.handle=$('#p_handle').value.trim(); p.role=$('#p_role').value.trim(); p.icon=$('#p_icon').value.trim();
-  p.avatar=$('#p_avatar').value.trim(); p.bio=$('#p_bio').value; p.color=$('#p_color').value.trim();
-  p.tags=[]; if($('#p_friend').checked) p.tags.push('friend'); if($('#p_collab').checked) p.tags.push('collab');
-  p.showOnHome=$('#p_home').checked;
-  p.projects=$('#p_projects').value.split(',').map(x=>x.trim()).filter(Boolean);
-  p.links={ twitter:$('#p_twitter').value, spotify:$('#p_spotify').value, instagram:$('#p_instagram').value, website:$('#p_website').value };
+  const p = getCurrentItem(); if (!p) return;
+  p.name    = $('#p_name').value.trim();
+  p.handle  = $('#p_handle').value.trim();
+  p.role    = $('#p_role').value.trim();
+  p.icon    = $('#p_icon').value.trim();
+  p.avatar  = $('#p_avatar').value.trim();
+  p.bio     = $('#p_bio').value;
+  p.color   = $('#p_color').value.trim();
+  p.tags    = [];
+  if ($('#p_friend').checked) p.tags.push('friend');
+  if ($('#p_collab').checked) p.tags.push('collab');
+  p.showOnHome = $('#p_home').checked;
+  // credits are mutated live; just ensure the field exists
+  p.credits = p.credits || [];
+  // keep legacy projects field in sync for any old code that reads it
+  p.projects = p.credits.map(c => c.song).filter(Boolean);
+  p.links = {
+    twitter:   $('#p_twitter').value,
+    spotify:   $('#p_spotify').value,
+    instagram: $('#p_instagram').value,
+    website:   $('#p_website').value
+  };
   p.id = p.id || slugify(p.name);
-  try{ setStatus('Saving person…','work'); const arr=state.data.people; const i=arr.findIndex(x=>x.id===p.id); if(i>=0) arr[i]=p; else arr.push(p); await putFile(PATHS.people, arr, `person: ${p.name}`); setStatus('Person saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
+  try {
+    setStatus('Saving person…','work');
+    const arr = state.data.people;
+    const i = arr.findIndex(x => x.id === p.id);
+    if (i >= 0) arr[i] = p; else arr.push(p);
+    await putFile(PATHS.people, arr, `person: ${p.name}`);
+    setStatus('Person saved','ok');
+    renderList();
+  } catch(e) { setStatus('Save failed','err'); alert(e.message); }
 }
 async function deletePerson(){ const p=getCurrentItem(); if(!p||!confirm('Delete person?')) return; try{ setStatus('Deleting…','work'); state.data.people=state.data.people.filter(x=>x.id!==p.id); await putFile(PATHS.people, state.data.people, `delete person: ${p.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
+
+function renderCategoryEditor(item){
+  editorShell('Edit Category', saveCategories, ()=>deleteItem('categories'));
+  const wrap = document.createElement('div'); wrap.className='form';
+  wrap.innerHTML = `
+    <div class="field"><label>ID (slug)</label><input type="text" value="${item.id||''}" oninput="item.id=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'-');state.dirty=true"><div class="hint">lowercase-with-dashes</div></div>
+    <div class="field"><label>Name</label><input type="text" value="${item.name||''}" oninput="item.name=this.value;state.dirty=true;document.getElementById('catPrev').textContent=this.value"></div>
+    <div class="field"><label>Color</label><div class="color-row"><input type="color" value="${item.color||'#A596DA'}" oninput="item.color=this.value;state.dirty=true;updateCatPreview()"><input type="text" value="${item.color||'#A596DA'}" oninput="item.color=this.value;state.dirty=true;updateCatPreview()"></div></div>
+    <div class="field"><label>Preview</label><div style="padding:10px;background:rgba(0,0,0,.3);border-radius:8px"><span class="badge" id="catPrev" style="background:${(item.color||'#A596DA')}20;color:${item.color||'#A596DA'};border-color:${(item.color||'#A596DA')}40">${item.name||''}</span></div></div>
+    <div class="field full"><label>Subcategories</label><div id="subsList" class="chips" style="min-height:42px;padding:8px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(--border)"></div><div class="row" style="margin-top:8px"><input type="text" id="newSub" placeholder="Add subcategory..." style="flex:1"><button class="btn small" onclick="addCategorySub()">+ Add</button></div></div>
+  `;
+  document.querySelector('.ed-body').appendChild(wrap);
+  renderSubs();
+  document.getElementById('newSub').addEventListener('keydown', e=>{ if(e.key==='Enter'){ addCategorySub(); e.preventDefault(); }});
+  window.updateCatPreview = ()=>{ const p=document.getElementById('catPrev'); if(p){ p.style.background=item.color+'20'; p.style.color=item.color; p.style.borderColor=item.color+'40'; } };
+}
+function renderSubs(){
+  const item = getCurrentItem(); const box = document.getElementById('subsList'); if(!box) return;
+  box.innerHTML = (item.subs||[]).map((s,i)=>`<span class="chip" onclick="removeCategorySub(${i})">${s} ×</span>`).join('') || '<span class="hint">No subs yet</span>';
+}
+function addCategorySub(){ const item=getCurrentItem(); const inp=document.getElementById('newSub'); const v=inp.value.trim(); if(!v) return; item.subs=item.subs||[]; item.subs.push(v); inp.value=''; state.dirty=true; renderSubs(); renderList(); }
+function removeCategorySub(i){ const item=getCurrentItem(); item.subs.splice(i,1); state.dirty=true; renderSubs(); renderList(); }
+async function saveCategories(){ try{ setStatus('Saving categories.json…','work'); await putFile(PATHS.categories, state.data.categories, 'cms: update categories'); setStatus('Categories saved ✓','ok'); state.dirty=false; }catch(e){ setStatus('Save failed: '+e.message,'err'); } }
 
 function renderAlbumEditor(a){
   const body = editorShell('Edit Album', saveAlbum, deleteAlbum);
@@ -930,246 +1016,18 @@ async function saveAlbum(){
 }
 async function deleteAlbum(){ const a=getCurrentItem(); if(!a||!confirm('Delete album?')) return; try{ setStatus('Deleting…','work'); state.data.albums=state.data.albums.filter(x=>x.id!==a.id); await putFile(PATHS.albums, state.data.albums, `delete album: ${a.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
-// ───────── CATEGORY EDITOR ─────────
-function renderCategoryEditor(cat){
-  const body = editorShell('Edit Category', saveCategory, deleteCategory);
-  body.innerHTML=`
-    <div class="form">
-      <div class="field"><label>Name</label><input id="c_name" value="${esc(cat.name||'')}"></div>
-      <div class="field"><label>Accent Color</label>
-        <div class="color-row"><input id="c_color" type="color" value="${cat.color||'#A596DA'}"><span class="hint">${cat.color||'#A596DA'}</span></div>
-      </div>
-      <div class="field full">
-        <label>Subcategories</label>
-        <div class="hint" style="margin-bottom:6px">One per line. These appear as filter chips on the blog.</div>
-        <textarea id="c_subs" style="min-height:140px">${esc((cat.subs||[]).join('\n'))}</textarea>
-      </div>
-      <div class="field full">
-        <label>Preview</label>
-        <div id="c_preview" class="chips"></div>
-      </div>
-    </div>
-  `;
-  $('#c_color').oninput=e=>{ e.target.nextElementSibling.textContent=e.target.value; updateCatPreview(); };
-  $('#c_subs').oninput=updateCatPreview;
-  function updateCatPreview(){
-    const col=$('#c_color').value;
-    const subs=$('#c_subs').value.split('\n').map(s=>s.trim()).filter(Boolean);
-    const wrap=$('#c_preview'); wrap.innerHTML='';
-    subs.forEach(s=>{ const c=document.createElement('span'); c.className='chip'; c.textContent=s; c.style.borderColor=col+'55'; c.style.color=col; wrap.appendChild(c); });
-  }
-  updateCatPreview();
-}
-async function saveCategory(){
-  const cat=getCurrentItem(); if(!cat) return;
-  cat.name=$('#c_name').value.trim()||'Untitled';
-  cat.color=$('#c_color').value;
-  cat.subs=$('#c_subs').value.split('\n').map(s=>s.trim()).filter(Boolean);
-  cat.id = cat.id || slugify(cat.name);
-  try{
-    setStatus('Saving categories…','work');
-    const arr=state.data.categories;
-    const i=arr.findIndex(x=>x.id===cat.id); if(i>=0) arr[i]=cat; else arr.push(cat);
-    await putFile(PATHS.categories, arr, `category: ${cat.name}`);
-    setStatus('Categories saved','ok'); renderList();
-  }catch(e){ setStatus('Save failed','err'); alert(e.message); }
-}
-async function deleteCategory(){
-  const cat=getCurrentItem(); if(!cat||!confirm(`Delete category "${cat.name}"? Blog posts in this category will keep their category label but it won't appear in filters.`)) return;
-  try{
-    setStatus('Deleting…','work');
-    state.data.categories=state.data.categories.filter(x=>x.id!==cat.id);
-    await putFile(PATHS.categories, state.data.categories, `delete category: ${cat.name}`);
-    state.currentId=null; setStatus('Deleted','ok'); render();
-  }catch(e){ setStatus('Delete failed','err'); }
-}
-
-// ───────── IMAGE SCANNER ─────────
-// Scans images/posts/ on GitHub and finds which ones are NOT referenced
-// in any post block, then lets you delete them.
-let _scanState = { files:[], orphans:[], checked:new Set(), scanning:false };
-
-function renderImageScanner(){
-  editorEl.innerHTML=`
-    <div class="ed-head">
-      <div class="title">🖼 Image Orphan Scanner</div>
-      <div class="ed-actions">
-        <button class="btn small" id="btnScan">Scan images/posts/</button>
-        <button class="btn small danger" id="btnDeleteOrphans" disabled>Delete Selected</button>
-      </div>
-    </div>
-    <div class="ed-body" id="edBody">
-      <div class="alert warn">This scans <b>images/posts/</b> on GitHub and checks which images are no longer used in any post block. Requires a connected token.</div>
-      <div id="scanResults" style="margin-top:12px"></div>
-    </div>
-  `;
-  $('#btnScan').onclick = runImageScan;
-  $('#btnDeleteOrphans').onclick = deleteSelectedOrphans;
-  if(_scanState.orphans.length) renderScanResults(); // re-render if already scanned
-}
-
-async function listGithubDir(path){
-  // Returns array of {name, path, sha, download_url}
-  const url=`https://api.github.com/repos/${REPO}/contents/${path}?ref=${BRANCH}`;
-  const res=await fetch(url,{headers:{'Authorization':`token ${state.token}`,'Accept':'application/vnd.github.v3+json'}});
-  if(!res.ok) throw new Error(`${res.status}: Can't list ${path}`);
-  const data=await res.json();
-  return Array.isArray(data)?data:[];
-}
-
-async function deleteGithubFile(path, sha, name){
-  const res=await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`,{
-    method:'DELETE',
-    headers:{'Authorization':`token ${state.token}`,'Content-Type':'application/json'},
-    body:JSON.stringify({message:`delete orphan image: ${name}`, sha, branch:BRANCH})
-  });
-  if(!res.ok){ const e=await res.json().catch(()=>{}); throw new Error(e?.message||res.statusText); }
-}
-
-async function runImageScan(){
-  if(!state.token){ alert('Connect to GitHub first'); return; }
-  _scanState={files:[],orphans:[],checked:new Set(),scanning:true};
-  const res=$('#scanResults');
-  res.innerHTML=`<div class="hint">⏳ Scanning images/posts/ …</div>`;
-  $('#btnScan').disabled=true;
-
-  try{
-    // 1. Get all files in images/posts/
-    const files = await listGithubDir('images/posts');
-    _scanState.files = files.filter(f=>f.type==='file' && /\.(png|jpg|jpeg|gif|webp)$/i.test(f.name));
-
-    // 2. Collect all image srcs referenced in posts
-    const usedSrcs = new Set();
-    const ghBase = `https://${OWNER}.github.io/`;
-    for(const post of (state.data.posts||[])){
-      for(const bl of (post.blocks||[])){
-        if(bl.type==='image' && bl.src){
-          // normalise to path portion
-          let s=bl.src;
-          if(s.startsWith(ghBase)) s=s.slice(ghBase.length);
-          usedSrcs.add(s.replace(/^\/+/,''));
-          // also store the raw URL in case it's stored as-is
-          usedSrcs.add(bl.src);
-        }
-      }
-    }
-
-    // 3. Find orphans
-    _scanState.orphans = _scanState.files.filter(f=>{
-      const rel = f.path.replace(/^\/+/,'');
-      return !usedSrcs.has(rel) && !usedSrcs.has(f.download_url) && !usedSrcs.has(ghBase+rel);
-    });
-    _scanState.checked = new Set(_scanState.orphans.map(f=>f.path));
-
-  }catch(e){
-    res.innerHTML=`<div class="alert warn">Scan failed: ${esc(e.message)}</div>`;
-    $('#btnScan').disabled=false;
-    return;
-  }
-
-  _scanState.scanning=false;
-  $('#btnScan').disabled=false;
-  renderScanResults();
-}
-
-function renderScanResults(){
-  const res=$('#scanResults');
-  if(!res) return;
-  const { files, orphans, checked } = _scanState;
-
-  if(!files.length){
-    res.innerHTML=`<div class="hint">No images found in images/posts/.</div>`;
-    $('#btnDeleteOrphans').disabled=true;
-    return;
-  }
-
-  const usedCount = files.length - orphans.length;
-  let html=`
-    <div style="display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap">
-      <div class="badge" style="background:rgba(52,211,153,.15);color:#6ee7b7;border-color:rgba(52,211,153,.3)">✓ ${usedCount} used</div>
-      <div class="badge" style="background:rgba(248,113,113,.15);color:#fca5a5;border-color:rgba(248,113,113,.3)">⚠ ${orphans.length} orphan${orphans.length!==1?'s':''}</div>
-      <div class="badge">📁 ${files.length} total</div>
-    </div>
-  `;
-
-  if(orphans.length===0){
-    html+=`<div style="padding:24px;text-align:center;color:var(--green)">✅ No orphaned images found! Everything is tidy.</div>`;
-    res.innerHTML=html;
-    $('#btnDeleteOrphans').disabled=true;
-    return;
-  }
-
-  html+=`<div style="margin-bottom:8px;display:flex;gap:8px;align-items:center">
-    <b style="font-size:13px">Orphaned images</b>
-    <button class="btn small" id="btnSelAll">Select all</button>
-    <button class="btn small" id="btnSelNone">Deselect all</button>
-  </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px" id="orphanGrid">`;
-
-  orphans.forEach(f=>{
-    const isChecked=checked.has(f.path);
-    const imgSrc=f.download_url;
-    html+=`
-      <label style="cursor:pointer;border:2px solid ${isChecked?'var(--red)':'var(--border)'};border-radius:12px;overflow:hidden;background:rgba(0,0,0,.3);transition:.15s;display:block" data-path="${esc(f.path)}">
-        <input type="checkbox" ${isChecked?'checked':''} style="display:none" data-path="${esc(f.path)}">
-        <img src="${esc(imgSrc)}" style="width:100%;height:120px;object-fit:cover;display:block" onerror="this.style.opacity='.3'">
-        <div style="padding:7px 8px;font-size:11px;word-break:break-all;color:var(--muted)">${esc(f.name)}</div>
-        <div style="padding:0 8px 8px;font-size:11px;color:${isChecked?'var(--red)':'var(--muted)'};">${isChecked?'✕ Will delete':'↩ Keep'}</div>
-      </label>
-    `;
-  });
-  html+=`</div>`;
-  res.innerHTML=html;
-
-  // wire up checkboxes
-  res.querySelectorAll('label[data-path]').forEach(lbl=>{
-    const cb=lbl.querySelector('input[type=checkbox]');
-    lbl.onclick=()=>{
-      cb.checked=!cb.checked;
-      const p=lbl.dataset.path;
-      if(cb.checked){ _scanState.checked.add(p); lbl.style.borderColor='var(--red)'; lbl.querySelector('div:last-child').textContent='✕ Will delete'; lbl.querySelector('div:last-child').style.color='var(--red)'; }
-      else { _scanState.checked.delete(p); lbl.style.borderColor='var(--border)'; lbl.querySelector('div:last-child').textContent='↩ Keep'; lbl.querySelector('div:last-child').style.color='var(--muted)'; }
-      $('#btnDeleteOrphans').disabled=_scanState.checked.size===0;
-    };
-  });
-  $('#btnSelAll').onclick=()=>{ _scanState.orphans.forEach(f=>_scanState.checked.add(f.path)); renderScanResults(); };
-  $('#btnSelNone').onclick=()=>{ _scanState.checked.clear(); renderScanResults(); };
-  $('#btnDeleteOrphans').disabled=checked.size===0;
-}
-
-async function deleteSelectedOrphans(){
-  const toDelete=_scanState.orphans.filter(f=>_scanState.checked.has(f.path));
-  if(!toDelete.length) return;
-  if(!confirm(`Permanently delete ${toDelete.length} image${toDelete.length!==1?'s':''} from GitHub? This cannot be undone.`)) return;
-  setStatus(`Deleting ${toDelete.length} images…`,'work');
-  let done=0, failed=0;
-  for(const f of toDelete){
-    try{ await deleteGithubFile(f.path, f.sha, f.name); done++; }
-    catch(e){ console.error('Failed to delete',f.path,e); failed++; }
-  }
-  // remove deleted from state
-  _scanState.files=_scanState.files.filter(f=>!_scanState.checked.has(f.path)||toDelete.find(d=>d.path===f.path&&failed>0));
-  _scanState.orphans=_scanState.orphans.filter(f=>!_scanState.checked.has(f.path));
-  _scanState.checked.clear();
-  setStatus(failed?`Deleted ${done}, failed ${failed}`:`Deleted ${done} image${done!==1?'s':''}`, failed?'err':'ok');
-  renderScanResults();
-}
-
-
-function showImg(src){ $('#modalImg').src=src; $('#modal').classList.add('show') }
 function esc(s){ return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) }
+function showImg(src){ $('#modalImg').src=src; $('#modal').classList.add('show') }
 
 $('#tabs').onclick=e=>{
   const btn=e.target.closest('.tab'); if(!btn) return;
   state.tab=btn.dataset.tab; state.currentId=null; render();
 };
 $('#btnNew').onclick=()=>{
-  if(state.tab==='images') return; // no "new" for scanner
   const arr=getCurrentArray();
-  if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:(state.data.categories[0]?.name||'Daily Life'),subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
+  if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:'Daily Life',subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
   else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),coverEmoji:'🎵',badges:[],streaming:{},about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
   else if(state.tab==='people'){ const id='person-'+Date.now(); arr.unshift({id,name:'New Person',handle:'',role:'',avatar:'',bio:'',tags:['friend'],links:{},projects:[],color:'text-purple-400',icon:'👤',showOnHome:true}); state.currentId=id; }
-  else if(state.tab==='categories'){ const id='cat-'+Date.now(); arr.unshift({id,name:'New Category',color:'#A596DA',subs:[]}); state.currentId=id; }
   else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'Dennis Zero VT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }
   render();
 };
@@ -1183,7 +1041,7 @@ $('#btnConnect').onclick=()=>{ state.token=$('#token').value.trim(); connect(); 
   state.data.songs = FALLBACK_SONGS;
   state.data.people = FALLBACK_PEOPLE;
   state.data.albums = FALLBACK_ALBUMS;
-  state.data.categories = FALLBACK_CATEGORIES; // array format [{id,name,color,subs}]
+  state.data.categories = FALLBACK_CATEGORIES;
   renderList();
 })();
 </script>
