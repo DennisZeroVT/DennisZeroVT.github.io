@@ -409,6 +409,12 @@ const UPLOADS = {
   people: 'Friends/'
 };
 
+const CREDIT_ROLES = [
+  'Drums', 'Guitar', 'Bass', 'Piano / Keys', 'Vocals', 'Backing Vocals',
+  'Lyrics', 'Melody', 'Mixing', 'Mastering', 'Artwork', 'Inspiration',
+  'Producer', 'Co-producer', 'Songwriter', 'Featured Artist', 'Other'
+];
+
 const FALLBACK_CATEGORIES = [
   { id:"game-dev",          name:"Game Dev",          color:"#A596DA", subs:["Snowfall","Stuck In Time","Other Projects"] },
   { id:"music-production",  name:"Music Production",  color:"#ec4899", subs:["Snowfall","Originals","Remixes","Soundtracks","Behind the Beat"] },
@@ -441,8 +447,6 @@ const FALLBACK_SONGS = [
     behindTheScenes:"Kula absolutely killed the drums on this. He sent me the stems at 3am and I knew instantly it was perfect. We built the entire drop around his groove."
   }
 ];
-const FALLBACK_PEOPLE = [...]) ── -->
-<script id="patch-fallback-people">
 const FALLBACK_PEOPLE = [
   { id:"erik",   name:"Erik",   handle:"eri_k416",       role:"Friend // eri_k416",         avatar:"https://denniszerovt.github.io/Friends/erik.jpg",   bio:"Erik was the subject and inspiration for Snowfall.",  tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Snowfall",       songId:"snowfall",     role:"Inspiration", note:"His character Viona shaped the whole mood"}],                                         color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-snowflake", showOnHome:true },
   { id:"kula",   name:"Kula",   handle:"@mee_yawwwwww",  role:"Friend, Drummer // @mee_yawwwwww", avatar:"https://denniszerovt.github.io/Friends/kula.jpg", bio:"Kula is a musician and drummer I met during an idol group project.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Stuck In Time", songId:"stuck_in_time", role:"Drums",        note:"Recorded live drums; killed the half-time section"}], color:"from-[#A596DA]/30 to-[#8B78CB]/10", icon:"fas fa-drum",      showOnHome:true },
@@ -839,53 +843,33 @@ async function saveSong(){
 }
 async function deleteSong(){ const s=getCurrentItem(); if(!s||!confirm('Delete song?')) return; try{ setStatus('Deleting…','work'); state.data.songs=state.data.songs.filter(x=>x.id!==s.id); await putFile(PATHS.songs, state.data.songs, `delete song: ${s.title}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
-const CREDIT_ROLES = [
-  'Drums', 'Guitar', 'Bass', 'Piano / Keys', 'Vocals', 'Backing Vocals',
-  'Lyrics', 'Melody', 'Mixing', 'Mastering', 'Artwork', 'Inspiration',
-  'Producer', 'Co-producer', 'Songwriter', 'Featured Artist', 'Other'
-];
-
 function renderPeopleEditor(p){
   const body = editorShell('Edit Person', savePerson, deletePerson);
-
-  // Normalise: support legacy "projects" array (strings) → credits objects
-  if (!p.credits && p.projects) {
-    p.credits = (p.projects || []).map(title => ({ song: title, songId: '', role: 'Collaborator', note: '' }));
-  }
-  p.credits = p.credits || [];
-
-  body.innerHTML = `
+  body.innerHTML=`
     <div class="alert warn">Avatars upload to <b>Friends/</b>. Use square PNG for best results.</div>
     <div class="form">
       <div class="field"><label>Name</label><input id="p_name" value="${esc(p.name||'')}"></div>
       <div class="field"><label>Handle</label><input id="p_handle" value="${esc(p.handle||'')}"></div>
-      <div class="field"><label>Role / tagline</label><input id="p_role" value="${esc(p.role||'')}"></div>
-      <div class="field"><label>Icon (Font Awesome class or emoji)</label><input id="p_icon" value="${esc(p.icon||'👤')}"></div>
+      <div class="field"><label>Role</label><input id="p_role" value="${esc(p.role||'')}"></div>
+      <div class="field"><label>Icon (emoji)</label><input id="p_icon" value="${esc(p.icon||'👤')}"></div>
       <div class="field full"><label>Avatar</label>
         <div class="upload"><label class="file-btn">Upload avatar<input type="file" accept="image/*" id="p_avfile"></label><span class="hint">${p.avatar?'Uploaded':''}</span></div>
-        ${p.avatar ? `<img class="img-prev" src="${p.avatar}" style="max-height:120px" onclick="showImg('${p.avatar}')">` : ''}
+        ${p.avatar?`<img class="img-prev" src="${p.avatar}" style="max-height:120px" onclick="showImg('${p.avatar}')">`:''}
         <input id="p_avatar" type="text" value="${esc(p.avatar||'')}" placeholder="Avatar URL" style="margin-top:8px">
       </div>
       <div class="field full"><label>Bio</label><textarea id="p_bio">${esc(p.bio||'')}</textarea></div>
-      <div class="field">
-        <label>Tags</label>
-        <div class="row">
-          <label class="switch"><input type="checkbox" id="p_friend" ${p.tags?.includes('friend')?'checked':''}><span>friend</span></label>
-          <label class="switch"><input type="checkbox" id="p_collab" ${p.tags?.includes('collab')?'checked':''}><span>collab</span></label>
-        </div>
-      </div>
+      <div class="field"><label>Tags</label><div class="row"><label class="switch"><input type="checkbox" id="p_friend" ${p.tags?.includes('friend')?'checked':''}><span>friend</span></label><label class="switch"><input type="checkbox" id="p_collab" ${p.tags?.includes('collab')?'checked':''}><span>collab</span></label></div></div>
       <div class="field"><label>Show on Home</label><label class="switch"><input type="checkbox" id="p_home" ${p.showOnHome?'checked':''}><span>Visible</span></label></div>
-      <div class="field"><label>Color class</label><input id="p_color" value="${esc(p.color||'from-purple-500/30 to-purple-600/10')}" placeholder="from-purple-500/30 to-purple-600/10"></div>
-
-      <!-- ── CREDITS ── -->
+      <div class="field"><label>Color class</label><input id="p_color" value="${esc(p.color||'text-purple-400')}" placeholder="text-purple-400"></div>
+      <div class="field"><label>Projects (comma)</label><input id="p_projects" value="${esc((p.projects||[]).join(', '))}"></div>
+            <!-- ── CREDITS ── -->
       <div class="field full">
         <label>Credits (what they did on each song)</label>
         <div id="p_credits_wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:6px"></div>
-        <button class="btn small" id="p_addcredit" style="margin-top:10px;align-self:flex-start">+ Add Credit</button>
+        <button class="btn small" id="p_addcredit" type="button" style="margin-top:10px;align-self:flex-start">+ Add Credit</button>
         <div class="hint" style="margin-top:6px">Each credit links this person to a specific song with their exact contribution.</div>
       </div>
 
-      <!-- ── LINKS ── -->
       <div class="field full"><label>Links</label>
         <div class="links-grid">
           ${['twitter','spotify','instagram','website'].map(k=>`<div><label class="hint">${k}</label><input id="p_${k}" value="${esc(p.links?.[k]||'')}"></div>`).join('')}
@@ -893,70 +877,60 @@ function renderPeopleEditor(p){
       </div>
     </div>
   `;
+  $('#p_avfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading avatar…','work'); const url=await uploadFile(f, `${UPLOADS.people}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#p_avatar').value=url; setStatus('Avatar uploaded','ok'); }catch{ setStatus('Upload failed','err') } };
+}
+async function savePerson(){
+  const p=getCurrentItem(); if(!p) return;
+  p.name=$('#p_name').value.trim(); p.handle=$('#p_handle').value.trim(); p.role=$('#p_role').value.trim(); p.icon=$('#p_icon').value.trim();
+  p.avatar=$('#p_avatar').value.trim(); p.bio=$('#p_bio').value; p.color=$('#p_color').value.trim();
+  p.tags=[]; if($('#p_friend').checked) p.tags.push('friend'); if($('#p_collab').checked) p.tags.push('collab');
+  p.showOnHome=$('#p_home').checked;
+  p.projects=$('#p_projects').value.split(',').map(x=>x.trim()).filter(Boolean);
+  p.links={ twitter:$('#p_twitter').value, spotify:$('#p_spotify').value, instagram:$('#p_instagram').value, website:$('#p_website').value };
+  p.id = p.id || slugify(p.name);
+  try{ setStatus('Saving person…','work'); const arr=state.data.people; const i=arr.findIndex(x=>x.id===p.id); if(i>=0) arr[i]=p; else arr.push(p); await putFile(PATHS.people, arr, `person: ${p.name}`); setStatus('Person saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
+}
+async function deletePerson(){ const p=getCurrentItem(); if(!p||!confirm('Delete person?')) return; try{ setStatus('Deleting…','work'); state.data.people=state.data.people.filter(x=>x.id!==p.id); await putFile(PATHS.people, state.data.people, `delete person: ${p.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
-  // Avatar upload
-  $('#p_avfile').onchange = async e => {
-    const f = e.target.files[0]; if (!f) return;
-    try { setStatus('Uploading avatar…','work'); const url = await uploadFile(f, `${UPLOADS.people}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#p_avatar').value = url; setStatus('Avatar uploaded','ok'); }
-    catch { setStatus('Upload failed','err'); }
-  };
-
-  // ── Credit row renderer ──
-  function renderCreditRows() {
-    const wrap = $('#p_credits_wrap');
-    wrap.innerHTML = '';
-    p.credits.forEach((cr, i) => {
-      const songOptions = (state.data.songs || []).map(s =>
-        `<option value="${s.id}" ${cr.songId === s.id ? 'selected' : ''}>${esc(s.title)}</option>`
-      ).join('');
-      const roleOptions = CREDIT_ROLES.map(r =>
-        `<option value="${r}" ${cr.role === r ? 'selected' : ''}>${r}</option>`
-      ).join('');
-
-      const row = document.createElement('div');
-      row.style.cssText = 'background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr 1fr 32px;gap:8px;align-items:start';
-      row.innerHTML = `
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <label class="hint">Song</label>
-          <select data-k="songId" data-i="${i}" style="width:100%;padding:8px;border-radius:8px;background:#0f0a1a;border:1px solid var(--border);color:var(--text)">
-            <option value="">— Select song —</option>
-            ${songOptions}
-          </select>
-          <input data-k="song" data-i="${i}" value="${esc(cr.song||'')}" placeholder="Song title (if not in list)" style="width:100%;padding:6px;border-radius:6px;background:#0f0a1a;border:1px solid var(--border);color:var(--text);font-size:12px">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:6px">
-          <label class="hint">Role</label>
-          <select data-k="role" data-i="${i}" style="width:100%;padding:8px;border-radius:8px;background:#0f0a1a;border:1px solid var(--border);color:var(--text)">
-            ${roleOptions}
-          </select>
-          <input data-k="note" data-i="${i}" value="${esc(cr.note||'')}" placeholder="Note (optional)" style="width:100%;padding:6px;border-radius:6px;background:#0f0a1a;border:1px solid var(--border);color:var(--text);font-size:12px">
-        </div>
-        <button class="btn small" data-del="${i}" style="height:32px;margin-top:18px">✕</button>
+function renderAlbumEditor(a){
+  const body = editorShell('Edit Album', saveAlbum, deleteAlbum);
+  body.innerHTML=`
+    <div class="form">
+      <div class="field"><label>Name</label><input id="a_name" value="${esc(a.name||'')}"></div>
+      <div class="field"><label>Artist</label><input id="a_artist" value="${esc(a.artist||'Dennis Zero VT')}"></div>
+      <div class="field"><label>Year</label><input id="a_year" type="number" value="${a.year||new Date().getFullYear()}"></div>
+      <div class="field"><label>Status</label><select id="a_status">${['In Progress','Released','Planned'].map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field full"><label>Cover</label>
+        <div class="upload"><label class="file-btn">Upload cover<input type="file" accept="image/*" id="a_coverfile"></label></div>
+        ${a.cover?`<img class="img-prev" src="${a.cover}" onclick="showImg('${a.cover}')">`:''}
+        <input id="a_cover" type="text" value="${esc(a.cover||'')}" placeholder="Cover URL" style="margin-top:8px">
+      </div>
+      <div class="field full"><label>Description</label><textarea id="a_desc">${esc(a.description||'')}</textarea></div>
+      <div class="field full">
+        <label>Tracklist</label>
+        <div class="tracks" id="tracks"></div>
+        <button class="btn small" id="addTrack" style="margin-top:8px">+ Add Track</button>
+      </div>
+    </div>
+  `;
+  $('#a_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading…','work'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#a_cover').value=url; setStatus('Uploaded','ok'); }catch{ setStatus('Upload failed','err') } };
+  const tracksWrap=$('#tracks');
+  function renderTracks(){
+    tracksWrap.innerHTML='';
+    (a.tracklist||[]).forEach((t,i)=>{
+      const row=document.createElement('div'); row.className='track';
+      row.innerHTML=`
+        <input value="${esc(t.name||'')}" placeholder="Track name" data-k="name">
+        <input value="${esc(t.duration||'')}" placeholder="3:24" data-k="duration">
+        <select data-k="status">${['planned','in-progress','released'].map(s=>`<option ${t.status===s?'selected':''}>${s}</option>`).join('')}</select>
+        <select data-k="key"><option value="">— link song —</option>${state.data.songs.map(s=>`<option value="${s.id}" ${t.key===s.id?'selected':''}>${esc(s.title)}</option>`).join('')}</select>
+        <div class="icon" title="Delete">✕</div>
       `;
-      wrap.appendChild(row);
-    });
-
-    // Wire up changes
-    wrap.querySelectorAll('select[data-k], input[data-k]').forEach(inp => {
-      inp.onchange = inp.oninput = () => {
-        const i = +inp.dataset.i;
-        const k = inp.dataset.k;
-        p.credits[i][k] = inp.value;
-        // Auto-fill song title when songId changes
-        if (k === 'songId' && inp.value) {
-          const song = (state.data.songs || []).find(s => s.id === inp.value);
-          if (song) p.credits[i].song = song.title;
-        }
-      };
-    });
-    wrap.querySelectorAll('button[data-del]').forEach(btn => {
-      btn.onclick = () => { p.credits.splice(+btn.dataset.del, 1); renderCreditRows(); };
+      row.querySelectorAll('[data-k]').forEach(inp=>inp.oninput=()=>t[inp.dataset.k]=inp.value);
+      row.querySelector('.icon').onclick=()=>{ a.tracklist.splice(i,1); renderTracks(); };
+      tracksWrap.appendChild(row);
     });
   }
-
-  renderCreditRows();
-  $('#p_addcredit').onclick = () => { p.credits.push({ song: '', songId: '', role: 'Collaborator', note: '' }); renderCreditRows(); };
-}
   a.tracklist = a.tracklist||[];
   renderTracks();
   $('#addTrack').onclick=()=>{ a.tracklist.push({name:'',duration:'',status:'planned',key:''}); renderTracks(); };
