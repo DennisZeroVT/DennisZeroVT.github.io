@@ -409,12 +409,6 @@ const UPLOADS = {
   people: 'Friends/'
 };
 
-const CREDIT_ROLES = [
-  'Drums', 'Guitar', 'Bass', 'Piano / Keys', 'Vocals', 'Backing Vocals',
-  'Lyrics', 'Melody', 'Mixing', 'Mastering', 'Artwork', 'Inspiration',
-  'Producer', 'Co-producer', 'Songwriter', 'Featured Artist', 'Other'
-];
-
 const FALLBACK_CATEGORIES = [
   { id:"game-dev",          name:"Game Dev",          color:"#A596DA", subs:["Snowfall","Stuck In Time","Other Projects"] },
   { id:"music-production",  name:"Music Production",  color:"#ec4899", subs:["Snowfall","Originals","Remixes","Soundtracks","Behind the Beat"] },
@@ -448,11 +442,11 @@ const FALLBACK_SONGS = [
   }
 ];
 const FALLBACK_PEOPLE = [
-  { id:"erik",   name:"Erik",   handle:"eri_k416",       role:"Friend // eri_k416",         avatar:"https://denniszerovt.github.io/Friends/erik.jpg",   bio:"Erik was the subject and inspiration for Snowfall.",  tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Snowfall",       songId:"snowfall",     role:"Inspiration", note:"His character Viona shaped the whole mood"}],                                         color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-snowflake", showOnHome:true },
-  { id:"kula",   name:"Kula",   handle:"@mee_yawwwwww",  role:"Friend, Drummer // @mee_yawwwwww", avatar:"https://denniszerovt.github.io/Friends/kula.jpg", bio:"Kula is a musician and drummer I met during an idol group project.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Stuck In Time", songId:"stuck_in_time", role:"Drums",        note:"Recorded live drums; killed the half-time section"}], color:"from-[#A596DA]/30 to-[#8B78CB]/10", icon:"fas fa-drum",      showOnHome:true },
-  { id:"vivid",  name:"Vivid",  handle:"@vivid_exile",   role:"Best Friend // @vivid_exile", avatar:"https://denniszerovt.github.io/Friends/vivid.jpg",  bio:"An ex-military veteran I met in my very first Discord server.", tags:["friend"], links:{}, credits:[], color:"from-pink-500/30 to-pink-600/10",   icon:"fas fa-guitar",    showOnHome:true },
-  { id:"skylar", name:"Skylar", handle:"@skylar_corgi",  role:"Friend // @skylar_corgi",     avatar:"https://denniszerovt.github.io/Friends/skylar.jpg", bio:"Skylar is a best friend I met through Vivid.",        tags:["friend"], links:{}, credits:[], color:"from-purple-500/30 to-purple-600/10", icon:"fas fa-guitar",    showOnHome:true },
-  { id:"nox",    name:"Nox",    handle:"@Nox_Daemon",    role:"Friend // @Nox_Daemon",       avatar:"https://denniszerovt.github.io/Friends/nox.jpg",    bio:"Nox is a friend I met through Vivid.",                tags:["friend"], links:{}, credits:[], color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-guitar",    showOnHome:true }
+  { id:"erik", name:"Erik", handle:"erikmusic", role:"Vocalist & Friend", avatar:"https://denniszerovt.github.io/Friends/erik.png", bio:"Incredible vocalist who worked on Snowfall.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, projects:["Snowfall"], color:"text-purple-400", icon:"🎤", showOnHome:true },
+  { id:"kula", name:"Kula", handle:"kuladrums", role:"Drummer", avatar:"https://denniszerovt.github.io/Friends/kula.png", bio:"Drum wizard behind Stuck In Time.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, projects:["Stuck In Time"], color:"text-blue-400", icon:"🥁", showOnHome:true },
+  { id:"vivid", name:"Vivid", handle:"vivid", role:"Friend", avatar:"https://denniszerovt.github.io/Friends/vivid.png", bio:"", tags:["friend"], links:{}, projects:[], color:"text-pink-400", icon:"✨", showOnHome:true },
+  { id:"skylar", name:"Skylar", handle:"skylar", role:"Friend", avatar:"https://denniszerovt.github.io/Friends/skylar.png", bio:"", tags:["friend"], links:{}, projects:[], color:"text-cyan-400", icon:"☁️", showOnHome:true },
+  { id:"nox", name:"Nox", handle:"nox", role:"Friend", avatar:"https://denniszerovt.github.io/Friends/nox.png", bio:"", tags:["friend"], links:{}, projects:[], color:"text-gray-400", icon:"🌙", showOnHome:true }
 ];
 const FALLBACK_ALBUMS = [
   { id:"solo-ep", name:"Solo EP", artist:"Dennis Zero VT", year:2025, cover:"https://denniszerovt.github.io/SongData/AlbumArt/solo-ep.png", status:"Released", description:"My first solo collection.", tracklist:[{name:"Snowfall",duration:"3:24",status:"released",key:"snowfall"},{name:"Stuck In Time",duration:"4:11",status:"released",key:"stuck-in-time"},{name:"Midnight Drive",duration:"2:58",status:"planned",key:""}] }
@@ -862,14 +856,6 @@ function renderPeopleEditor(p){
       <div class="field"><label>Show on Home</label><label class="switch"><input type="checkbox" id="p_home" ${p.showOnHome?'checked':''}><span>Visible</span></label></div>
       <div class="field"><label>Color class</label><input id="p_color" value="${esc(p.color||'text-purple-400')}" placeholder="text-purple-400"></div>
       <div class="field"><label>Projects (comma)</label><input id="p_projects" value="${esc((p.projects||[]).join(', '))}"></div>
-            <!-- ── CREDITS ── -->
-      <div class="field full">
-        <label>Credits (what they did on each song)</label>
-        <div id="p_credits_wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:6px"></div>
-        <button class="btn small" id="p_addcredit" type="button" style="margin-top:10px;align-self:flex-start">+ Add Credit</button>
-        <div class="hint" style="margin-top:6px">Each credit links this person to a specific song with their exact contribution.</div>
-      </div>
-
       <div class="field full"><label>Links</label>
         <div class="links-grid">
           ${['twitter','spotify','instagram','website'].map(k=>`<div><label class="hint">${k}</label><input id="p_${k}" value="${esc(p.links?.[k]||'')}"></div>`).join('')}
