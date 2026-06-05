@@ -39,19 +39,24 @@
     ],
     "links": {
       "twitter": "https://x.com/mee_yawwwwww?s=20",
-      "spotify": "https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x"
+      "spotify": "https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x",
+      "instagram": "",
+      "website": ""
     },
     "credits": [
       {
         "song": "Stuck In Time",
         "songId": "stuck_in_time",
         "role": "Drums",
-        "note": "Recorded live drums; absolutely killed the half-time section before the key change"
+        "note": ""
       }
     ],
     "color": "from-[#A596DA]/30 to-[#8B78CB]/10",
     "icon": "fas fa-drum",
-    "showOnHome": true
+    "showOnHome": true,
+    "projects": [
+      "Stuck In Time"
+    ]
   },
   {
     "id": "vivid",
