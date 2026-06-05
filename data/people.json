@@ -14,8 +14,13 @@
       "twitter": "https://x.com/eri_k416?s=20",
       "spotify": "https://open.spotify.com/track/0TxrNlfNSlwuncbt0wpVH6"
     },
-    "projects": [
-      "Snowfall"
+    "credits": [
+      {
+        "song": "Snowfall",
+        "songId": "snowfall",
+        "role": "Inspiration",
+        "note": "His character Viona shaped the entire mood of the track"
+      }
     ],
     "color": "from-blue-500/30 to-blue-600/10",
     "icon": "fas fa-snowflake",
@@ -36,8 +41,13 @@
       "twitter": "https://x.com/mee_yawwwwww?s=20",
       "spotify": "https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x"
     },
-    "projects": [
-      "Stuck In Time"
+    "credits": [
+      {
+        "song": "Stuck In Time",
+        "songId": "stuck_in_time",
+        "role": "Drums",
+        "note": "Recorded live drums; absolutely killed the half-time section before the key change"
+      }
     ],
     "color": "from-[#A596DA]/30 to-[#8B78CB]/10",
     "icon": "fas fa-drum",
@@ -56,7 +66,7 @@
     "links": {
       "twitter": "https://x.com/vivid_exile?s=20"
     },
-    "projects": [],
+    "credits": [],
     "color": "from-pink-500/30 to-pink-600/10",
     "icon": "fas fa-guitar",
     "showOnHome": true
@@ -74,7 +84,7 @@
     "links": {
       "twitter": "https://x.com/skylar_corgi?s=20"
     },
-    "projects": [],
+    "credits": [],
     "color": "from-purple-500/30 to-purple-600/10",
     "icon": "fas fa-guitar",
     "showOnHome": true
@@ -92,7 +102,7 @@
     "links": {
       "twitter": "https://x.com/Nox_Daemon?s=20"
     },
-    "projects": [],
+    "credits": [],
     "color": "from-blue-500/30 to-blue-600/10",
     "icon": "fas fa-guitar",
     "showOnHome": true
