@@ -1821,16 +1821,28 @@ function renderAlbumsGrid() {
             let projectsHTML = '';
             if(projects.length > 0){
                 const projectButtons = projects.map(p => {
-                    const song = Object.values(window.songData || {}).find(s => s.title && s.title.toLowerCase() === p.toLowerCase());
+                    // Try to find matching song - check multiple sources
+                    let song = null;
+                    const songSources = [window.songData, window.songs, window.FALLBACK_SONGS];
+                    for(const source of songSources){
+                        if(!source) continue;
+                        const songsArray = Array.isArray(source) ? source : Object.values(source);
+                        song = songsArray.find(s => s && s.title && s.title.toLowerCase() === p.toLowerCase());
+                        if(song) break;
+                    }
+                    
                     let roleText = 'collaborator';
                     if(person.role){
                         if(person.role.toLowerCase().includes('drummer')) roleText = 'drummer';
-                        else if(person.role.toLowerCase().includes('friend')) roleText = 'collaborator';
+                        else if(person.role.toLowerCase().includes('friend')) roleText = 'featured on';
                         else roleText = person.role.split(',')[0].trim().toLowerCase();
                     }
-                    if(song){
-                        return '<button onclick="document.getElementById(\'person-overlay\').classList.remove(\'active\'); setTimeout(function(){ if(window.openSongOverlay) openSongOverlay(\'' + song.id + '\') }, 200)" class="px-3 py-1 rounded-full glass text-sm hover:bg-[var(--accent)]/20 transition-colors cursor-pointer"><i class="fas fa-music mr-1"></i>' + roleText + ' on \"' + p + '\"</button>';
+                    
+                    if(song && song.id){
+                        // Filled purple button
+                        return '<button onclick="document.getElementById(\'person-overlay\').classList.remove(\'active\'); setTimeout(function(){ openSongOverlay(\'' + song.id + '\') }, 250)" class="px-4 py-2 rounded-full bg-[var(--accent)] text-black font-medium text-sm hover:opacity-90 transition-all cursor-pointer flex items-center gap-2 shadow-lg shadow-[var(--accent-glow)]"><i class="fas fa-drum"></i>' + roleText + ' for \'' + p + '\'</button>';
                     }
+                    // Fallback if no song found - still show as pill
                     return '<span class="px-3 py-1 rounded-full glass text-sm">' + p + '</span>';
                 }).join('');
                 
