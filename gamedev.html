@@ -981,52 +981,21 @@ body.optimized .glow-hover {
 </nav>
 
 <main class="relative z-10 pt-20">
-<section class="inline-flex items-center gap-2 px-4 py-2 rounded-0 glass text-sm self-start" id="home">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-<div class="grid lg:grid-cols-2 gap-12 items-center">
-<div class="space-y-8">
-<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm">
-<span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-<span class="text-[var(--text-secondary)]">Available for collaborations</span>
-</div>
-<h1 class="text-5xl lg:text-7xl font-bold leading-tight">
-                            Hey, I'm <span class="text-[#A596DA]">Dennis van Wijngaarden</span>
-</h1>
-<p class="text-xl text-[var(--text-secondary)] leading-relaxed">
-                            Independent music producer and game developer 
-                        </p>
-<div class="flex flex-wrap gap-4">
-<button class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover" onclick="navigateTo('music')">
-<i class="fas fa-play mr-2"></i>Listen to My Music
-                            </button>
-<button class="px-8 py-4 rounded-lg glass font-semibold glow-hover" onclick="navigateTo('gamedev')">
-<i class="fas fa-gamepad mr-2"></i>View Game Projects
-                            </button>
-</div>
-</div>
-</div>
-</div>
-<!-- Featured Projects -->
-<div id="featured-projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<section class="page-section active" id="gamedev">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
-<h2 class="text-4xl lg:text-5xl font-bold mb-4">Featured <span class="gradient-text">Projects</span></h2>
-<p class="text-[var(--text-secondary)] text-lg">Games &amp; music I'm currently working on</p>
+<h1 class="text-5xl lg:text-6xl font-bold mb-4">Game Dev <span class="gradient-text">Blog</span></h1>
+<p class="text-[var(--text-secondary)] text-lg">
+                        Dev logs, progress updates, and behind-the-scenes content from Snowfall and Stuck In Time.
+                    </p>
+
+<div class="flex flex-wrap justify-center gap-3 mt-8 mb-4" id="category-filters"></div>
+<div id="subcategory-filters" class="flex flex-wrap justify-center gap-2 mb-8 hidden"></div>
+
 </div>
-<div class="grid md:grid-cols-2 gap-8">
-<div class="glass rounded-2xl p-8 glow-hover gradient-border">
-<div class="flex items-start justify-between mb-6">
-<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
-<i class="fas fa-snowflake text-2xl text-[#A596DA]"></i>
-</div>
-<span class="px-3 py-1 rounded-full text-xs bg-[#A596DA]/20 text-[#A596DA] font-medium">comming soon</span>
-</div>
-<h3 class="text-2xl font-bold mb-3">Adrenaline</h3>
-<p class="text-[var(--text-secondary)] mb-6 leading-relaxed">
-                            a remaster of my old song with the same name inspired by sonic ost.
-                        </p>
-<button class="text-[#A596DA] font-semibold hover:gap-3 flex items-center gap-2 transition-all" onclick="navigateTo('none')">
-</button>
-</div>
+<!-- Blog Posts -->
+<div id="blog-posts-container" class="space-y-8 mb-12">
+  <div class="text-center py-12 text-[var(--text-secondary)]">Loading posts...</div>
 </div>
 </div>
 </section>
