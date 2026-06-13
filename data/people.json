@@ -49,13 +49,20 @@
         "songId": "stuck_in_time",
         "role": "Drums",
         "note": ""
+      },
+      {
+        "song": "Adrenaline",
+        "songId": "song-1781376702122",
+        "role": "Drums",
+        "note": ""
       }
     ],
     "color": "from-[#A596DA]/30 to-[#8B78CB]/10",
     "icon": "fas fa-drum",
     "showOnHome": true,
     "projects": [
-      "Stuck In Time"
+      "Stuck In Time",
+      "Adrenaline"
     ]
   },
   {
