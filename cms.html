@@ -664,6 +664,7 @@ function renderBlogEditor(post){
         <div class="row">
           <button class="btn small" data-add="text">+ Text</button>
           <button class="btn small" data-add="image">+ Image</button>
+          <button class="btn small" data-add="video">+ Video</button>
           <button class="btn small" data-add="divider">+ Divider</button>
         </div>
         <div class="blocks" id="blocks"></div>
@@ -672,7 +673,7 @@ function renderBlogEditor(post){
   `;
   $('#f_cat').onchange=e=>{ post.category=e.target.value; const s=$('#f_sub'); s.innerHTML=[''].concat(state.data.categories[post.category]||[]).map(x=>`<option>${esc(x)}</option>`).join(''); };
   $('#f_color').oninput=e=>{ e.target.nextElementSibling.textContent=e.target.value };
-  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:{type:'divider'}); renderBlocks(post); });
+  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:b.dataset.add==='video'?{type:'video',src:'',url:'',caption:''}:{type:'divider'}); renderBlocks(post); });
 
   function renderBlocks(p){
     const wrap = $('#blocks'); wrap.innerHTML='';
@@ -700,6 +701,30 @@ function renderBlogEditor(post){
         fileInp.onchange=async e=>{
           const f=e.target.files[0]; if(!f) return;
           try{ setStatus('Uploading image…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); renderBlocks(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
+        };
+      }else if(bl.type==='video'){
+        body.innerHTML=`
+          <div style="margin-bottom:8px">
+            <div class="hint" style="margin-bottom:6px">Option 1 — Upload video file</div>
+            <div class="upload"><label class="file-btn">Choose video<input type="file" accept="video/*" id="vfile_${i}"></label><span class="hint" id="vhint_${i}">${bl.src?'Uploaded':'No file'}</span></div>
+            ${bl.src && !bl.url ? `<video controls class="audio" src="${bl.src}" style="margin-top:8px;max-height:180px"></video>` : ''}
+          </div>
+          <div style="margin-bottom:8px">
+            <div class="hint" style="margin-bottom:6px">Option 2 — Paste a URL (YouTube, Vimeo, direct mp4, etc.)</div>
+            <input type="text" data-k="url" placeholder="https://youtube.com/watch?v=… or direct .mp4 URL" value="${esc(bl.url||'')}">
+          </div>
+          <div><input type="text" data-k="caption" placeholder="Caption (optional)" value="${esc(bl.caption||'')}"></div>
+        `;
+        const vfileInp = body.querySelector(`#vfile_${i}`);
+        vfileInp.onchange = async e => {
+          const f = e.target.files[0]; if(!f) return;
+          try {
+            setStatus('Uploading video…','work');
+            const url = await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`);
+            bl.src = url; bl.url = '';
+            setStatus('Video uploaded','ok');
+            renderBlocks(p);
+          } catch(err) { setStatus('Upload failed','err'); alert(err.message); }
         };
       }else{
         body.innerHTML=`<div class="divider-prev"></div><span class="hint">Visual separator</span>`;
