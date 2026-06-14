@@ -1130,9 +1130,9 @@ body.optimized .glow-hover {
 <div class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-white/70 font-mono">152mm</div>
 <div class="absolute -left-8 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-white/70 font-mono">95mm</div>
 <!-- Active area -->
-<div class="absolute bottom-0 left-0 bg-[#A596DA]" style="width: 95%; height: 65%;">
-<div class="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] text-black/70 font-mono">95mm</div>
-<div class="absolute left-1 top-1/2 -translate-y-1/2 -rotate-90 origin-left text-[10px] text-black/70 font-mono">65mm</div>
+<div id="tablet-active" class="absolute bg-[#A596DA]" style="width: 95%; height: 65%; left:0; bottom:0;">
+<div id="tablet-label-w" class="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] text-black/70 font-mono">95mm</div>
+<div id="tablet-label-h" class="absolute left-1 top-1/2 -translate-y-1/2 -rotate-90 origin-left text-[10px] text-black/70 font-mono">65mm</div>
 <div class="absolute inset-0 flex flex-col items-center justify-center">
 <div class="w-1 h-1 bg-black rounded-full mb-1"></div>
 <div class="text-[11px] text-black font-mono font-bold">1.7778</div>
@@ -2650,6 +2650,91 @@ if (typeof _origNav === 'function') {
   };
 }
 </script>
+
+<!-- TABLET AREA FIX - uses existing Hardware focus -->
+<script>
+// EASY CONFIG - edit these numbers only
+const TABLET_AREA = {
+  width: 95,      // mm
+  height: 65,     // mm
+  x: 47.5,        // center X (will be clamped)
+  y: 32.5,        // center Y (will be clamped)
+  rotation: 0,    // degrees
+  unit: 'mm'
+};
+
+// YOUR BOUNDS from your message
+const TABLET_BOUNDS = {
+  xMin: 47.5,   // max left
+  xMax: 104.5,  // max right
+  yMin: 32.5,   // max up
+  yMax: 62.5    // max down
+};
+
+function updateHardwareTablet() {
+  const viz = document.getElementById('tablet-viz');
+  const active = document.getElementById('tablet-active');
+  if (!viz || !active) return;
+  
+  // Clamp X/Y to your limits
+  const x = Math.max(TABLET_BOUNDS.xMin, Math.min(TABLET_BOUNDS.xMax, TABLET_AREA.x));
+  const y = Math.max(TABLET_BOUNDS.yMin, Math.min(TABLET_BOUNDS.yMax, TABLET_AREA.y));
+  
+  // Full tablet dimensions from your specs
+  const FULL_W = 152;  // mm
+  const FULL_H = 95;   // mm
+  
+  // Convert mm to % of container
+  const wPercent = (TABLET_AREA.width / FULL_W) * 100;
+  const hPercent = (TABLET_AREA.height / FULL_H) * 100;
+  
+  // Position by center X/Y
+  // X: 0 = left edge, FULL_W = right edge
+  // Y: 0 = top, FULL_H = bottom (we invert because CSS top is from top)
+  const xPercent = ((x - TABLET_AREA.width/2) / FULL_W) * 100;
+  const yPercent = ((y - TABLET_AREA.height/2) / FULL_H) * 100;
+  
+  active.style.width = wPercent + '%';
+  active.style.height = hPercent + '%';
+  active.style.left = xPercent + '%';
+  active.style.top = yPercent + '%';
+  active.style.bottom = 'auto';
+  active.style.transform = `rotate(${TABLET_AREA.rotation}deg)`;
+  active.style.transformOrigin = 'center';
+  
+  // Update labels
+  const labelW = document.getElementById('tablet-label-w');
+  const labelH = document.getElementById('tablet-label-h');
+  if (labelW) labelW.textContent = TABLET_AREA.width + 'mm';
+  if (labelH) labelH.textContent = TABLET_AREA.height + 'mm';
+  
+  // Update specs text
+  const specs = document.getElementById('tablet-specs');
+  if (specs) {
+    const ratio = (TABLET_AREA.width / TABLET_AREA.height).toFixed(4);
+    specs.textContent = `Full: ${FULL_W}×${FULL_H}mm • Active: ${TABLET_AREA.width}×${TABLET_AREA.height}mm (${ratio}) • X:${x.toFixed(1)} Y:${y.toFixed(1)}`;
+  }
+}
+
+// Run after page loads and after fill.js
+function initTabletFix() {
+  updateHardwareTablet();
+  // Re-run if fill.js overwrites
+  setTimeout(updateHardwareTablet, 500);
+  setTimeout(updateHardwareTablet, 1500);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initTabletFix);
+} else {
+  initTabletFix();
+}
+
+// Expose for console
+window.TABLET_AREA = TABLET_AREA;
+window.updateTablet = updateHardwareTablet;
+</script>
+
 </body>
 
 
