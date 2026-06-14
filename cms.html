@@ -605,7 +605,7 @@ function renderList(){
     if(state.tab==='blog') s.innerHTML=`<span>${it.category||''}</span> • <span>${it.date||''}</span>`;
     else if(state.tab==='songs') s.innerHTML=`<span>${it.artist||''}</span> • <span>${it.year||''}</span>`;
     else if(state.tab==='people'){ s.innerHTML=''; (it.tags||[]).forEach(tag=>{ const b=document.createElement('span'); b.className='badge '+tag; b.textContent=tag; s.appendChild(b); }); }
-    else if(state.tab==='categories'){ s.innerHTML=`<span class="badge" style="background:${it.color}20;color:${it.color};border-color:${it.color}40">${it.id}</span> • <span>${it.subs.length} subs</span>`; }
+    else if(state.tab==='categories'){ s.innerHTML=`<span class="badge" style="background:${it.color}20;color:${it.color};border-color:${it.color}40">${it.id}</span> • <span>${(it.subs||[]).length} subs</span>`; }
     else s.innerHTML=`<span>${it.status||''}</span> • <span>${it.year||''}</span>`;
     meta.appendChild(t); meta.appendChild(s);
     div.appendChild(thumb); div.appendChild(meta);
@@ -650,8 +650,9 @@ function editorShell(title, saveFn, delFn){
 
 function renderBlogEditor(post){
   const body = editorShell('Edit Blog Post', saveBlog, deleteBlog);
-  const cats = Object.keys(state.data.categories||FALLBACK_CATEGORIES);
-  const subs = (state.data.categories?.[post.category]||[]);
+  const catsArr = (state.data.categories||FALLBACK_CATEGORIES);
+  const cats = catsArr.map(c=>c.name);
+  const subs = (catsArr.find(c=>c.name===post.category)||{}).subs||[];
   body.innerHTML = `
     <div class="form">
       <div class="field"><label>Title</label><input id="f_title" type="text" value="${esc(post.title||'')}"></div>
@@ -671,7 +672,7 @@ function renderBlogEditor(post){
       </div>
     </div>
   `;
-  $('#f_cat').onchange=e=>{ post.category=e.target.value; const s=$('#f_sub'); s.innerHTML=[''].concat(state.data.categories[post.category]||[]).map(x=>`<option>${esc(x)}</option>`).join(''); };
+  $('#f_cat').onchange=e=>{ post.category=e.target.value; const s=$('#f_sub'); const found=(state.data.categories||FALLBACK_CATEGORIES).find(c=>c.name===post.category); s.innerHTML=[''].concat(found?.subs||[]).map(x=>`<option>${esc(x)}</option>`).join(''); };
   $('#f_color').oninput=e=>{ e.target.nextElementSibling.textContent=e.target.value };
   body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:b.dataset.add==='video'?{type:'video',src:'',url:'',caption:''}:{type:'divider'}); renderBlocks(post); });
 
@@ -704,27 +705,46 @@ function renderBlogEditor(post){
         };
       }else if(bl.type==='video'){
         body.innerHTML=`
-          <div style="margin-bottom:8px">
+          <div style="margin-bottom:10px">
             <div class="hint" style="margin-bottom:6px">Option 1 — Upload video file</div>
-            <div class="upload"><label class="file-btn">Choose video<input type="file" accept="video/*" id="vfile_${i}"></label><span class="hint" id="vhint_${i}">${bl.src?'Uploaded':'No file'}</span></div>
-            ${bl.src && !bl.url ? `<video controls class="audio" src="${bl.src}" style="margin-top:8px;max-height:180px"></video>` : ''}
+            <div class="row">
+              <label class="field" style="flex:1;gap:4px"><span class="hint" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px">Quality</span>
+                <select id="vq_${i}" style="font-size:12px;padding:6px 8px">
+                  <option value="original">Original (no compression)</option>
+                  <option value="high" selected>High (1080p cap, good quality)</option>
+                  <option value="medium">Medium (720p cap, smaller file)</option>
+                  <option value="low">Low (480p cap, smallest file)</option>
+                </select>
+              </label>
+              <label class="file-btn" style="align-self:flex-end;margin-bottom:0">Choose video<input type="file" accept="video/*" id="vfile_${i}"></label>
+            </div>
+            <div id="vhint_${i}" class="hint" style="margin-top:4px">${bl.src && !bl.url ? '✓ Uploaded' : 'No file selected'}</div>
+            ${bl.src && !bl.url ? `<video controls class="audio" src="${bl.src}" style="margin-top:8px;max-height:180px;border-radius:8px"></video>` : ''}
           </div>
-          <div style="margin-bottom:8px">
-            <div class="hint" style="margin-bottom:6px">Option 2 — Paste a URL (YouTube, Vimeo, direct mp4, etc.)</div>
+          <div style="margin-bottom:10px">
+            <div class="hint" style="margin-bottom:6px">Option 2 — Paste a URL (YouTube, Vimeo, direct mp4…)</div>
             <input type="text" data-k="url" placeholder="https://youtube.com/watch?v=… or direct .mp4 URL" value="${esc(bl.url||'')}">
           </div>
           <div><input type="text" data-k="caption" placeholder="Caption (optional)" value="${esc(bl.caption||'')}"></div>
         `;
         const vfileInp = body.querySelector(`#vfile_${i}`);
+        const vhint = body.querySelector(`#vhint_${i}`);
+        const qualSel = body.querySelector(`#vq_${i}`);
         vfileInp.onchange = async e => {
           const f = e.target.files[0]; if(!f) return;
+          const quality = qualSel.value;
           try {
-            setStatus('Uploading video…','work');
-            const url = await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`);
+            setStatus('Processing video…','work');
+            vhint.textContent = quality === 'original' ? 'Uploading…' : 'Compressing video (this may take a moment)…';
+            let fileToUpload = f;
+            if(quality !== 'original'){
+              fileToUpload = await compressVideo(f, quality);
+            }
+            const url = await uploadFile(fileToUpload, `${UPLOADS.posts}${Date.now()}-${fileToUpload.name||f.name.replace(/\s+/g,'-')}`);
             bl.src = url; bl.url = '';
             setStatus('Video uploaded','ok');
             renderBlocks(p);
-          } catch(err) { setStatus('Upload failed','err'); alert(err.message); }
+          } catch(err) { setStatus('Upload failed','err'); vhint.textContent = 'Error: '+err.message; }
         };
       }else{
         body.innerHTML=`<div class="divider-prev"></div><span class="hint">Visual separator</span>`;
@@ -967,27 +987,44 @@ async function savePerson(){
 async function deletePerson(){ const p=getCurrentItem(); if(!p||!confirm('Delete person?')) return; try{ setStatus('Deleting…','work'); state.data.people=state.data.people.filter(x=>x.id!==p.id); await putFile(PATHS.people, state.data.people, `delete person: ${p.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
 function renderCategoryEditor(item){
-  editorShell('Edit Category', saveCategories, ()=>deleteItem('categories'));
+  editorShell('Edit Category', saveCategories, deleteCategoryItem);
+  const body = document.querySelector('.ed-body');
   const wrap = document.createElement('div'); wrap.className='form';
   wrap.innerHTML = `
-    <div class="field"><label>ID (slug)</label><input type="text" value="${item.id||''}" oninput="item.id=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'-');state.dirty=true"><div class="hint">lowercase-with-dashes</div></div>
-    <div class="field"><label>Name</label><input type="text" value="${item.name||''}" oninput="item.name=this.value;state.dirty=true;document.getElementById('catPrev').textContent=this.value"></div>
-    <div class="field"><label>Color</label><div class="color-row"><input type="color" value="${item.color||'#A596DA'}" oninput="item.color=this.value;state.dirty=true;updateCatPreview()"><input type="text" value="${item.color||'#A596DA'}" oninput="item.color=this.value;state.dirty=true;updateCatPreview()"></div></div>
-    <div class="field"><label>Preview</label><div style="padding:10px;background:rgba(0,0,0,.3);border-radius:8px"><span class="badge" id="catPrev" style="background:${(item.color||'#A596DA')}20;color:${item.color||'#A596DA'};border-color:${(item.color||'#A596DA')}40">${item.name||''}</span></div></div>
-    <div class="field full"><label>Subcategories</label><div id="subsList" class="chips" style="min-height:42px;padding:8px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(--border)"></div><div class="row" style="margin-top:8px"><input type="text" id="newSub" placeholder="Add subcategory..." style="flex:1"><button class="btn small" onclick="addCategorySub()">+ Add</button></div></div>
+    <div class="field"><label>ID (slug)</label><input type="text" id="cat_id" value="${esc(item.id||'')}"><div class="hint">lowercase-with-dashes</div></div>
+    <div class="field"><label>Name</label><input type="text" id="cat_name" value="${esc(item.name||'')}"></div>
+    <div class="field"><label>Color</label><div class="color-row"><input type="color" id="cat_colorpick" value="${item.color||'#A596DA'}"><input type="text" id="cat_colortext" value="${item.color||'#A596DA'}"></div></div>
+    <div class="field"><label>Preview</label><div style="padding:10px;background:rgba(0,0,0,.3);border-radius:8px"><span class="badge" id="catPrev" style="background:${(item.color||'#A596DA')}20;color:${item.color||'#A596DA'};border-color:${(item.color||'#A596DA')}40">${esc(item.name||'')}</span></div></div>
+    <div class="field full"><label>Subcategories</label><div id="subsList" class="chips" style="min-height:42px;padding:8px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(--border)"></div><div class="row" style="margin-top:8px"><input type="text" id="newSub" placeholder="Add subcategory..." style="flex:1"><button class="btn small" id="btnAddSub">+ Add</button></div></div>
   `;
-  document.querySelector('.ed-body').appendChild(wrap);
+  body.appendChild(wrap);
+
+  const idInp = document.getElementById('cat_id');
+  const nameInp = document.getElementById('cat_name');
+  const colorPick = document.getElementById('cat_colorpick');
+  const colorText = document.getElementById('cat_colortext');
+  const prev = document.getElementById('catPrev');
+
+  function syncColor(c){ item.color=c; colorPick.value=c; colorText.value=c; prev.style.background=c+'20'; prev.style.color=c; prev.style.borderColor=c+'40'; state.dirty=true; }
+
+  idInp.oninput = ()=>{ item.id=idInp.value.toLowerCase().replace(/[^a-z0-9-]/g,'-'); state.dirty=true; };
+  nameInp.oninput = ()=>{ item.name=nameInp.value; prev.textContent=nameInp.value; state.dirty=true; };
+  colorPick.oninput = ()=>syncColor(colorPick.value);
+  colorText.oninput = ()=>{ if(/^#[0-9a-fA-F]{6}$/.test(colorText.value)) syncColor(colorText.value); };
+
   renderSubs();
+  document.getElementById('btnAddSub').onclick = addCategorySub;
   document.getElementById('newSub').addEventListener('keydown', e=>{ if(e.key==='Enter'){ addCategorySub(); e.preventDefault(); }});
-  window.updateCatPreview = ()=>{ const p=document.getElementById('catPrev'); if(p){ p.style.background=item.color+'20'; p.style.color=item.color; p.style.borderColor=item.color+'40'; } };
 }
 function renderSubs(){
-  const item = getCurrentItem(); const box = document.getElementById('subsList'); if(!box) return;
-  box.innerHTML = (item.subs||[]).map((s,i)=>`<span class="chip" onclick="removeCategorySub(${i})">${s} ×</span>`).join('') || '<span class="hint">No subs yet</span>';
+  const item = getCurrentItem(); const box = document.getElementById('subsList'); if(!box||!item) return;
+  box.innerHTML = (item.subs||[]).map((s,i)=>`<span class="chip" data-sub="${i}">${esc(s)} ×</span>`).join('') || '<span class="hint">No subs yet</span>';
+  box.querySelectorAll('.chip').forEach(chip=>chip.onclick=()=>removeCategorySub(parseInt(chip.dataset.sub)));
 }
-function addCategorySub(){ const item=getCurrentItem(); const inp=document.getElementById('newSub'); const v=inp.value.trim(); if(!v) return; item.subs=item.subs||[]; item.subs.push(v); inp.value=''; state.dirty=true; renderSubs(); renderList(); }
-function removeCategorySub(i){ const item=getCurrentItem(); item.subs.splice(i,1); state.dirty=true; renderSubs(); renderList(); }
+function addCategorySub(){ const item=getCurrentItem(); const inp=document.getElementById('newSub'); const v=inp.value.trim(); if(!v||!item) return; item.subs=item.subs||[]; item.subs.push(v); inp.value=''; state.dirty=true; renderSubs(); renderList(); }
+function removeCategorySub(i){ const item=getCurrentItem(); if(!item) return; item.subs.splice(i,1); state.dirty=true; renderSubs(); renderList(); }
 async function saveCategories(){ try{ setStatus('Saving categories.json…','work'); await putFile(PATHS.categories, state.data.categories, 'cms: update categories'); setStatus('Categories saved ✓','ok'); state.dirty=false; }catch(e){ setStatus('Save failed: '+e.message,'err'); } }
+async function deleteCategoryItem(){ const item=getCurrentItem(); if(!item||!confirm('Delete category "'+item.name+'"?')) return; try{ setStatus('Deleting…','work'); state.data.categories=state.data.categories.filter(x=>x.id!==item.id); await putFile(PATHS.categories, state.data.categories, `delete category: ${item.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
 function renderAlbumEditor(a){
   const body = editorShell('Edit Album', saveAlbum, deleteAlbum);
@@ -1041,6 +1078,68 @@ async function saveAlbum(){
 }
 async function deleteAlbum(){ const a=getCurrentItem(); if(!a||!confirm('Delete album?')) return; try{ setStatus('Deleting…','work'); state.data.albums=state.data.albums.filter(x=>x.id!==a.id); await putFile(PATHS.albums, state.data.albums, `delete album: ${a.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
+// ── Video compression using MediaRecorder + Canvas ──────────────────────────
+// Quality presets: cap resolution + set bitrate. Browser transcodes client-side.
+async function compressVideo(file, quality){
+  const presets = {
+    high:   { maxH: 1080, videoBps: 4_000_000, audioBps: 128_000 },
+    medium: { maxH: 720,  videoBps: 1_500_000, audioBps:  96_000 },
+    low:    { maxH: 480,  videoBps:   600_000, audioBps:  64_000 },
+  };
+  const p = presets[quality] || presets.medium;
+
+  // Load video into a hidden element
+  const vid = document.createElement('video');
+  vid.muted = true;
+  vid.src = URL.createObjectURL(file);
+  await new Promise((res,rej)=>{ vid.onloadedmetadata=res; vid.onerror=rej; });
+
+  // Compute scaled dimensions
+  const scale = Math.min(1, p.maxH / vid.videoHeight);
+  const w = Math.round(vid.videoWidth  * scale / 2) * 2; // must be even
+  const h = Math.round(vid.videoHeight * scale / 2) * 2;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // Pick best supported codec
+  const mimeTypes = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
+  const mimeType = mimeTypes.find(m=>MediaRecorder.isTypeSupported(m)) || 'video/webm';
+
+  const stream = canvas.captureStream(30);
+  // Add audio if source has it
+  try {
+    const audioCtx = new AudioContext();
+    const src = audioCtx.createMediaElementSource(vid);
+    const dest = audioCtx.createMediaStreamDestination();
+    src.connect(dest);
+    dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+  } catch(e){ /* no audio track, fine */ }
+
+  const recorder = new MediaRecorder(stream, {
+    mimeType,
+    videoBitsPerSecond: p.videoBps,
+    audioBitsPerSecond: p.audioBps,
+  });
+  const chunks = [];
+  recorder.ondataavailable = e=>{ if(e.data.size>0) chunks.push(e.data); };
+
+  // Play + draw frames
+  recorder.start(100);
+  vid.play();
+  await new Promise(res=>{
+    vid.ontimeupdate = ()=>ctx.drawImage(vid, 0, 0, w, h);
+    vid.onended = ()=>{ recorder.stop(); res(); };
+  });
+  await new Promise(res=>{ recorder.onstop=res; });
+
+  URL.revokeObjectURL(vid.src);
+  const blob = new Blob(chunks, { type: mimeType });
+  const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+  return new File([blob], file.name.replace(/\.[^.]+$/, '')+`_${quality}.${ext}`, { type: mimeType });
+}
+
 function esc(s){ return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) }
 function showImg(src){ $('#modalImg').src=src; $('#modal').classList.add('show') }
 
@@ -1050,9 +1149,10 @@ $('#tabs').onclick=e=>{
 };
 $('#btnNew').onclick=()=>{
   const arr=getCurrentArray();
-  if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:'Daily Life',subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
+  if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:(state.data.categories[0]?.name||'Daily Life'),subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
   else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),coverEmoji:'🎵',badges:[],streaming:{},about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
   else if(state.tab==='people'){ const id='person-'+Date.now(); arr.unshift({id,name:'New Person',handle:'',role:'',avatar:'',bio:'',tags:['friend'],links:{},projects:[],color:'text-purple-400',icon:'👤',showOnHome:true}); state.currentId=id; }
+  else if(state.tab==='categories'){ const id='cat-'+Date.now(); arr.unshift({id,name:'New Category',color:'#A596DA',subs:[]}); state.currentId=id; }
   else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'Dennis Zero VT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }
   render();
 };
