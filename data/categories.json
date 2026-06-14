@@ -1,5 +1,11 @@
 [
   {
+    "id": "cat-1781469095633",
+    "name": "New Category",
+    "color": "#A596DA",
+    "subs": []
+  },
+  {
     "id": "game-dev",
     "name": "Game Dev",
     "color": "#A596DA",
@@ -17,17 +23,6 @@
       "Remixes",
       "Soundtracks",
       "Behind the Beat"
-    ]
-  },
-  {
-    "id": "daily-life",
-    "name": "Daily Life",
-    "color": "#22c55e",
-    "subs": [
-      "Workflow",
-      "Thoughts",
-      "Updates",
-      "Gear"
     ]
   }
 ]
