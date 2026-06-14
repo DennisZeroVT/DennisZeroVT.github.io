@@ -1,9 +1,12 @@
 [
   {
-    "id": "cat-1781469095633",
-    "name": "New Category",
+    "id": "gaming",
+    "name": "Gaming",
     "color": "#A596DA",
-    "subs": []
+    "subs": [
+      "Osu",
+      "speedrunning"
+    ]
   },
   {
     "id": "game-dev",
