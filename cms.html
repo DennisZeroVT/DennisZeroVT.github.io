@@ -1,42 +1,92 @@
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>CMS</title>
-<style>body{background:#111;color:#eee;font-family:system-ui;padding:20px}input,select,textarea{width:100%;margin:4px 0;padding:8px;background:#222;color:#eee;border:1px solid #444}button{padding:10px 16px;margin:8px 4px;background:#1DB954;color:#000;border:0;font-weight:700;cursor:pointer}.song{border:1px solid #333;padding:16px;margin:16px 0;border-radius:12px}.platform{display:grid;grid-template-columns:1fr 120px 1fr;gap:8px;align-items:center}</style>
-</head><body>
-<h1>Song CMS - badges</h1>
-<input type="file" id="file" accept=".json">
-<div id="list"></div>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Dennis CMS - Badges</title>
+<style>
+body{background:#0a0a0a;color:#eee;font-family:system-ui;margin:0;display:flex;height:100vh}
+.left{flex:1;padding:20px;overflow:auto}
+.right{width:380px;background:#111;border-left:1px solid #222;padding:16px;overflow:auto}
+.song{background:#181818;border:1px solid #282828;border-radius:12px;padding:14px;margin:14px 0}
+input,textarea,select{width:100%;background:#222;color:#eee;border:1px solid #333;padding:8px;margin:4px 0;border-radius:6px;box-sizing:border-box}
+button{background:#1DB954;color:#000;border:0;padding:9px 14px;font-weight:700;border-radius:8px;cursor:pointer;margin:4px 4px 0 0}
+.badge-row{display:grid;grid-template-columns:1fr 90px 90px 32px;gap:6px;align-items:center;margin:6px 0}
+.badge-preview{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;margin:3px}
+.small{font-size:12px;opacity:.7}
+</style>
+</head>
+<body>
+<div class="left">
+<h1>Song Badges – Label & Color Editor</h1>
+<input type="file" id="load" accept=".json">
 <button onclick="download()">Download songs.json</button>
-
+<button onclick="addSong()">+ Add Song</button>
+<div id="songs"></div>
+</div>
+<div class="right">
+<h3>Live Preview</h3>
+<div id="preview"></div>
+<div class="small" style="margin-top:20px">Tip: Click a color to change badge background. First badge is usually status (pending/released).</div>
+</div>
 <script>
 let songs=[];
-document.getElementById('file').onchange=e=>{
-  const r=new FileReader();
-  r.onload=()=>{songs=JSON.parse(r.result);render()};
-  r.readAsText(e.target.files[0]);
-};
-function render(){
-  document.getElementById('list').innerHTML=songs.map((s,i)=>`
-  <div class="song">
-    <h3>${s.title}</h3>
-    <input value="${s.title}" onchange="songs[${i}].title=this.value" placeholder="Title">
-    <textarea onchange="songs[${i}].description=this.value">${s.description}</textarea>
-    ${s.platforms.map((p,pi)=>`
-      <div class="platform">
-        <input value="${p.name}" onchange="songs[${i}].platforms[${pi}].name=this.value">
-        <select onchange="songs[${i}].platforms[${pi}].status=this.value">
-          <option ${p.status==='released'?'selected':''}>released</option>
-          <option ${p.status==='pending'?'selected':''}>pending</option>
-          <option ${p.status==='coming'?'selected':''}>coming</option>
-        </select>
-        <input value="${p.url}" placeholder="url" onchange="songs[${i}].platforms[${pi}].url=this.value">
-      </div>`).join('')}
-  </div>`).join('');
+document.getElementById('load').onchange=e=>{const r=new FileReader();r.onload=()=>{songs=JSON.parse(r.result);render()};r.readAsText(e.target.files[0])};
+fetch('data/songs.json').then(r=>r.json()).then(d=>{songs=d;convertOld();render()}).catch(()=>{});
+
+function convertOld(){
+  songs.forEach(s=>{
+    if(s.badges && typeof s.badges[0]==='string'){
+      s.badges = s.badges.map(label=>{
+        const l=label.toLowerCase();
+        return {label, bg:l==='released'?'#1DB954':l==='pending'?'#2a2a2a':'#3a3a3a', fg:l==='released'?'#000':l==='pending'?'#999':'#ddd'}
+      })
+    }
+  })
 }
+
+function render(){
+  document.getElementById('songs').innerHTML = songs.map((s,i)=>`
+    <div class="song">
+      <input value="${s.title}" oninput="songs[${i}].title=this.value;updatePreview(${i})">
+      <div style="display:grid;grid-template-columns:80px 1fr;gap:6px">
+        <input value="${s.year}" oninput="songs[${i}].year=this.value">
+        <input value="${s.coverEmoji||''}" placeholder="emoji" oninput="songs[${i}].coverEmoji=this.value">
+      </div>
+      <textarea rows="2" oninput="songs[${i}].about=this.value">${s.about||''}</textarea>
+      <h4>Badges</h4>
+      ${s.badges.map((b,bi)=>`
+        <div class="badge-row">
+          <input value="${b.label}" oninput="songs[${i}].badges[${bi}].label=this.value;updatePreview(${i})">
+          <input type="color" value="${b.bg}" oninput="songs[${i}].badges[${bi}].bg=this.value;updatePreview(${i})" title="background">
+          <input type="color" value="${b.fg}" oninput="songs[${i}].badges[${bi}].fg=this.value;updatePreview(${i})" title="text">
+          <button onclick="songs[${i}].badges.splice(${bi},1);render()" style="background:#c33;color:#fff;padding:4px">×</button>
+        </div>
+      `).join('')}
+      <button onclick="songs[${i}].badges.push({label:'New',bg:'#444',fg:'#fff'});render()">+ badge</button>
+      <button onclick="updatePreview(${i})">Preview</button>
+    </div>
+  `).join('');
+  if(songs[0]) updatePreview(0);
+}
+
+function updatePreview(i){
+  const s=songs[i];
+  document.getElementById('preview').innerHTML = `
+    <h4>${s.coverEmoji||''} ${s.title} (${s.year})</h4>
+    <p class="small">${(s.about||'').slice(0,120)}...</p>
+    <div>${s.badges.map(b=>`<span class="badge-preview" style="background:${b.bg};color:${b.fg}">${b.label}</span>`).join('')}</div>
+  `;
+}
+
+function addSong(){
+  songs.unshift({id:'song-'+Date.now(),title:'New Song',year:2026,coverEmoji:'',about:'',cover:'',audio:'',badges:[{label:'pending',bg:'#2a2a2a',fg:'#999'},{label:'Spotify',bg:'#1DB954',fg:'#000'}]});
+  render();
+}
+
 function download(){
-  const blob=new Blob([JSON.stringify(songs,null,2)],{type:'application/json'});
+  const blob = new Blob([JSON.stringify(songs,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='songs.json';a.click();
 }
-// load default
-fetch('../data/songs.json').then(r=>r.json()).then(d=>{songs=d;render()}).catch(()=>{});
 </script>
-</body></html>
+</body>
+</html>

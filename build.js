@@ -1,43 +1,45 @@
 const fs = require('fs');
+const read = p => JSON.parse(fs.readFileSync(p,'utf8'));
+const posts = read('data/posts.json');
+const people = read('data/people.json');
+const songs = read('data/songs.json');
 
-function bake(file, startTag, endTag, content) {
-  let html = fs.readFileSync(file, 'utf8');
-  const re = new RegExp(`${startTag}[\s\S]*?${endTag}`, 'm');
-  html = html.replace(re, `${startTag}\n${content}\n${endTag}`);
-  fs.writeFileSync(file, html);
-}
+const replace = (file, start, end, html) => {
+  let src = fs.readFileSync(file,'utf8');
+  src = src.replace(new RegExp(`${start}[\s\S]*?${end}`,'m'), `${start}\n${html}\n${end}`);
+  fs.writeFileSync(file, src);
+};
 
-// --- MUSIC ---
-const songs = JSON.parse(fs.readFileSync('data/songs.json','utf8'));
-const musicCards = songs.map(s => {
-  const badges = s.platforms.map(p => {
-    const cls = p.status.toLowerCase();
-    const href = p.url || '#';
-    return `<a href="${href}" class="badge badge-${cls}" target="_blank" rel="noopener">${p.name} • ${p.status}</a>`;
-  }).join('\n');
-  return `
-<div class="song-card">
-  <img src="${s.cover}" alt="${s.title}" class="song-cover">
-  <h3>${s.emoji ? s.emoji + ' ' : ''}${s.title} (${s.year})</h3>
-  <p>${s.description}</p>
-  <div class="badges">${badges}</div>
-  <audio controls src="${s.audio}"></audio>
-</div>`;
-}).join('\n');
+replace('blog.html','<!-- POSTS_START -->','<!-- POSTS_END -->',
+  posts.map(p => `<article class="glass p-6 rounded-xl">
+    <h2 class="text-2xl font-semibold mb-2">${p.title}</h2>
+    <div class="text-sm text-[var(--text-secondary)] mb-3">${p.date} • ${p.category}${p.subcategory?' / '+p.subcategory:''}</div>
+    ${p.blocks.map(b => b.type==='text'?`<p class="mb-3">${b.content.replace(/\n/g,'<br>')}</p>`: `<a href="${b.url}" target="_blank" class="text-[var(--accent)]">▶ Watch video</a>`).join('')}
+  </article>`).join('\n')
+);
 
-bake('music.html','<!-- MUSIC_START -->','<!-- MUSIC_END -->', musicCards);
+replace('friends.html','<!-- FRIENDS_START -->','<!-- FRIENDS_END -->',
+  people.map(f => `<div class="glass p-6 rounded-xl">
+    <div class="flex gap-4">
+      <img src="${f.avatar}" class="w-20 h-20 rounded-full object-cover">
+      <div>
+        <h3 class="text-xl font-semibold">${f.name} <span class="text-sm opacity-70">${f.handle}</span></h3>
+        <p class="text-[var(--text-secondary)] text-sm mb-2">${f.role}</p>
+        <p class="text-sm">${f.bio}</p>
+      </div>
+    </div>
+  </div>`).join('\n')
+);
 
-// --- keep existing blog/friends/collabs if you have them ---
-try {
-  const posts = JSON.parse(fs.readFileSync('data/posts.json','utf8'));
-  const blog = posts.map(p=>`<article><h2>${p.title}</h2><div class="meta">${p.date} • ${p.category}</div><p>${p.body}</p></article>`).join('\n');
-  bake('blog.html','<!-- BLOG_START -->','<!-- BLOG_END -->', blog);
-} catch(e){}
+replace('music.html','<!-- SONGS_START -->','<!-- SONGS_END -->',
+  songs.map(s => `<div class="glass p-6 rounded-xl">
+    <img src="${s.cover}" class="w-full rounded-lg mb-4">
+    <h3 class="text-xl font-semibold">${s.coverEmoji||''} ${s.title} (${s.year})</h3>
+    <p class="text-sm my-2">${s.about}</p>
+    <div class="flex flex-wrap gap-2 text-xs mb-3">${s.badges.map(b=>`<span class="px-2 py-1 rounded font-medium" style="background:${b.bg};color:${b.fg}">${b.label}</span>`).join('')}</div>
+    <audio controls src="${s.audio}" class="w-full"></audio>
+  </div>`).join('\n')
+);
 
-try {
-  const people = JSON.parse(fs.readFileSync('data/people.json','utf8'));
-  const friends = people.filter(p=>p.type==='friend').map(p=>`<div class="person"><h3>${p.name}</h3><p>${p.role}</p><p>${p.bio}</p></div>`).join('\n');
-  bake('friends.html','<!-- FRIENDS_START -->','<!-- FRIENDS_END -->', friends);
-} catch(e){}
-
-console.log('Baked music + badges');
+replace('collabs.html','<!-- COLLABS_START -->','<!-- COLLABS_END -->','<p class="glass p-6 rounded-xl">Collabs coming soon.</p>');
+console.log('built');
