@@ -36,7 +36,7 @@ replace('music.html','<!-- SONGS_START -->','<!-- SONGS_END -->',
     <img src="${s.cover}" class="w-full rounded-lg mb-4">
     <h3 class="text-xl font-semibold">${s.coverEmoji||''} ${s.title} (${s.year})</h3>
     <p class="text-sm my-2">${s.about}</p>
-    <div class="flex flex-wrap gap-2 text-xs mb-3">${s.badges.map(b=>`<span class="px-2 py-1 bg-[var(--accent)]/20 rounded">${b}</span>`).join('')}</div>
+    <div class="flex flex-wrap gap-2 text-xs mb-3">${(s.badges||[]).map(b=>{const label=typeof b==='string'?b:b.label;const color=typeof b==='object'&&b.color?b.color:null;return color?`<span class="px-2 py-1 rounded text-white font-medium" style="background-color:${color}">${label}</span>`:`<span class="px-2 py-1 bg-[var(--accent)]/20 rounded">${label}</span>`}).join('')}</div>
     <audio controls src="${s.audio}" class="w-full"></audio>
   </div>`).join('\n')
 );

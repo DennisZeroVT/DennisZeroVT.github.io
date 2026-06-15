@@ -788,7 +788,11 @@ function renderSongEditor(s){
       <div class="field"><label>Artist</label><input id="s_artist" value="${esc(s.artist||'Dennis Zero VT')}"></div>
       <div class="field"><label>Year</label><input id="s_year" type="number" value="${s.year||new Date().getFullYear()}"></div>
       <div class="field"><label>Cover Emoji</label><input id="s_emoji" value="${esc(s.coverEmoji||'🎵')}"></div>
-      <div class="field"><label>Badges (comma)</label><input id="s_badges" value="${esc((s.badges||[]).join(', '))}"></div>
+      <div class="field full"><label>Badges</label>
+        <div id="badge_editor" class="badge-editor"></div>
+        <button class="btn small" id="add_badge" type="button">+ Add Badge</button>
+        <div class="hint">Pick a label and color for each badge. Colors show on music.html</div>
+      </div>
       <div class="field"><label>Cover Image</label>
         <div class="upload"><label class="file-btn">Upload cover<input type="file" accept="image/*" id="s_coverfile"></label><span class="hint">${s.cover?'Uploaded':''}</span></div>
         ${s.cover?`<img class="img-prev" src="${s.cover}" onclick="showImg('${s.cover}')">`:''}
@@ -810,13 +814,44 @@ function renderSongEditor(s){
       <div class="field full"><label>Behind The Scenes</label><textarea id="s_bts">${esc(s.behindTheScenes||'')}</textarea></div>
     </div>
   `;
+  // --- Badge editor with color ---
+  const defaultColors = { 'Released':'#10B981','pending':'#6B7280','Pending':'#6B7280','Spotify':'#1DB954','Apple Music':'#FA243C','Tidal':'#000000','Amazon':'#FF9900','YouTube Music':'#FF0000','Deezer':'#FEAA2D' };
+  s.badges = (s.badges||[]).map(b => typeof b==='string' ? {label:b, color: defaultColors[b]||'#A596DA'} : {label:b.label||'', color:b.color||'#A596DA'});
+  const badgeWrap = $('#badge_editor');
+  function renderBadges(){
+    badgeWrap.innerHTML='';
+    s.badges.forEach((b,i)=>{
+      const row=document.createElement('div'); row.className='row'; row.style='gap:8px;margin-bottom:8px;align-items:center';
+      row.innerHTML = `
+        <input data-i="${i}" data-k="label" value="${esc(b.label)}" placeholder="Label" style="flex:1;min-width:120px">
+        <input type="color" data-i="${i}" data-k="color" value="${b.color}" title="Pick color" style="width:44px;height:32px;padding:0;border:none;background:none">
+        <span class="preview" style="display:inline-block;padding:2px 8px;border-radius:6px;background:${b.color};color:#fff;font-size:11px;min-width:60px;text-align:center">${esc(b.label||'')}</span>
+        <button class="btn small danger" data-del="${i}" type="button">✕</button>
+      `;
+      badgeWrap.appendChild(row);
+    });
+    badgeWrap.querySelectorAll('[data-k]').forEach(inp=>{
+      inp.oninput=e=>{
+        const i=+e.target.dataset.i; const k=e.target.dataset.k;
+        s.badges[i][k]=e.target.value;
+        const prev = e.target.parentElement.querySelector('.preview');
+        if(prev){ prev.textContent=s.badges[i].label; prev.style.background=s.badges[i].color; }
+      };
+    });
+    badgeWrap.querySelectorAll('[data-del]').forEach(btn=>{ btn.onclick=()=>{ s.badges.splice(+btn.dataset.del,1); renderBadges(); } });
+  }
+  $('#add_badge').onclick=()=>{ s.badges.push({label:'New', color:'#A596DA'}); renderBadges(); };
+  renderBadges();
+
   $('#s_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading cover…','work'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_cover').value=url; setStatus('Cover uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
   $('#s_audiofile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading audio…','work'); const url=await uploadFile(f, `${UPLOADS.songs}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_audio').value=url; setStatus('Audio uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
 }
 async function saveSong(){
   const s=getCurrentItem(); if(!s) return;
   s.title=$('#s_title').value.trim(); s.artist=$('#s_artist').value.trim(); s.year=parseInt($('#s_year').value)||new Date().getFullYear();
-  s.coverEmoji=$('#s_emoji').value.trim(); s.badges=$('#s_badges').value.split(',').map(x=>x.trim()).filter(Boolean);
+  s.coverEmoji=$('#s_emoji').value.trim(); 
+  // badges are maintained as objects by the badge editor
+  s.badges=(s.badges||[]).map(b=>({label:(b.label||'').trim(), color:b.color||'#A596DA'})).filter(b=>b.label);
   s.cover=$('#s_cover').value.trim(); s.audio=$('#s_audio').value.trim();
   s.streaming={ spotify:$('#s_spotify').value, apple:$('#s_apple').value, tidal:$('#s_tidal').value, youtube:$('#s_youtube').value, amazon:$('#s_amazon').value, deezer:$('#s_deezer').value };
   s.about=$('#s_about').value; s.thoughts=$('#s_thoughts').value; s.miscellaneous=$('#s_misc').value; s.behindTheScenes=$('#s_bts').value;
