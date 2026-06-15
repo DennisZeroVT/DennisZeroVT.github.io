@@ -6,7 +6,7 @@ const songs = read('data/songs.json');
 
 const replace = (file, start, end, html) => {
   let src = fs.readFileSync(file,'utf8');
-  src = src.replace(new RegExp(`${start}[\s\S]*?${end}`,'m'), `${start}\n${html}\n${end}`);
+  src = src.replace(new RegExp(`${start}[\\s\\S]*?${end}`,'m'), `${start}\n${html}\n${end}`);
   fs.writeFileSync(file, src);
 };
 
@@ -36,7 +36,7 @@ replace('music.html','<!-- SONGS_START -->','<!-- SONGS_END -->',
     <img src="${s.cover}" class="w-full rounded-lg mb-4">
     <h3 class="text-xl font-semibold">${s.coverEmoji||''} ${s.title} (${s.year})</h3>
     <p class="text-sm my-2">${s.about}</p>
-    <div class="flex flex-wrap gap-2 text-xs mb-3">${s.badges.map(b=>`<span class="px-2 py-1 rounded font-medium" style="background:${b.bg};color:${b.fg}">${b.label}</span>`).join('')}</div>
+    <div class="flex flex-wrap gap-2 text-xs mb-3">${s.badges.map(b=>`<span class="px-2 py-1 bg-[var(--accent)]/20 rounded">${b}</span>`).join('')}</div>
     <audio controls src="${s.audio}" class="w-full"></audio>
   </div>`).join('\n')
 );

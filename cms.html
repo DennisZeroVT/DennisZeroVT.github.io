@@ -1,92 +1,1175 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Dennis CMS - Badges</title>
+<!-- Playables SDK -->
+<script>// Playables SDK v1.0.0
+// Game lifecycle bridge: rAF-based game-ready detection + event communication
+(function() {
+  'use strict';
+
+  // Idempotency: skip if already initialized (e.g., server-side injection
+  // followed by client-side inject-javascript via the Bloks webview component).
+  if (window.playablesSDK) return;
+
+  var HANDLER_NAME = 'playablesGameEventHandler';
+  var ANDROID_BRIDGE_NAME = '_MetaPlayablesBridge';
+  var RAF_FRAME_THRESHOLD = 3;
+
+  var gameReadySent = false;
+  var firstInteractionSent = false;
+  var errorSent = false;
+  var frameCount = 0;
+  var originalRAF = window.requestAnimationFrame;
+
+  // --- Transport Layer ---
+
+  function hasIOSBridge() {
+    return !!(window.webkit &&
+              window.webkit.messageHandlers &&
+              window.webkit.messageHandlers[HANDLER_NAME]);
+  }
+
+  function hasAndroidBridge() {
+    return !!(window[ANDROID_BRIDGE_NAME] &&
+              typeof window[ANDROID_BRIDGE_NAME].postEvent === 'function');
+  }
+
+  function isInIframe() {
+    return !!(window.parent && window.parent !== window);
+  }
+
+  function sendEvent(eventName, payload) {
+    var message = {
+      type: eventName,
+      payload: payload || {},
+      timestamp: Date.now()
+    };
+
+    if (hasIOSBridge()) {
+      try {
+        window.webkit.messageHandlers[HANDLER_NAME].postMessage(message);
+      } catch (e) { /* ignore */ }
+      return;
+    }
+
+    if (hasAndroidBridge()) {
+    try {
+      var p = payload || {};
+      p.__secureToken = window.__fbAndroidBridgeAuthToken || '';
+      p.timestamp = message.timestamp;
+      window[ANDROID_BRIDGE_NAME].postEvent(
+        eventName,
+        JSON.stringify(p)
+      );
+    } catch (e) { /* ignore */ }
+    return;
+  }
+
+    if (isInIframe()) {
+      try {
+        window.parent.postMessage(message, '*');
+      } catch (e) { /* ignore */ }
+      return;
+    }
+  }
+
+  // --- rAF Game-Ready Detection ---
+
+  function onFrame() {
+    if (gameReadySent) return;
+
+    frameCount++;
+    if (frameCount >= RAF_FRAME_THRESHOLD) {
+      gameReadySent = true;
+      sendEvent('game_ready', {
+        frame_count: frameCount,
+        detected_at: Date.now()
+      });
+      return;
+    }
+
+    originalRAF.call(window, onFrame);
+  }
+
+  if (originalRAF) {
+    window.requestAnimationFrame = function(callback) {
+      if (!gameReadySent) {
+        return originalRAF.call(window, function(timestamp) {
+          frameCount++;
+          if (frameCount >= RAF_FRAME_THRESHOLD && !gameReadySent) {
+            gameReadySent = true;
+            sendEvent('game_ready', {
+              frame_count: frameCount,
+              detected_at: Date.now()
+            });
+          }
+          callback(timestamp);
+        });
+      }
+      return originalRAF.call(window, callback);
+    };
+  }
+
+  // --- First User Interaction Detection ---
+
+  function setupFirstInteractionDetection() {
+    var events = ['touchstart', 'mousedown', 'keydown'];
+
+    function onFirstInteraction() {
+      if (firstInteractionSent) return;
+      firstInteractionSent = true;
+      sendEvent('user_interaction_start', null);
+
+      for (var i = 0; i < events.length; i++) {
+        document.removeEventListener(events[i], onFirstInteraction, true);
+      }
+    }
+
+    for (var i = 0; i < events.length; i++) {
+      document.addEventListener(events[i], onFirstInteraction, true);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupFirstInteractionDetection);
+  } else {
+    setupFirstInteractionDetection();
+  }
+
+  // --- Auto Error Capture ---
+
+  window.addEventListener('error', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    sendEvent('error', {
+      message: event.message || 'Unknown error',
+      source: event.filename || '',
+      lineno: event.lineno || 0,
+      colno: event.colno || 0,
+      auto_captured: true
+    });
+  });
+
+  window.addEventListener('unhandledrejection', function(event) {
+    if (errorSent) return;
+    errorSent = true;
+    var reason = event.reason;
+    sendEvent('error', {
+      message: (reason instanceof Error) ? reason.message : String(reason),
+      type: 'unhandled_promise_rejection',
+      auto_captured: true
+    });
+  });
+
+  // --- Public API ---
+
+  window.playablesSDK = {
+    complete: function(score) {
+      sendEvent('game_ended', {
+        score: score,
+        completed: true
+      });
+    },
+
+    error: function(message) {
+      if (errorSent) return;
+      errorSent = true;
+      sendEvent('error', {
+        message: message || 'Unknown error',
+        auto_captured: false
+      });
+    },
+
+    sendEvent: function(eventName, payload) {
+      if (!eventName || typeof eventName !== 'string') return;
+      sendEvent(eventName, payload);
+    }
+  };
+
+  // Kick off rAF detection in case no game code calls rAF immediately
+  if (originalRAF) {
+    originalRAF.call(window, onFrame);
+  }
+})();</script>
+<!-- PLAYABLE_TOUCH_PATCH_V1 --><script>
+(function() {
+  if (window.__playableTouchPatchInstalled) return;
+  window.__playableTouchPatchInstalled = true;
+  var origAdd = EventTarget.prototype.addEventListener;
+  var blockedTypes = { touchstart: 1, touchmove: 1, wheel: 1 };
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (blockedTypes[type]) {
+      if (options === undefined || options === null) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else {
+        options = Object.assign({}, options, { passive: true });
+      }
+    }
+    return origAdd.call(this, type, listener, options);
+  };
+})();
+</script><script>window.Intl=window.Intl||{};Intl.t=function(s){return(Intl._locale&&Intl._locale[s])||s;};</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dennis CMS — Unified GitHub Manager</title>
 <style>
-body{background:#0a0a0a;color:#eee;font-family:system-ui;margin:0;display:flex;height:100vh}
-.left{flex:1;padding:20px;overflow:auto}
-.right{width:380px;background:#111;border-left:1px solid #222;padding:16px;overflow:auto}
-.song{background:#181818;border:1px solid #282828;border-radius:12px;padding:14px;margin:14px 0}
-input,textarea,select{width:100%;background:#222;color:#eee;border:1px solid #333;padding:8px;margin:4px 0;border-radius:6px;box-sizing:border-box}
-button{background:#1DB954;color:#000;border:0;padding:9px 14px;font-weight:700;border-radius:8px;cursor:pointer;margin:4px 4px 0 0}
-.badge-row{display:grid;grid-template-columns:1fr 90px 90px 32px;gap:6px;align-items:center;margin:6px 0}
-.badge-preview{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600;margin:3px}
-.small{font-size:12px;opacity:.7}
+:root{
+  --bg:#050507; --bg2:#0b0b12; --glass:rgba(14,14,20,.72); --glass-2:rgba(18,18,26,.6);
+  --border:rgba(255,255,255,.08); --border-2:rgba(255,255,255,.14);
+  --text:#e9e9f2; --muted:#9a9ab3; --accent:#A596DA; --accent-2:#7c6bc4;
+  --red:#f87171; --green:#34d399; --amber:#fbbf24;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;
+  background:var(--bg); color:var(--text); overflow:hidden;
+}
+body::before{
+  content:""; position:fixed; inset:-30%;
+  background:
+    radial-gradient(700px at 12% 15%, rgba(165,150,218,.18), transparent 60%),
+    radial-gradient(600px at 88% 25%, rgba(124,107,196,.14), transparent 60%),
+    radial-gradient(500px at 50% 85%, rgba(165,150,218,.10), transparent 60%);
+  filter:blur(40px); z-index:-1; animation:float 25s ease-in-out infinite alternate;
+}
+@keyframes float{to{transform:translateY(-20px) scale(1.03)}}
+.glass{background:var(--glass);backdrop-filter:blur(22px) saturate(140%);border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.app{display:flex;flex-direction:column;height:100vh}
+.topbar{display:flex;align-items:center;gap:14px;padding:12px 16px;position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.6px}
+.logo{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 24px rgba(165,150,218,.45), inset 0 1px 0 rgba(255,255,255,.2);display:grid;place-items:center;color:#0b0714;font-weight:900;font-size:13px}
+.tabs{display:flex;gap:6px;flex:1;overflow:auto;padding:2px}
+.tab{padding:8px 14px;border-radius:10px;border:1px solid transparent;background:transparent;color:var(--muted);font-weight:700;font-size:12.5px;letter-spacing:.4px;cursor:pointer;white-space:nowrap;transition:.18s}
+.tab:hover{color:var(--text);background:rgba(255,255,255,.04)}
+.tab.active{color:var(--text);background:rgba(165,150,218,.14);border-color:rgba(165,150,218,.28);box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 0 1px rgba(165,150,218,.08) inset}
+.connect{display:flex;gap:8px;align-items:center}
+.connect input{width:200px;background:rgba(0,0,0,.35);border:1px solid var(--border);color:var(--text);padding:9px 11px;border-radius:10px;font-size:13px;outline:none}
+.connect input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(165,150,218,.18)}
+.btn{padding:9px 13px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text);font-weight:700;font-size:13px;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{background:rgba(255,255,255,.1)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));border:none;color:#0e0a18;box-shadow:0 8px 22px rgba(165,150,218,.28)}
+.btn.ghost{background:transparent}
+.btn.small{padding:6px 10px;font-size:12px;border-radius:8px}
+.btn.danger{background:rgba(248,113,113,.12);border-color:rgba(248,113,113,.28);color:#fecaca}
+.btn.danger:hover{background:rgba(248,113,113,.2)}
+.workspace{display:grid;grid-template-columns:330px 1fr;gap:14px;padding:14px;flex:1;min-height:0}
+.sidebar{border-radius:18px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.side-head{display:flex;align-items:center;justify-content:space-between;padding:14px 14px 8px;border-bottom:1px solid var(--border)}
+.side-head h2{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.9px;color:var(--muted);font-weight:800}
+.list{overflow:auto;padding:10px;flex:1;display:flex;flex-direction:column;gap:8px}
+.item{display:flex;gap:11px;padding:10px;border-radius:12px;cursor:pointer;border:1px solid transparent;align-items:center;transition:.15s;background:rgba(0,0,0,.18)}
+.item:hover{background:rgba(255,255,255,.05);border-color:var(--border)}
+.item.active{background:rgba(165,150,218,.12);border-color:rgba(165,150,218,.3)}
+.thumb{width:46px;height:46px;border-radius:10px;object-fit:cover;background:#0d0d14;flex-shrink:0;display:grid;place-items:center;font-size:22px;border:1px solid var(--border);overflow:hidden}
+.meta{min-width:0;flex:1}
+.meta .t{font-weight:700;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta .s{font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center;margin-top:2px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;font-size:10.5px;font-weight:700;background:rgba(165,150,218,.15);color:var(--accent);border:1px solid rgba(165,150,218,.25);text-transform:uppercase;letter-spacing:.3px}
+.badge.friend{background:rgba(52,211,153,.15);color:#6ee7b7;border-color:rgba(52,211,153,.25)}
+.badge.collab{background:rgba(251,191,36,.15);color:#fcd34d;border-color:rgba(251,191,36,.25)}
+.editor{border-radius:18px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.ed-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.ed-head .title{font-weight:800;font-size:15px;letter-spacing:.3px}
+.ed-actions{display:flex;gap:8px}
+.ed-body{overflow:auto;padding:18px;flex:1}
+.form{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.6px}
+input[type="text"],input[type="number"],input[type="date"],input[type="password"],select,textarea{
+  background:rgba(0,0,0,.32);border:1px solid var(--border);color:var(--text);
+  padding:10px 12px;border-radius:10px;font-size:14px;outline:none;transition:.18s;width:100%;font-family:inherit
+}
+textarea{min-height:88px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(165,150,218,.16)}
+.color-row{display:flex;gap:10px;align-items:center}
+input[type="color"]{width:44px;height:38px;padding:0;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer}
+.hint{font-size:12px;color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.switch{display:inline-flex;align-items:center;gap:8px;cursor:pointer;user-select:none}
+.switch input{appearance:none;width:38px;height:22px;background:rgba(255,255,255,.12);border-radius:999px;position:relative;border:1px solid var(--border);transition:.2s}
+.switch input::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:white;transition:.2s}
+.switch input:checked{background:rgba(165,150,218,.5);border-color:var(--accent)}
+.switch input:checked::after{left:18px;background:#0e0a18}
+.blocks{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.block{background:var(--glass-2);border:1px solid var(--border);border-radius:14px;padding:12px}
+.block-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.block-type{font-size:11px;font-weight:800;letter-spacing:.5px;color:var(--accent);text-transform:uppercase}
+.block-ctrls{display:flex;gap:6px}
+.icon{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid var(--border);cursor:pointer;font-size:14px;transition:.15s}
+.icon:hover{background:rgba(255,255,255,.12)}
+.divider-prev{height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin:8px 0;border-radius:2px}
+.img-prev{max-width:100%;max-height:220px;border-radius:10px;border:1px solid var(--border);cursor:zoom-in;display:block}
+.upload{display:flex;gap:8px;align-items:center}
+.upload input[type="file"]{display:none}
+.file-btn{padding:8px 11px;border-radius:9px;background:rgba(255,255,255,.06);border:1px dashed var(--border-2);cursor:pointer;font-size:12.5px;font-weight:700}
+.file-btn:hover{background:rgba(255,255,255,.1)}
+.tracks{display:flex;flex-direction:column;gap:8px}
+.track{display:grid;grid-template-columns:1fr 90px 110px 130px 32px;gap:8px;align-items:center;background:rgba(0,0,0,.22);padding:8px;border-radius:10px;border:1px solid var(--border)}
+.track .icon{width:30px;height:32px}
+.links-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);gap:12px;text-align:center;padding:40px}
+.empty .big{font-size:42px;opacity:.7}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:rgba(0,0,0,.4);gap:10px}
+.status-msg{display:flex;align-items:center;gap:8px;min-width:0}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted);flex-shrink:0}
+.dot.ok{background:var(--green);box-shadow:0 0 8px rgba(52,211,153,.5)}
+.dot.err{background:var(--red)}
+.dot.work{background:var(--amber);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px);padding:20px}
+.modal.show{display:flex}
+.modal img{max-width:92vw;max-height:88vh;border-radius:12px;border:1px solid var(--border)}
+.alert{padding:10px 12px;border-radius:10px;font-size:13px;border:1px solid;margin-bottom:12px}
+.alert.warn{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:#fde68a}
+.audio{width:100%;margin-top:8px;background:rgba(0,0,0,.3);border-radius:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.chip{padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--border);font-size:12px;cursor:pointer}
+.chip:hover{background:rgba(255,255,255,.1)}
+.sep{height:1px;background:var(--border);margin:14px 0}
+@media (max-width:980px){
+  .workspace{grid-template-columns:1fr; padding:10px}
+  .sidebar{max-height:38vh}
+  .form{grid-template-columns:1fr}
+  .links-grid{grid-template-columns:1fr}
+  .track{grid-template-columns:1fr 80px 100px 32px}
+  .track select:nth-child(3){display:none}
+  .connect input{width:140px}
+  .topbar{flex-wrap:wrap}
+  .tabs{order:3;width:100%}
+}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:rgba(165,150,218,.25);border-radius:9px;border:2px solid transparent;background-clip:padding-box}
+::-webkit-scrollbar-thumb:hover{background:rgba(165,150,218,.4);background-clip:padding-box}
 </style>
 </head>
 <body>
-<div class="left">
-<h1>Song Badges – Label & Color Editor</h1>
-<input type="file" id="load" accept=".json">
-<button onclick="download()">Download songs.json</button>
-<button onclick="addSong()">+ Add Song</button>
-<div id="songs"></div>
-</div>
-<div class="right">
-<h3>Live Preview</h3>
-<div id="preview"></div>
-<div class="small" style="margin-top:20px">Tip: Click a color to change badge background. First badge is usually status (pending/released).</div>
-</div>
-<script>
-let songs=[];
-document.getElementById('load').onchange=e=>{const r=new FileReader();r.onload=()=>{songs=JSON.parse(r.result);render()};r.readAsText(e.target.files[0])};
-fetch('data/songs.json').then(r=>r.json()).then(d=>{songs=d;convertOld();render()}).catch(()=>{});
+<div class="app">
+  <header class="topbar glass">
+    <div class="brand"><div class="logo">DZ</div><span>DENNIS CMS</span></div>
+    <nav class="tabs" id="tabs">
+      <button class="tab active" data-tab="blog">BLOG</button>
+      <button class="tab" data-tab="songs">SONGS</button>
+      <button class="tab" data-tab="people">PEOPLE</button>
+      <button class="tab" data-tab="categories">CATEGORIES</button>
+      <button class="tab" data-tab="albums">ALBUMS</button>
+    </nav>
+    <div class="connect">
+      <input id="token" type="password" placeholder="GitHub token (ghp_...)" autocomplete="off">
+      <button id="btnConnect" class="btn primary">Connect</button>
+    </div>
+  </header>
 
-function convertOld(){
-  songs.forEach(s=>{
-    if(s.badges && typeof s.badges[0]==='string'){
-      s.badges = s.badges.map(label=>{
-        const l=label.toLowerCase();
-        return {label, bg:l==='released'?'#1DB954':l==='pending'?'#2a2a2a':'#3a3a3a', fg:l==='released'?'#000':l==='pending'?'#999':'#ddd'}
-      })
-    }
-  })
+  <div class="workspace">
+    <aside class="sidebar glass">
+      <div class="side-head">
+        <h2 id="listTitle">Blog Posts</h2>
+        <button id="btnNew" class="btn small">+ New</button>
+      </div>
+      <div id="list" class="list"></div>
+    </aside>
+
+    <main class="editor glass" id="editor">
+      <div class="empty">
+        <div class="big">✦</div>
+        <div><b>Connect to GitHub</b><br><span class="hint">Enter token → Connect → select an item</span></div>
+      </div>
+    </main>
+  </div>
+
+  <footer class="statusbar">
+    <div class="status-msg"><span class="dot" id="dot"></span><span id="status">Not connected</span></div>
+    <div>denniszerovt/denniszerovt.github.io @ main</div>
+  </footer>
+</div>
+
+<div id="modal" class="modal" onclick="this.classList.remove('show')"><img id="modalImg" alt=""></div>
+
+<script>
+const REPO = 'denniszerovt/denniszerovt.github.io';
+const BRANCH = 'main';
+const OWNER = 'denniszerovt';
+
+const PATHS = {
+  posts: 'data/posts.json',
+  songs: 'data/songs.json',
+  people: 'data/people.json',
+  albums: 'data/albums.json',
+  categories: 'data/categories.json'
+};
+const UPLOADS = {
+  posts: 'images/posts/',
+  songs: 'SongData/Songs/',
+  covers: 'SongData/AlbumArt/',
+  people: 'Friends/'
+};
+
+const FALLBACK_CATEGORIES = [
+  {"id":"game-dev","name":"Game Dev","color":"#A596DA","subs":["Snowfall","Stuck In Time","Other Projects"]},
+  {"id":"music-production","name":"Music Production","color":"#ec4899","subs":["Snowfall","Originals","Remixes","Soundtracks","Behind the Beat"]},
+  {"id":"daily-life","name":"Daily Life","color":"#22c55e","subs":["Workflow","Thoughts","Updates","Gear"]}
+];
+const FALLBACK_POSTS = [
+  { id:"welcome-2025", title:"Welcome to the new CMS", category:"Daily Life", subcategory:"Update", date:"2025-01-15", color:"#A596DA", blocks:[{type:"text",content:"This is a glassmorphism CMS synced directly to GitHub. Write with blocks, upload images, and publish instantly."},{type:"divider"},{type:"text",content:"Legacy posts with body/images are auto-converted."}]} 
+];
+const FALLBACK_SONGS = [
+  {
+    id:"snowfall", title:"Snowfall", artist:"Dennis Zero VT", year:2025, coverEmoji:"❄️",
+    cover:"https://denniszerovt.github.io/SongData/AlbumArt/snowfall.png",
+    audio:"https://denniszerovt.github.io/SongData/Songs/snowfall.mp3",
+    badges:["Lo-fi","Collab","Winter Vibes"],
+    streaming:{ spotify:"https://open.spotify.com/", apple:"https://music.apple.com/", tidal:"", youtube:"https://youtube.com/", amazon:"", deezer:"" },
+    about:"Snowfall was created during a late winter night with Erik on vocals and inspired by Viona's calming presence. It's about that quiet moment when the world slows down.",
+    thoughts:"I wanted to capture the feeling of watching snow fall at 2am through a window.",
+    miscellaneous:"Produced in FL Studio. Piano by me, vocals by Erik.",
+    behindTheScenes:"Erik recorded his takes in one night. We layered three harmonies to get that airy feel."
+  },
+  {
+    id:"stuck-in-time", title:"Stuck In Time", artist:"Dennis Zero VT", year:2026, coverEmoji:"⏳",
+    cover:"https://denniszerovt.github.io/SongData/AlbumArt/stuck-in-time.png",
+    audio:"https://denniszerovt.github.io/SongData/Songs/stuck-in-time.mp3",
+    badges:["Drum & Bass","Collab"],
+    streaming:{ spotify:"", apple:"", tidal:"", youtube:"", amazon:"", deezer:"" },
+    about:"A track about looping memories and trying to move forward.",
+    thoughts:"This one hits different for me.",
+    miscellaneous:"140 BPM",
+    behindTheScenes:"Kula absolutely killed the drums on this. He sent me the stems at 3am and I knew instantly it was perfect. We built the entire drop around his groove."
+  }
+];
+const FALLBACK_PEOPLE = [
+  { id:"erik",   name:"Erik",   handle:"eri_k416",       role:"Friend // eri_k416",         avatar:"https://denniszerovt.github.io/Friends/erik.jpg",   bio:"Erik was the subject and inspiration for Snowfall.",  tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Snowfall",       songId:"snowfall",     role:"Inspiration", note:"His character Viona shaped the whole mood"}],                                         color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-snowflake", showOnHome:true },
+  { id:"kula",   name:"Kula",   handle:"@mee_yawwwwww",  role:"Friend, Drummer // @mee_yawwwwww", avatar:"https://denniszerovt.github.io/Friends/kula.jpg", bio:"Kula is a musician and drummer I met during an idol group project.", tags:["friend","collab"], links:{twitter:"",spotify:"",instagram:"",website:""}, credits:[{song:"Stuck In Time", songId:"stuck_in_time", role:"Drums",        note:"Recorded live drums; killed the half-time section"}], color:"from-[#A596DA]/30 to-[#8B78CB]/10", icon:"fas fa-drum",      showOnHome:true },
+  { id:"vivid",  name:"Vivid",  handle:"@vivid_exile",   role:"Best Friend // @vivid_exile", avatar:"https://denniszerovt.github.io/Friends/vivid.jpg",  bio:"An ex-military veteran I met in my very first Discord server.", tags:["friend"], links:{}, credits:[], color:"from-pink-500/30 to-pink-600/10",   icon:"fas fa-guitar",    showOnHome:true },
+  { id:"skylar", name:"Skylar", handle:"@skylar_corgi",  role:"Friend // @skylar_corgi",     avatar:"https://denniszerovt.github.io/Friends/skylar.jpg", bio:"Skylar is a best friend I met through Vivid.",        tags:["friend"], links:{}, credits:[], color:"from-purple-500/30 to-purple-600/10", icon:"fas fa-guitar",    showOnHome:true },
+  { id:"nox",    name:"Nox",    handle:"@Nox_Daemon",    role:"Friend // @Nox_Daemon",       avatar:"https://denniszerovt.github.io/Friends/nox.jpg",    bio:"Nox is a friend I met through Vivid.",                tags:["friend"], links:{}, credits:[], color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-guitar",    showOnHome:true }
+];
+const FALLBACK_ALBUMS = [
+  { id:"solo-ep", name:"Solo EP", artist:"Dennis Zero VT", year:2025, cover:"https://denniszerovt.github.io/SongData/AlbumArt/solo-ep.png", status:"Released", description:"My first solo collection.", tracklist:[{name:"Snowfall",duration:"3:24",status:"released",key:"snowfall"},{name:"Stuck In Time",duration:"4:11",status:"released",key:"stuck-in-time"},{name:"Midnight Drive",duration:"2:58",status:"planned",key:""}] }
+];
+
+const state = {
+  token: localStorage.getItem('dzcms_token')||'',
+  connected:false,
+  shas:{},
+  data:{ posts:[], songs:[], people:[], albums:[], categories:[] },
+  tab:'blog',
+  currentId:null,
+  dirty:false
+};
+
+const $ = s=>document.querySelector(s);
+const listEl = $('#list');
+const editorEl = $('#editor');
+const statusEl = $('#status');
+const dotEl = $('#dot');
+const listTitle = $('#listTitle');
+
+function setStatus(msg, type=''){
+  statusEl.textContent = msg;
+  dotEl.className = 'dot ' + (type==='ok'?'ok':type==='err'?'err':type==='work'?'work':'');
+}
+function slugify(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') }
+function b64enc(str){ return btoa(unescape(encodeURIComponent(str))) }
+function b64dec(str){ return decodeURIComponent(escape(atob(str.replace(/\n/g,'')))) }
+function today(){ return new Date().toISOString().slice(0,10) }
+function ghUrl(path){ return `https://${OWNER}.github.io/${path}` }
+
+async function ghFetch(path, opts={}){
+  const url = `https://api.github.com/repos/${REPO}/contents/${path}${opts.ref?`?ref=${opts.ref}`:''}`;
+  const res = await fetch(url, {
+    ...opts,
+    headers:{ 'Authorization':`token ${state.token}`, 'Accept':'application/vnd.github.v3+json', ...opts.headers }
+  });
+  if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return res.json();
+}
+async function getFile(path){
+  const data = await ghFetch(path, {ref:BRANCH});
+  state.shas[path]=data.sha;
+  const content = b64dec(data.content);
+  return JSON.parse(content);
+}
+async function putFile(path, obj, message){
+  const content = b64enc(JSON.stringify(obj,null,2));
+  const body = { message, content, branch:BRANCH, sha:state.shas[path] };
+  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${path}`,{
+    method:'PUT',
+    headers:{ 'Authorization':`token ${state.token}`, 'Content-Type':'application/json' },
+    body:JSON.stringify(body)
+  });
+  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||res.statusText) }
+  const data = await res.json();
+  state.shas[path]=data.content.sha;
+  return data;
+}
+async function uploadFile(file, dest){
+  const buf = await file.arrayBuffer();
+  let binary=''; const bytes=new Uint8Array(buf); for(let i=0;i<bytes.byteLength;i++) binary+=String.fromCharCode(bytes[i]);
+  const content = btoa(binary);
+  let sha=null;
+  try{ const info = await ghFetch(dest,{ref:BRANCH}); sha=info.sha; }catch{}
+  const body={message:`upload ${dest}`,content,branch:BRANCH, ...(sha?{sha}:{})};
+  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${dest}`,{
+    method:'PUT', headers:{'Authorization':`token ${state.token}`,'Content-Type':'application/json'}, body:JSON.stringify(body)
+  });
+  if(!res.ok) throw new Error('Upload failed');
+  return ghUrl(dest);
+}
+
+function migratePosts(posts){
+  return posts.map(p=>{
+    if(p.blocks) return p;
+    const blocks=[];
+    if(p.body) blocks.push({type:'text',content:p.body});
+    if(Array.isArray(p.images)) p.images.forEach(src=>blocks.push({type:'image',src,caption:''}));
+    return {...p, blocks};
+  });
+}
+
+async function connect(){
+  if(!state.token){ alert('Enter GitHub token'); return }
+  localStorage.setItem('dzcms_token', state.token);
+  setStatus('Connecting to GitHub…','work');
+  try{
+    const [posts,songs,people,albums,categories] = await Promise.all([
+      getFile(PATHS.posts).catch(()=>FALLBACK_POSTS),
+      getFile(PATHS.songs).catch(()=>FALLBACK_SONGS),
+      getFile(PATHS.people).catch(()=>FALLBACK_PEOPLE),
+      getFile(PATHS.albums).catch(()=>FALLBACK_ALBUMS),
+      getFile(PATHS.categories).catch(()=>FALLBACK_CATEGORIES),
+    ]);
+    state.data.posts = migratePosts(posts);
+    state.data.songs = songs;
+    state.data.people = people;
+    state.data.albums = albums;
+    state.data.categories = categories;
+    state.connected = true;
+    setStatus('Connected • Synced','ok');
+    render();
+  }catch(e){
+    console.error(e);
+    setStatus('Connection failed: '+e.message,'err');
+    // still load fallbacks for offline editing
+    state.data.posts = FALLBACK_POSTS;
+    state.data.songs = FALLBACK_SONGS;
+    state.data.people = FALLBACK_PEOPLE;
+    state.data.albums = FALLBACK_ALBUMS;
+    state.data.categories = FALLBACK_CATEGORIES;
+    render();
+  }
 }
 
 function render(){
-  document.getElementById('songs').innerHTML = songs.map((s,i)=>`
-    <div class="song">
-      <input value="${s.title}" oninput="songs[${i}].title=this.value;updatePreview(${i})">
-      <div style="display:grid;grid-template-columns:80px 1fr;gap:6px">
-        <input value="${s.year}" oninput="songs[${i}].year=this.value">
-        <input value="${s.coverEmoji||''}" placeholder="emoji" oninput="songs[${i}].coverEmoji=this.value">
+  renderTabs();
+  renderList();
+  renderEditor();
+}
+function renderTabs(){
+  document.querySelectorAll('.tab').forEach(b=>{
+    b.classList.toggle('active', b.dataset.tab===state.tab);
+  });
+  listTitle.textContent = state.tab==='blog'?'Blog Posts':state.tab==='songs'?'Songs':state.tab==='people'?'People':'Albums';
+}
+function renderList(){
+  listEl.innerHTML='';
+  const data = getCurrentArray();
+  const items = [...data].sort((a,b)=>{
+    if(state.tab==='blog') return (b.date||'').localeCompare(a.date||'');
+    if(state.tab==='songs' || state.tab==='albums') return (b.year||0)-(a.year||0);
+    return (a.name||'').localeCompare(b.name||'');
+  });
+  items.forEach(it=>{
+    const div=document.createElement('div');
+    div.className='item'+(it.id===state.currentId?' active':'');
+    div.onclick=()=>{ state.currentId=it.id; renderList(); renderEditor(); };
+    const thumb = document.createElement('div'); thumb.className='thumb';
+    if(state.tab==='blog'){
+      const firstImg = (it.blocks||[]).find(b=>b.type==='image')?.src;
+      if(firstImg){ const img=document.createElement('img'); img.src=firstImg; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img); } else thumb.textContent='📝';
+    } else if(state.tab==='songs'){
+      if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent=it.coverEmoji||'🎵';
+    } else if(state.tab==='people'){
+      if(it.avatar){ const img=document.createElement('img'); img.src=it.avatar; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent=it.icon||'👤';
+    } else if(state.tab==='categories'){
+      thumb.style.background = it.color+'20'; thumb.style.borderColor = it.color+'40'; thumb.style.color = it.color; thumb.textContent = it.name.charAt(0); thumb.style.fontWeight='700';
+    } else {
+      if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent='💿';
+    }
+    const meta=document.createElement('div'); meta.className='meta';
+    const t=document.createElement('div'); t.className='t'; t.textContent= state.tab==='blog'?it.title:it.name||it.title;
+    const s=document.createElement('div'); s.className='s';
+    if(state.tab==='blog') s.innerHTML=`<span>${it.category||''}</span> • <span>${it.date||''}</span>`;
+    else if(state.tab==='songs') s.innerHTML=`<span>${it.artist||''}</span> • <span>${it.year||''}</span>`;
+    else if(state.tab==='people'){ s.innerHTML=''; (it.tags||[]).forEach(tag=>{ const b=document.createElement('span'); b.className='badge '+tag; b.textContent=tag; s.appendChild(b); }); }
+    else if(state.tab==='categories'){ s.innerHTML=`<span class="badge" style="background:${it.color}20;color:${it.color};border-color:${it.color}40">${it.id}</span> • <span>${(it.subs||[]).length} subs</span>`; }
+    else s.innerHTML=`<span>${it.status||''}</span> • <span>${it.year||''}</span>`;
+    meta.appendChild(t); meta.appendChild(s);
+    div.appendChild(thumb); div.appendChild(meta);
+    listEl.appendChild(div);
+  });
+}
+function getCurrentArray(){
+  return state.tab==='blog'?state.data.posts:state.tab==='songs'?state.data.songs:state.tab==='people'?state.data.people:state.tab==='categories'?state.data.categories:state.data.albums;
+}
+function getCurrentItem(){
+  return getCurrentArray().find(x=>x.id===state.currentId);
+}
+
+function renderEditor(){
+  const item = getCurrentItem();
+  if(!item){
+    editorEl.innerHTML=`<div class="empty"><div class="big">✦</div><div>Select an item or create new<br><span class="hint">Data is stored in /data/*.json</span></div></div>`;
+    return;
+  }
+  if(state.tab==='blog') renderBlogEditor(item);
+  else if(state.tab==='songs') renderSongEditor(item);
+  else if(state.tab==='people') renderPeopleEditor(item);
+  else if(state.tab==='categories') renderCategoryEditor(item);
+  else renderAlbumEditor(item);
+}
+
+function editorShell(title, saveFn, delFn){
+  editorEl.innerHTML = `
+    <div class="ed-head">
+      <div class="title">${title}</div>
+      <div class="ed-actions">
+        <button class="btn small danger" id="btnDel">Delete</button>
+        <button class="btn small primary" id="btnSave">Save to GitHub</button>
       </div>
-      <textarea rows="2" oninput="songs[${i}].about=this.value">${s.about||''}</textarea>
-      <h4>Badges</h4>
-      ${s.badges.map((b,bi)=>`
-        <div class="badge-row">
-          <input value="${b.label}" oninput="songs[${i}].badges[${bi}].label=this.value;updatePreview(${i})">
-          <input type="color" value="${b.bg}" oninput="songs[${i}].badges[${bi}].bg=this.value;updatePreview(${i})" title="background">
-          <input type="color" value="${b.fg}" oninput="songs[${i}].badges[${bi}].fg=this.value;updatePreview(${i})" title="text">
-          <button onclick="songs[${i}].badges.splice(${bi},1);render()" style="background:#c33;color:#fff;padding:4px">×</button>
-        </div>
-      `).join('')}
-      <button onclick="songs[${i}].badges.push({label:'New',bg:'#444',fg:'#fff'});render()">+ badge</button>
-      <button onclick="updatePreview(${i})">Preview</button>
     </div>
-  `).join('');
-  if(songs[0]) updatePreview(0);
-}
-
-function updatePreview(i){
-  const s=songs[i];
-  document.getElementById('preview').innerHTML = `
-    <h4>${s.coverEmoji||''} ${s.title} (${s.year})</h4>
-    <p class="small">${(s.about||'').slice(0,120)}...</p>
-    <div>${s.badges.map(b=>`<span class="badge-preview" style="background:${b.bg};color:${b.fg}">${b.label}</span>`).join('')}</div>
+    <div class="ed-body" id="edBody"></div>
   `;
+  $('#btnSave').onclick=saveFn;
+  $('#btnDel').onclick=delFn;
+  return $('#edBody');
 }
 
-function addSong(){
-  songs.unshift({id:'song-'+Date.now(),title:'New Song',year:2026,coverEmoji:'',about:'',cover:'',audio:'',badges:[{label:'pending',bg:'#2a2a2a',fg:'#999'},{label:'Spotify',bg:'#1DB954',fg:'#000'}]});
+function renderBlogEditor(post){
+  const body = editorShell('Edit Blog Post', saveBlog, deleteBlog);
+  const catsArr = (state.data.categories||FALLBACK_CATEGORIES);
+  const cats = catsArr.map(c=>c.name);
+  const subs = (catsArr.find(c=>c.name===post.category)||{}).subs||[];
+  body.innerHTML = `
+    <div class="form">
+      <div class="field"><label>Title</label><input id="f_title" type="text" value="${esc(post.title||'')}"></div>
+      <div class="field"><label>Date</label><input id="f_date" type="date" value="${post.date||today()}"></div>
+      <div class="field"><label>Category</label><select id="f_cat">${cats.map(c=>`<option ${c===post.category?'selected':''}>${c}</option>`).join('')}</select></div>
+      <div class="field"><label>Subcategory</label><select id="f_sub">${[''].concat(subs).map(s=>`<option ${s===post.subcategory?'selected':''}>${esc(s)}</option>`).join('')}</select></div>
+      <div class="field full"><label>Color</label><div class="color-row"><input id="f_color" type="color" value="${post.color||'#A596DA'}"><span class="hint">${post.color||'#A596DA'}</span></div></div>
+      <div class="field full">
+        <label>Blocks</label>
+        <div class="row">
+          <button class="btn small" data-add="text">+ Text</button>
+          <button class="btn small" data-add="image">+ Image</button>
+          <button class="btn small" data-add="video">+ Video</button>
+          <button class="btn small" data-add="divider">+ Divider</button>
+        </div>
+        <div class="blocks" id="blocks"></div>
+      </div>
+    </div>
+  `;
+  $('#f_cat').onchange=e=>{ post.category=e.target.value; const s=$('#f_sub'); const found=(state.data.categories||FALLBACK_CATEGORIES).find(c=>c.name===post.category); s.innerHTML=[''].concat(found?.subs||[]).map(x=>`<option>${esc(x)}</option>`).join(''); };
+  $('#f_color').oninput=e=>{ e.target.nextElementSibling.textContent=e.target.value };
+  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:b.dataset.add==='video'?{type:'video',src:'',url:'',caption:''}:{type:'divider'}); renderBlocks(post); });
+
+  function renderBlocks(p){
+    const wrap = $('#blocks'); wrap.innerHTML='';
+    (p.blocks||[]).forEach((bl,i)=>{
+      const d=document.createElement('div'); d.className='block';
+      d.innerHTML=`<div class="block-head"><div class="block-type">${bl.type}</div><div class="block-ctrls">
+        <div class="icon" title="Up">↑</div><div class="icon" title="Down">↓</div><div class="icon" title="Delete">✕</div></div></div>
+        <div class="block-body"></div>`;
+      const [up,down,del]=d.querySelectorAll('.icon');
+      up.onclick=()=>{ if(i>0){ [p.blocks[i-1],p.blocks[i]]=[p.blocks[i],p.blocks[i-1]]; renderBlocks(p);} };
+      down.onclick=()=>{ if(i<p.blocks.length-1){ [p.blocks[i+1],p.blocks[i]]=[p.blocks[i],p.blocks[i+1]]; renderBlocks(p);} };
+      del.onclick=()=>{ p.blocks.splice(i,1); renderBlocks(p); };
+      const body=d.querySelector('.block-body');
+      if(bl.type==='text'){
+        body.innerHTML=`<textarea data-k="content" placeholder="Write...">${esc(bl.content||'')}</textarea>`;
+      }else if(bl.type==='image'){
+        body.innerHTML=`
+          <div class="upload"><label class="file-btn">Choose image<input type="file" accept="image/*"></label><span class="hint">${bl.src? 'Uploaded':'No file'}</span></div>
+          ${bl.src?`<img class="img-prev" src="${bl.src}" alt="">`:''}
+          <div style="margin-top:8px"><input type="text" data-k="caption" placeholder="Caption (optional)" value="${esc(bl.caption||'')}"></div>
+        `;
+        const fileInp=body.querySelector('input[type=file]');
+        const img=body.querySelector('img');
+        if(img) img.onclick=()=>showImg(bl.src);
+        fileInp.onchange=async e=>{
+          const f=e.target.files[0]; if(!f) return;
+          try{ setStatus('Uploading image…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); renderBlocks(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
+        };
+      }else if(bl.type==='video'){
+        body.innerHTML=`
+          <div style="margin-bottom:10px">
+            <div class="hint" style="margin-bottom:6px">Option 1 — Upload video file</div>
+            <div class="row">
+              <label class="field" style="flex:1;gap:4px"><span class="hint" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px">Quality</span>
+                <select id="vq_${i}" style="font-size:12px;padding:6px 8px">
+                  <option value="original">Original (no compression)</option>
+                  <option value="high" selected>High (1080p cap, good quality)</option>
+                  <option value="medium">Medium (720p cap, smaller file)</option>
+                  <option value="low">Low (480p cap, smallest file)</option>
+                </select>
+              </label>
+              <label class="file-btn" style="align-self:flex-end;margin-bottom:0">Choose video<input type="file" accept="video/*" id="vfile_${i}"></label>
+            </div>
+            <div id="vhint_${i}" class="hint" style="margin-top:4px">${bl.src && !bl.url ? '✓ Uploaded' : 'No file selected'}</div>
+            ${bl.src && !bl.url ? `<video controls class="audio" src="${bl.src}" style="margin-top:8px;max-height:180px;border-radius:8px"></video>` : ''}
+          </div>
+          <div style="margin-bottom:10px">
+            <div class="hint" style="margin-bottom:6px">Option 2 — Paste a URL (YouTube, Vimeo, direct mp4…)</div>
+            <input type="text" data-k="url" placeholder="https://youtube.com/watch?v=… or direct .mp4 URL" value="${esc(bl.url||'')}">
+          </div>
+          <div><input type="text" data-k="caption" placeholder="Caption (optional)" value="${esc(bl.caption||'')}"></div>
+        `;
+        const vfileInp = body.querySelector(`#vfile_${i}`);
+        const vhint = body.querySelector(`#vhint_${i}`);
+        const qualSel = body.querySelector(`#vq_${i}`);
+        vfileInp.onchange = async e => {
+          const f = e.target.files[0]; if(!f) return;
+          const quality = qualSel.value;
+          try {
+            setStatus('Processing video…','work');
+            vhint.textContent = quality === 'original' ? 'Uploading…' : 'Compressing video (this may take a moment)…';
+            let fileToUpload = f;
+            if(quality !== 'original'){
+              fileToUpload = await compressVideo(f, quality);
+            }
+            const url = await uploadFile(fileToUpload, `${UPLOADS.posts}${Date.now()}-${fileToUpload.name||f.name.replace(/\s+/g,'-')}`);
+            bl.src = url; bl.url = '';
+            setStatus('Video uploaded','ok');
+            renderBlocks(p);
+          } catch(err) { setStatus('Upload failed','err'); vhint.textContent = 'Error: '+err.message; }
+        };
+      }else{
+        body.innerHTML=`<div class="divider-prev"></div><span class="hint">Visual separator</span>`;
+      }
+      body.querySelectorAll('[data-k]').forEach(inp=>{ inp.oninput=()=>{ bl[inp.dataset.k]=inp.value } });
+      wrap.appendChild(d);
+    });
+  }
+  renderBlocks(post);
+}
+async function saveBlog(){
+  const p=getCurrentItem(); if(!p) return;
+  p.title=$('#f_title').value.trim()||'Untitled';
+  p.date=$('#f_date').value||today();
+  p.category=$('#f_cat').value;
+  p.subcategory=$('#f_sub').value;
+  p.color=$('#f_color').value;
+  p.id = p.id || slugify(p.title+'-'+p.date);
+  try{
+    setStatus('Saving post…','work');
+    const arr=state.data.posts; const idx=arr.findIndex(x=>x.id===p.id); if(idx>=0) arr[idx]=p; else arr.push(p);
+    await putFile(PATHS.posts, arr, `blog: ${p.title}`);
+    setStatus('Post saved','ok'); renderList();
+  }catch(e){ setStatus('Save failed','err'); alert(e.message) }
+}
+async function deleteBlog(){
+  const p=getCurrentItem(); if(!p) return; if(!confirm('Delete this post?')) return;
+  try{
+    setStatus('Deleting…','work');
+    state.data.posts = state.data.posts.filter(x=>x.id!==p.id);
+    await putFile(PATHS.posts, state.data.posts, `delete post: ${p.title}`);
+    state.currentId=null; setStatus('Deleted','ok'); render();
+  }catch(e){ setStatus('Delete failed','err'); alert(e.message) }
+}
+
+function renderSongEditor(s){
+  const body = editorShell('Edit Song', saveSong, deleteSong);
+  body.innerHTML=`
+    <div class="form">
+      <div class="field"><label>Title</label><input id="s_title" value="${esc(s.title||'')}"></div>
+      <div class="field"><label>Artist</label><input id="s_artist" value="${esc(s.artist||'Dennis Zero VT')}"></div>
+      <div class="field"><label>Year</label><input id="s_year" type="number" value="${s.year||new Date().getFullYear()}"></div>
+      <div class="field"><label>Cover Emoji</label><input id="s_emoji" value="${esc(s.coverEmoji||'🎵')}"></div>
+      <div class="field"><label>Badges (comma)</label><input id="s_badges" value="${esc((s.badges||[]).join(', '))}"></div>
+      <div class="field"><label>Cover Image</label>
+        <div class="upload"><label class="file-btn">Upload cover<input type="file" accept="image/*" id="s_coverfile"></label><span class="hint">${s.cover?'Uploaded':''}</span></div>
+        ${s.cover?`<img class="img-prev" src="${s.cover}" onclick="showImg('${s.cover}')">`:''}
+        <input id="s_cover" type="text" placeholder="Cover URL" value="${esc(s.cover||'')}" style="margin-top:8px">
+      </div>
+      <div class="field"><label>Audio</label>
+        <div class="upload"><label class="file-btn">Upload audio<input type="file" accept="audio/*" id="s_audiofile"></label><span class="hint">${s.audio?'Uploaded':''}</span></div>
+        <input id="s_audio" type="text" placeholder="Audio URL" value="${esc(s.audio||'')}">
+        ${s.audio?`<audio class="audio" controls src="${s.audio}"></audio>`:''}
+      </div>
+      <div class="field full"><label>Streaming URLs</label>
+        <div class="links-grid">
+          ${['spotify','apple','tidal','youtube','amazon','deezer'].map(k=>`<div><label class="hint">${k}</label><input id="s_${k}" value="${esc(s.streaming?.[k]||'')}"></div>`).join('')}
+        </div>
+      </div>
+      <div class="field full"><label>About</label><textarea id="s_about">${esc(s.about||'')}</textarea></div>
+      <div class="field full"><label>Thoughts</label><textarea id="s_thoughts">${esc(s.thoughts||'')}</textarea></div>
+      <div class="field full"><label>Miscellaneous</label><textarea id="s_misc">${esc(s.miscellaneous||'')}</textarea></div>
+      <div class="field full"><label>Behind The Scenes</label><textarea id="s_bts">${esc(s.behindTheScenes||'')}</textarea></div>
+    </div>
+  `;
+  $('#s_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading cover…','work'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_cover').value=url; setStatus('Cover uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
+  $('#s_audiofile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading audio…','work'); const url=await uploadFile(f, `${UPLOADS.songs}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_audio').value=url; setStatus('Audio uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
+}
+async function saveSong(){
+  const s=getCurrentItem(); if(!s) return;
+  s.title=$('#s_title').value.trim(); s.artist=$('#s_artist').value.trim(); s.year=parseInt($('#s_year').value)||new Date().getFullYear();
+  s.coverEmoji=$('#s_emoji').value.trim(); s.badges=$('#s_badges').value.split(',').map(x=>x.trim()).filter(Boolean);
+  s.cover=$('#s_cover').value.trim(); s.audio=$('#s_audio').value.trim();
+  s.streaming={ spotify:$('#s_spotify').value, apple:$('#s_apple').value, tidal:$('#s_tidal').value, youtube:$('#s_youtube').value, amazon:$('#s_amazon').value, deezer:$('#s_deezer').value };
+  s.about=$('#s_about').value; s.thoughts=$('#s_thoughts').value; s.miscellaneous=$('#s_misc').value; s.behindTheScenes=$('#s_bts').value;
+  s.id = s.id || slugify(s.title);
+  try{ setStatus('Saving song…','work'); const arr=state.data.songs; const i=arr.findIndex(x=>x.id===s.id); if(i>=0) arr[i]=s; else arr.push(s); await putFile(PATHS.songs, arr, `song: ${s.title}`); setStatus('Song saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
+}
+async function deleteSong(){ const s=getCurrentItem(); if(!s||!confirm('Delete song?')) return; try{ setStatus('Deleting…','work'); state.data.songs=state.data.songs.filter(x=>x.id!==s.id); await putFile(PATHS.songs, state.data.songs, `delete song: ${s.title}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
+
+// CREDIT ROLE OPTIONS — add more as needed
+const CREDIT_ROLES = [
+  'Drums', 'Guitar', 'Bass', 'Piano / Keys', 'Vocals', 'Backing Vocals',
+  'Lyrics', 'Melody', 'Mixing', 'Mastering', 'Artwork', 'Inspiration',
+  'Producer', 'Co-producer', 'Songwriter', 'Featured Artist', 'Other'
+];
+
+function renderPeopleEditor(p){
+  const body = editorShell('Edit Person', savePerson, deletePerson);
+
+  // Normalise: support legacy "projects" array (strings) → credits objects
+  if (!p.credits && p.projects) {
+    p.credits = (p.projects || []).map(title => ({ song: title, songId: '', role: 'Collaborator', note: '' }));
+  }
+  p.credits = p.credits || [];
+
+  body.innerHTML = `
+    <div class="alert warn">Avatars upload to <b>Friends/</b>. Use square PNG for best results.</div>
+    <div class="form">
+      <div class="field"><label>Name</label><input id="p_name" value="${esc(p.name||'')}"></div>
+      <div class="field"><label>Handle</label><input id="p_handle" value="${esc(p.handle||'')}"></div>
+      <div class="field"><label>Role / tagline</label><input id="p_role" value="${esc(p.role||'')}"></div>
+      <div class="field"><label>Icon (Font Awesome class or emoji)</label><input id="p_icon" value="${esc(p.icon||'👤')}"></div>
+      <div class="field full"><label>Avatar</label>
+        <div class="upload"><label class="file-btn">Upload avatar<input type="file" accept="image/*" id="p_avfile"></label><span class="hint">${p.avatar?'Uploaded':''}</span></div>
+        ${p.avatar ? `<img class="img-prev" src="${p.avatar}" style="max-height:120px" onclick="showImg('${p.avatar}')">` : ''}
+        <input id="p_avatar" type="text" value="${esc(p.avatar||'')}" placeholder="Avatar URL" style="margin-top:8px">
+      </div>
+      <div class="field full"><label>Bio</label><textarea id="p_bio">${esc(p.bio||'')}</textarea></div>
+      <div class="field">
+        <label>Tags</label>
+        <div class="row">
+          <label class="switch"><input type="checkbox" id="p_friend" ${p.tags?.includes('friend')?'checked':''}><span>friend</span></label>
+          <label class="switch"><input type="checkbox" id="p_collab" ${p.tags?.includes('collab')?'checked':''}><span>collab</span></label>
+        </div>
+      </div>
+      <div class="field"><label>Show on Home</label><label class="switch"><input type="checkbox" id="p_home" ${p.showOnHome?'checked':''}><span>Visible</span></label></div>
+      <div class="field"><label>Color class</label><input id="p_color" value="${esc(p.color||'from-purple-500/30 to-purple-600/10')}" placeholder="from-purple-500/30 to-purple-600/10"></div>
+
+      <!-- ── CREDITS ── -->
+      <div class="field full">
+        <label>Credits (what they did on each song)</label>
+        <div id="p_credits_wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:6px"></div>
+        <button class="btn small" id="p_addcredit" style="margin-top:10px;align-self:flex-start">+ Add Credit</button>
+        <div class="hint" style="margin-top:6px">Each credit links this person to a specific song with their exact contribution.</div>
+      </div>
+
+      <!-- ── LINKS ── -->
+      <div class="field full"><label>Links</label>
+        <div class="links-grid">
+          ${['twitter','spotify','instagram','website'].map(k=>`<div><label class="hint">${k}</label><input id="p_${k}" value="${esc(p.links?.[k]||'')}"></div>`).join('')}
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Avatar upload
+  $('#p_avfile').onchange = async e => {
+    const f = e.target.files[0]; if (!f) return;
+    try { setStatus('Uploading avatar…','work'); const url = await uploadFile(f, `${UPLOADS.people}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#p_avatar').value = url; setStatus('Avatar uploaded','ok'); }
+    catch { setStatus('Upload failed','err'); }
+  };
+
+  // ── Credit row renderer ──
+  function renderCreditRows() {
+    const wrap = $('#p_credits_wrap');
+    wrap.innerHTML = '';
+    p.credits.forEach((cr, i) => {
+      const songOptions = (state.data.songs || []).map(s =>
+        `<option value="${s.id}" ${cr.songId === s.id ? 'selected' : ''}>${esc(s.title)}</option>`
+      ).join('');
+      const roleOptions = CREDIT_ROLES.map(r =>
+        `<option value="${r}" ${cr.role === r ? 'selected' : ''}>${r}</option>`
+      ).join('');
+
+      const row = document.createElement('div');
+      row.style.cssText = 'background:rgba(0,0,0,.22);border:1px solid var(--border);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr 1fr 32px;gap:8px;align-items:start';
+      row.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label class="hint">Song</label>
+          <select class="cr_song">
+            <option value="">— pick a song —</option>
+            ${songOptions}
+          </select>
+          <input class="cr_song_title" type="text" placeholder="Or type title manually" value="${esc(cr.song||'')}" style="margin-top:4px;font-size:12px;opacity:.7">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <label class="hint">Role / Contribution</label>
+          <select class="cr_role">
+            ${roleOptions}
+            ${!CREDIT_ROLES.includes(cr.role) && cr.role ? `<option value="${esc(cr.role)}" selected>${esc(cr.role)}</option>` : ''}
+          </select>
+          <input class="cr_note" type="text" placeholder="Short note (optional)" value="${esc(cr.note||'')}" style="margin-top:4px;font-size:12px;opacity:.7">
+        </div>
+        <div class="icon" title="Remove" style="margin-top:20px">✕</div>
+      `;
+
+      // Sync song dropdown → title
+      const songSel  = row.querySelector('.cr_song');
+      const songTitle = row.querySelector('.cr_song_title');
+      const roleSel  = row.querySelector('.cr_role');
+      const noteInp  = row.querySelector('.cr_note');
+      const delBtn   = row.querySelector('.icon');
+
+      songSel.onchange = () => {
+        const found = (state.data.songs||[]).find(s => s.id === songSel.value);
+        if (found) { cr.songId = found.id; cr.song = found.title; songTitle.value = found.title; }
+        else { cr.songId = ''; }
+      };
+      songTitle.oninput = () => { cr.song = songTitle.value; };
+      roleSel.onchange  = () => { cr.role = roleSel.value; };
+      noteInp.oninput   = () => { cr.note = noteInp.value; };
+      delBtn.onclick    = () => { p.credits.splice(i, 1); renderCreditRows(); };
+
+      wrap.appendChild(row);
+    });
+  }
+
+  renderCreditRows();
+  $('#p_addcredit').onclick = () => {
+    p.credits.push({ song: '', songId: '', role: 'Collaborator', note: '' });
+    renderCreditRows();
+  };
+}
+
+async function savePerson(){
+  const p = getCurrentItem(); if (!p) return;
+  p.name    = $('#p_name').value.trim();
+  p.handle  = $('#p_handle').value.trim();
+  p.role    = $('#p_role').value.trim();
+  p.icon    = $('#p_icon').value.trim();
+  p.avatar  = $('#p_avatar').value.trim();
+  p.bio     = $('#p_bio').value;
+  p.color   = $('#p_color').value.trim();
+  p.tags    = [];
+  if ($('#p_friend').checked) p.tags.push('friend');
+  if ($('#p_collab').checked) p.tags.push('collab');
+  p.showOnHome = $('#p_home').checked;
+  // credits are mutated live; just ensure the field exists
+  p.credits = p.credits || [];
+  // keep legacy projects field in sync for any old code that reads it
+  p.projects = p.credits.map(c => c.song).filter(Boolean);
+  p.links = {
+    twitter:   $('#p_twitter').value,
+    spotify:   $('#p_spotify').value,
+    instagram: $('#p_instagram').value,
+    website:   $('#p_website').value
+  };
+  p.id = p.id || slugify(p.name);
+  try {
+    setStatus('Saving person…','work');
+    const arr = state.data.people;
+    const i = arr.findIndex(x => x.id === p.id);
+    if (i >= 0) arr[i] = p; else arr.push(p);
+    await putFile(PATHS.people, arr, `person: ${p.name}`);
+    setStatus('Person saved','ok');
+    renderList();
+  } catch(e) { setStatus('Save failed','err'); alert(e.message); }
+}
+async function deletePerson(){ const p=getCurrentItem(); if(!p||!confirm('Delete person?')) return; try{ setStatus('Deleting…','work'); state.data.people=state.data.people.filter(x=>x.id!==p.id); await putFile(PATHS.people, state.data.people, `delete person: ${p.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
+
+function renderCategoryEditor(item){
+  editorShell('Edit Category', saveCategories, deleteCategoryItem);
+  const body = document.querySelector('.ed-body');
+  const wrap = document.createElement('div'); wrap.className='form';
+  wrap.innerHTML = `
+    <div class="field"><label>ID (slug)</label><input type="text" id="cat_id" value="${esc(item.id||'')}"><div class="hint">lowercase-with-dashes</div></div>
+    <div class="field"><label>Name</label><input type="text" id="cat_name" value="${esc(item.name||'')}"></div>
+    <div class="field"><label>Color</label><div class="color-row"><input type="color" id="cat_colorpick" value="${item.color||'#A596DA'}"><input type="text" id="cat_colortext" value="${item.color||'#A596DA'}"></div></div>
+    <div class="field"><label>Preview</label><div style="padding:10px;background:rgba(0,0,0,.3);border-radius:8px"><span class="badge" id="catPrev" style="background:${(item.color||'#A596DA')}20;color:${item.color||'#A596DA'};border-color:${(item.color||'#A596DA')}40">${esc(item.name||'')}</span></div></div>
+    <div class="field full"><label>Subcategories</label><div id="subsList" class="chips" style="min-height:42px;padding:8px;background:rgba(0,0,0,.2);border-radius:8px;border:1px solid var(--border)"></div><div class="row" style="margin-top:8px"><input type="text" id="newSub" placeholder="Add subcategory..." style="flex:1"><button class="btn small" id="btnAddSub">+ Add</button></div></div>
+  `;
+  body.appendChild(wrap);
+
+  const idInp = document.getElementById('cat_id');
+  const nameInp = document.getElementById('cat_name');
+  const colorPick = document.getElementById('cat_colorpick');
+  const colorText = document.getElementById('cat_colortext');
+  const prev = document.getElementById('catPrev');
+
+  function syncColor(c){ item.color=c; colorPick.value=c; colorText.value=c; prev.style.background=c+'20'; prev.style.color=c; prev.style.borderColor=c+'40'; state.dirty=true; }
+
+  idInp.oninput = ()=>{ item.id=idInp.value.toLowerCase().replace(/[^a-z0-9-]/g,'-'); state.dirty=true; };
+  nameInp.oninput = ()=>{ item.name=nameInp.value; prev.textContent=nameInp.value; state.dirty=true; };
+  colorPick.oninput = ()=>syncColor(colorPick.value);
+  colorText.oninput = ()=>{ if(/^#[0-9a-fA-F]{6}$/.test(colorText.value)) syncColor(colorText.value); };
+
+  renderSubs();
+  document.getElementById('btnAddSub').onclick = addCategorySub;
+  document.getElementById('newSub').addEventListener('keydown', e=>{ if(e.key==='Enter'){ addCategorySub(); e.preventDefault(); }});
+}
+function renderSubs(){
+  const item = getCurrentItem(); const box = document.getElementById('subsList'); if(!box||!item) return;
+  box.innerHTML = (item.subs||[]).map((s,i)=>`<span class="chip" data-sub="${i}">${esc(s)} ×</span>`).join('') || '<span class="hint">No subs yet</span>';
+  box.querySelectorAll('.chip').forEach(chip=>chip.onclick=()=>removeCategorySub(parseInt(chip.dataset.sub)));
+}
+function addCategorySub(){ const item=getCurrentItem(); const inp=document.getElementById('newSub'); const v=inp.value.trim(); if(!v||!item) return; item.subs=item.subs||[]; item.subs.push(v); inp.value=''; state.dirty=true; renderSubs(); renderList(); }
+function removeCategorySub(i){ const item=getCurrentItem(); if(!item) return; item.subs.splice(i,1); state.dirty=true; renderSubs(); renderList(); }
+async function saveCategories(){ try{ setStatus('Saving categories.json…','work'); await putFile(PATHS.categories, state.data.categories, 'cms: update categories'); setStatus('Categories saved ✓','ok'); state.dirty=false; }catch(e){ setStatus('Save failed: '+e.message,'err'); } }
+async function deleteCategoryItem(){ const item=getCurrentItem(); if(!item||!confirm('Delete category "'+item.name+'"?')) return; try{ setStatus('Deleting…','work'); state.data.categories=state.data.categories.filter(x=>x.id!==item.id); await putFile(PATHS.categories, state.data.categories, `delete category: ${item.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
+
+function renderAlbumEditor(a){
+  const body = editorShell('Edit Album', saveAlbum, deleteAlbum);
+  body.innerHTML=`
+    <div class="form">
+      <div class="field"><label>Name</label><input id="a_name" value="${esc(a.name||'')}"></div>
+      <div class="field"><label>Artist</label><input id="a_artist" value="${esc(a.artist||'Dennis Zero VT')}"></div>
+      <div class="field"><label>Year</label><input id="a_year" type="number" value="${a.year||new Date().getFullYear()}"></div>
+      <div class="field"><label>Status</label><select id="a_status">${['In Progress','Released','Planned'].map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
+      <div class="field full"><label>Cover</label>
+        <div class="upload"><label class="file-btn">Upload cover<input type="file" accept="image/*" id="a_coverfile"></label></div>
+        ${a.cover?`<img class="img-prev" src="${a.cover}" onclick="showImg('${a.cover}')">`:''}
+        <input id="a_cover" type="text" value="${esc(a.cover||'')}" placeholder="Cover URL" style="margin-top:8px">
+      </div>
+      <div class="field full"><label>Description</label><textarea id="a_desc">${esc(a.description||'')}</textarea></div>
+      <div class="field full">
+        <label>Tracklist</label>
+        <div class="tracks" id="tracks"></div>
+        <button class="btn small" id="addTrack" style="margin-top:8px">+ Add Track</button>
+      </div>
+    </div>
+  `;
+  $('#a_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading…','work'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#a_cover').value=url; setStatus('Uploaded','ok'); }catch{ setStatus('Upload failed','err') } };
+  const tracksWrap=$('#tracks');
+  function renderTracks(){
+    tracksWrap.innerHTML='';
+    (a.tracklist||[]).forEach((t,i)=>{
+      const row=document.createElement('div'); row.className='track';
+      row.innerHTML=`
+        <input value="${esc(t.name||'')}" placeholder="Track name" data-k="name">
+        <input value="${esc(t.duration||'')}" placeholder="3:24" data-k="duration">
+        <select data-k="status">${['planned','in-progress','released'].map(s=>`<option ${t.status===s?'selected':''}>${s}</option>`).join('')}</select>
+        <select data-k="key"><option value="">— link song —</option>${state.data.songs.map(s=>`<option value="${s.id}" ${t.key===s.id?'selected':''}>${esc(s.title)}</option>`).join('')}</select>
+        <div class="icon" title="Delete">✕</div>
+      `;
+      row.querySelectorAll('[data-k]').forEach(inp=>inp.oninput=()=>t[inp.dataset.k]=inp.value);
+      row.querySelector('.icon').onclick=()=>{ a.tracklist.splice(i,1); renderTracks(); };
+      tracksWrap.appendChild(row);
+    });
+  }
+  a.tracklist = a.tracklist||[];
+  renderTracks();
+  $('#addTrack').onclick=()=>{ a.tracklist.push({name:'',duration:'',status:'planned',key:''}); renderTracks(); };
+}
+async function saveAlbum(){
+  const a=getCurrentItem(); if(!a) return;
+  a.name=$('#a_name').value.trim(); a.artist=$('#a_artist').value.trim(); a.year=parseInt($('#a_year').value)||new Date().getFullYear();
+  a.status=$('#a_status').value; a.cover=$('#a_cover').value.trim(); a.description=$('#a_desc').value;
+  a.id = a.id || slugify(a.name);
+  try{ setStatus('Saving album…','work'); const arr=state.data.albums; const i=arr.findIndex(x=>x.id===a.id); if(i>=0) arr[i]=a; else arr.push(a); await putFile(PATHS.albums, arr, `album: ${a.name}`); setStatus('Album saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
+}
+async function deleteAlbum(){ const a=getCurrentItem(); if(!a||!confirm('Delete album?')) return; try{ setStatus('Deleting…','work'); state.data.albums=state.data.albums.filter(x=>x.id!==a.id); await putFile(PATHS.albums, state.data.albums, `delete album: ${a.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
+
+// ── Video compression using MediaRecorder + Canvas ──────────────────────────
+// Quality presets: cap resolution + set bitrate. Browser transcodes client-side.
+async function compressVideo(file, quality){
+  const presets = {
+    high:   { maxH: 1080, videoBps: 4_000_000, audioBps: 128_000 },
+    medium: { maxH: 720,  videoBps: 1_500_000, audioBps:  96_000 },
+    low:    { maxH: 480,  videoBps:   600_000, audioBps:  64_000 },
+  };
+  const p = presets[quality] || presets.medium;
+
+  // Load video into a hidden element
+  const vid = document.createElement('video');
+  vid.muted = true;
+  vid.src = URL.createObjectURL(file);
+  await new Promise((res,rej)=>{ vid.onloadedmetadata=res; vid.onerror=rej; });
+
+  // Compute scaled dimensions
+  const scale = Math.min(1, p.maxH / vid.videoHeight);
+  const w = Math.round(vid.videoWidth  * scale / 2) * 2; // must be even
+  const h = Math.round(vid.videoHeight * scale / 2) * 2;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+
+  // Pick best supported codec
+  const mimeTypes = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
+  const mimeType = mimeTypes.find(m=>MediaRecorder.isTypeSupported(m)) || 'video/webm';
+
+  const stream = canvas.captureStream(30);
+  // Add audio if source has it
+  try {
+    const audioCtx = new AudioContext();
+    const src = audioCtx.createMediaElementSource(vid);
+    const dest = audioCtx.createMediaStreamDestination();
+    src.connect(dest);
+    dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
+  } catch(e){ /* no audio track, fine */ }
+
+  const recorder = new MediaRecorder(stream, {
+    mimeType,
+    videoBitsPerSecond: p.videoBps,
+    audioBitsPerSecond: p.audioBps,
+  });
+  const chunks = [];
+  recorder.ondataavailable = e=>{ if(e.data.size>0) chunks.push(e.data); };
+
+  // Play + draw frames
+  recorder.start(100);
+  vid.play();
+  await new Promise(res=>{
+    vid.ontimeupdate = ()=>ctx.drawImage(vid, 0, 0, w, h);
+    vid.onended = ()=>{ recorder.stop(); res(); };
+  });
+  await new Promise(res=>{ recorder.onstop=res; });
+
+  URL.revokeObjectURL(vid.src);
+  const blob = new Blob(chunks, { type: mimeType });
+  const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
+  return new File([blob], file.name.replace(/\.[^.]+$/, '')+`_${quality}.${ext}`, { type: mimeType });
+}
+
+function esc(s){ return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) }
+function showImg(src){ $('#modalImg').src=src; $('#modal').classList.add('show') }
+
+$('#tabs').onclick=e=>{
+  const btn=e.target.closest('.tab'); if(!btn) return;
+  state.tab=btn.dataset.tab; state.currentId=null; render();
+};
+$('#btnNew').onclick=()=>{
+  const arr=getCurrentArray();
+  if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:(state.data.categories[0]?.name||'Daily Life'),subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
+  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),coverEmoji:'🎵',badges:[],streaming:{},about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
+  else if(state.tab==='people'){ const id='person-'+Date.now(); arr.unshift({id,name:'New Person',handle:'',role:'',avatar:'',bio:'',tags:['friend'],links:{},projects:[],color:'text-purple-400',icon:'👤',showOnHome:true}); state.currentId=id; }
+  else if(state.tab==='categories'){ const id='cat-'+Date.now(); arr.unshift({id,name:'New Category',color:'#A596DA',subs:[]}); state.currentId=id; }
+  else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'Dennis Zero VT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }
   render();
-}
+};
+$('#btnConnect').onclick=()=>{ state.token=$('#token').value.trim(); connect(); };
 
-function download(){
-  const blob = new Blob([JSON.stringify(songs,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='songs.json';a.click();
-}
+(function init(){
+  $('#token').value = state.token;
+  setStatus('Ready — enter token to connect');
+  // load fallbacks for UI preview
+  state.data.posts = migratePosts(FALLBACK_POSTS);
+  state.data.songs = FALLBACK_SONGS;
+  state.data.people = FALLBACK_PEOPLE;
+  state.data.albums = FALLBACK_ALBUMS;
+  state.data.categories = FALLBACK_CATEGORIES;
+  renderList();
+})();
 </script>
+<script>(function(){document.addEventListener("click",function(e){var a=e.target.closest("[data-product-id]");if(!a)return;e.preventDefault();var pid=a.getAttribute("data-product-id");if(pid)parent.postMessage({type:"ecto-artifact-link-click",productId:pid},"*")})})();</script>
 </body>
 </html>
