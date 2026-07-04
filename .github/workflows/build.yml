@@ -2,9 +2,9 @@ name: Bake JSON
 on:
   push:
     paths:
-            - 'data/**/*.json'
-            - 'build.js'
-            - '**/*.html'
+      - 'data/**/*.json'
+      - 'build.js'
+      - '**/*.html'
   workflow_dispatch:
 
 permissions:
@@ -14,20 +14,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-            - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          
-            - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: '20'
-          
-            - run: node build.js
-        
-            - name: Commit baked HTML
+      - name: Bake
+        run: node build.js
+      - name: Commit baked HTML
         run: |
           git config user.name "dzvt-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add index.html blog.html music.html friends.html collabs.html rhythm.html || true
-          git diff --cached --quiet || git commit -m "chore: bake JSON into HTML"
+          git add index.html || true
+          git add -A
+          git diff --cached --quiet || git commit -m "chore: bake JSON into HTML [skip ci]"
           git push
