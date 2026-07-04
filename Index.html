@@ -874,7 +874,8 @@ body.optimized .glow-hover {
 <!-- Featured Songs -->
 <div class="mb-16">
 <h2 class="text-3xl font-bold mb-8">Featured Singles</h2>
-<div class="grid md:grid-cols-2 gap-6" id="songs-grid">
+<div class="grid md:grid-cols-2 gap-6" id="songs-grid"><!-- SONGS_START -->
+<!-- SONGS_END -->>
 <!-- Dynamically populated -->
 </div>
 </div>
@@ -1430,7 +1431,30 @@ body.optimized .glow-hover {
 <script>
         // SONGS DATA
 
-        // ===== GITHUB DATA LOADER (replaces Firebase + s) =====
+        
+<script>
+// ===== FALLBACK DATA - so site works even without /data folder =====
+const FALLBACK_SONGS = [
+  {id:'echoes', title:'ECHOES', artist:'DennisZeroVT ft. Yuzuki', year:2024, audio:'', cover:'/icons/pfp.png', coverEmoji:'🌊', badges:[{label:'Ambient',color:'#A596DA'},{label:'New',color:'#22d3ee'}], about:'Ambient electronic journey', thoughts:'Made in Ableton', miscellaneous:'FLAC available', behindTheScenes:'3 weeks of sound design'},
+  {id:'neon-drift', title:'Neon Drift', artist:'DennisZeroVT', year:2023, audio:'', cover:'', coverEmoji:'🌃', badges:[{label:'Synthwave',color:'#f43f5e'}], about:'Night drive vibe', thoughts:'Inspired by Utrecht at 2am'},
+  {id:'fracture', title:'Fracture', artist:'DennisZeroVT', year:2023, audio:'', cover:'', coverEmoji:'💔', badges:[{label:'Orchestral',color:'#C4B5FD'}], about:'Orchestral hybrid'}
+];
+const FALLBACK_ALBUMS = [
+  {id:'album1', title:'Midnight Signals', year:2024, cover:'', songs:['echoes','neon-drift']},
+];
+const FALLBACK_PEOPLE = [
+  {id:'yuzuki', name:'Yuzuki', handle:'@yuzuki_vt', role:'Vocalist', bio:'Amazing vocalist & friend', avatar:'/icons/pfp.png', tags:['friend','collab'], type:'friend'},
+  {id:'kael', name:'Kael', handle:'@kael_beats', role:'Producer', bio:'Rhythm game mapper', avatar:'/icons/pfp.png', tags:['collab'], type:'collab'},
+  {id:'mira', name:'Mira', handle:'@mira_art', role:'Artist', bio:'Cover artist', avatar:'/icons/pfp.png', tags:['friend'], type:'friend'}
+];
+const FALLBACK_POSTS = [
+  {id:'1', title:'How I produce ambient game music', category:'GameDev', subcategory:'Audio', date:'2024-05-01', excerpt:'My workflow in Ableton for game-ready loops...', content:'Full post...'},
+  {id:'2', title:'Optimizing osu!mania performance', category:'Rhythm', subcategory:'Guide', date:'2024-04-20', excerpt:'From 200pp to 800pp...', content:'Full post...'}
+];
+const FALLBACK_CATS = ['All','GameDev','Rhythm','Music'];
+</script>
+
+// ===== GITHUB DATA LOADER (replaces Firebase + s) =====
         let SONGS = {};
         let ALBUMS = {};
         let personData = {}; let dataLoaded = false;
@@ -1479,6 +1503,13 @@ function loadAllData() {
               fetch('./data/posts.json').then(r=>r.json()).catch(()=>[]),
               fetch('./data/categories.json').then(r=>r.json()).catch(()=>[])
             ]);
+            // Use fallback if empty (for local preview / missing /data folder)
+            songsData = useFallback(songsData, FALLBACK_SONGS);
+            peopleData = useFallback(peopleData, FALLBACK_PEOPLE);
+            albumsData = useFallback(albumsData, FALLBACK_ALBUMS);
+            postsData = useFallback(postsData, FALLBACK_POSTS);
+            catsData = useFallback(catsData, FALLBACK_CATS);
+
 
             // Convert arrays to the format your site expects
             SONGS = Object.fromEntries(songsData.map(s => [s.id, {
@@ -2313,10 +2344,12 @@ document.addEventListener('DOMContentLoaded', function() {
 <!-- MARKERS FOR GITHUB ACTION - DO NOT DELETE -->
 <div id="posts-container" style="display:none">
   <!-- POSTS_START -->
+<!-- POSTS_END -->
   <!-- POSTS_END -->
 </div>
 <div id="songs-container" style="display:none">
   <!-- SONGS_START -->
+<!-- SONGS_END -->
 <div class="glass p-6 rounded-xl">
     <img src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" class="w-full rounded-lg mb-4">
     <h3 class="text-xl font-semibold"> Adrenaline (2026)</h3>
@@ -2343,10 +2376,12 @@ I wanted to make the final version to show that I have improved as a music produ
 </div>
 <div id="friends-container" style="display:none">
   <!-- FRIENDS_START -->
+<!-- FRIENDS_END -->
   <!-- FRIENDS_END -->
 </div>
 <div id="collabs-container" style="display:none">
   <!-- COLLABS_START -->
+<!-- COLLABS_END -->
   <!-- COLLABS_END -->
 </div>
 
