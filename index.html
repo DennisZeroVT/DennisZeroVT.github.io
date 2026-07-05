@@ -1,7 +1,28 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>DennisZeroVT | Music Producer &amp; Game Developer</title>
@@ -100,36 +121,13 @@
     }
     
     .page-section {
-        /* Not display:none — this keeps the section's text in the DOM
-           (readable by innerText/crawler extraction) while making it
-           fully invisible, unclickable, and out of the page's layout
-           flow for real users. Same technique as classic
-           screen-reader-only content. clip-path/overflow/pointer-events
-           are !important so no later mobile-fix rule can accidentally
-           make an inactive section visible or clickable again. */
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 1px;
-        height: 1px;
-        overflow: hidden !important;
-        clip: rect(0,0,0,0);
-        clip-path: inset(50%) !important;
-        white-space: nowrap;
-        pointer-events: none !important;
+        /* SEO FIX: Use display:none for SPA navigation.
+           This is understood by all crawlers. JS toggles .active.
+           Crawlers without JS will see everything via <noscript> override below. */
+        display: none;
     }
     
     .page-section.active {
-        position: relative;
-        top: auto;
-        left: auto;
-        width: auto;
-        height: auto;
-        overflow: visible !important;
-        clip: auto;
-        clip-path: none !important;
-        white-space: normal;
-        pointer-events: auto !important;
         display: block;
         animation: fadeInUp 0.5s ease;
     }
@@ -755,6 +753,32 @@ body.optimized .glow-hover {
 }
 </style>
 
+
+<!-- SEO FIX: If JS is disabled (crawlers, no-JS), show all sections -->
+<noscript>
+  <style>
+    .page-section { display: block !important; }
+    /* Hide SPA nav clutter for no-JS view */
+    nav .hidden.md\:flex { display: flex !important; }
+  </style>
+</noscript>
+
+<!-- SEO: Structured data for your music so crawlers understand it -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicGroup",
+  "name": "DennisZeroVT",
+  "url": "https://denniszerovt.github.io/",
+  "genre": ["Ambient", "Electronic", "Orchestral"],
+  "track": [
+    {"@type":"MusicRecording","name":"Adrenaline"},
+    {"@type":"MusicRecording","name":"Snowfall"},
+    {"@type":"MusicRecording","name":"Stuck In Time"}
+  ]
+}
+</script>
+
 </head>
 
 <body class="antialiased">
@@ -856,6 +880,18 @@ body.optimized .glow-hover {
 <p class="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
                         Original compositions blending ambient, electronic, and orchestral elements for games and standalone listening.
                     </p>
+<!-- Crawlable fallback list for bots -->
+<div class="sr-only" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">
+  <h2>My Music - DennisZeroVT</h2>
+  <ul>
+    <li>Adrenaline (2026) - Original composition by Dennis van Wijngaarden - Spotify, Apple Music</li>
+    <li>Snowfall (2025) - Original composition - Released on Spotify, Apple Music, Deezer, Tidal</li>
+    <li>Stuck In Time (2026) - Original composition - Released</li>
+    <li>Solo EP (2026) - 2 tracks - In Progress</li>
+  </ul>
+  <p>Listen on Spotify, Apple Music, Deezer, Amazon Music, Tidal, YouTube: DennisZeroVT</p>
+</div>
+
 </div>
 <!-- Featured Songs -->
 <div class="mb-16">
@@ -2787,5 +2823,5 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 
-</body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;var a=target.closest?target.closest("a[href]"):null;if(!a||!a.href||!/^https?:\/\//.test(a.href))return;if(a.href.replace(/#.*$/,"")===loc)return;var productId=extractProductId(target)||extractProductId(a);if(!productId)return;e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*")},true)})();</script></body>
 </html>
