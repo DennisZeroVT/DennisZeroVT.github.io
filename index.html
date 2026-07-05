@@ -861,16 +861,76 @@ body.optimized .glow-hover {
 <div class="mb-16">
 <h2 class="text-3xl font-bold mb-8">Featured Singles</h2>
 <div class="grid md:grid-cols-2 gap-6" id="songs-grid">
-<!-- SSR:songs -->
 
-<!-- /SSR:songs -->
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('song-1781376702122')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            <img src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" alt="Adrenaline" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🎵</div>
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Adrenaline</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2026 • Dennis van Wijngaarden</p>
+            <div class="flex gap-1.5 mt-3 flex-wrap"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#6B7280;color:#fff">pending</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#1DB954;color:#fff">Spotify</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#FA243C;color:#fff">Apple Music</span></div>
+        </div>
+    </div>
+
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('snowfall')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            <img src="SongData/AlbumArt/snowfall.png" alt="Snowfall" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🌨️</div>
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Snowfall</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2025 • Dennis van Wijngaarden</p>
+            <div class="flex gap-1.5 mt-3 flex-wrap"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#10B981;color:#fff">Released</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#1DB954;color:#fff">Spotify</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#FA243C;color:#fff">Apple Music</span></div>
+        </div>
+    </div>
+
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('stuck_in_time')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            <img src="SongData/AlbumArt/stuckintime.png" alt="Stuck In Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🕒</div>
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Stuck In Time</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2026 • Dennis van Wijngaarden</p>
+            <div class="flex gap-1.5 mt-3 flex-wrap"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#10B981;color:#fff">Released</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#1DB954;color:#fff">Spotify</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#FA243C;color:#fff">Apple Music</span></div>
+        </div>
+    </div>
 </div>
 </div>
 <!-- Albums -->
 <div>
-<h2 class="text-3xl font-bold mb-8">Albums &amp; Collections</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="albums-grid"><!-- SSR:albums -->
-
-<!-- /SSR:albums --></div>
+<h2 class="text-3xl font-bold mb-8">Albums &amp; Collections</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="albums-grid">
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openAlbum('album-1780532205221')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60"></div>
+            <div class="absolute bottom-3 left-3">
+                <span class="px-2 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] text-[10px] font-medium backdrop-blur">In Progress</span>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Solo EP 💿</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2026 • 2 tracks</p>
+        </div>
+    </div>
+</div>
 
 </div>
 </div>
@@ -891,9 +951,7 @@ body.optimized .glow-hover {
 </div>
 <!-- Blog Posts -->
 <div id="blog-posts-container" class="space-y-8 mb-12">
-<!-- SSR:posts -->
-<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet.</div>
-<!-- /SSR:posts -->
+<article class="glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:#a596da20;color:#a596da;border:1px solid #a596da40">Gaming</span><span class="text-[var(--text-secondary)]">Osu</span><span class="ml-auto text-[var(--text-secondary)]">2026-06-14</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">my second 200pp play</h3><div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">GG i got my second best play on osu 206 pp - my second 200 pp lets go<br><br>the bg gave me powers - bless mika</p></div><div class="mb-5"><a href="https://youtu.be/PfoJg2idmF8" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div></article>
 </div>
 </div>
 </section>
@@ -1214,9 +1272,31 @@ body.optimized .glow-hover {
 <h1>Collabs</h1>
 <p>// People I've made things with</p>
 </div>
-<div class="people-grid" id="collabs-grid"><!-- SSR:collabs -->
-
-<!-- /SSR:collabs --></div>
+<div class="people-grid" id="collabs-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry at</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Inspiration · <span style="opacity:.75;font-weight:400">Snowfall</span></span></div>
+        <a href="https://x.com/eri_k416?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Stuck In Time</span></span><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Adrenaline</span></span></div>
+        <a href="https://x.com/mee_yawwwwww?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+</div>
 </div>
 </div>
 </section>
@@ -1228,9 +1308,67 @@ body.optimized .glow-hover {
 <h1 class="gradient-text">Friends</h1>
 <p>// The people who made the journey worth it</p>
 </div>
-<div class="people-grid" id="friends-grid"><!-- SSR:friends -->
-
-<!-- /SSR:friends --></div>
+<div class="people-grid" id="friends-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry at</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Inspiration · <span style="opacity:.75;font-weight:400">Snowfall</span></span></div>
+        <a href="https://x.com/eri_k416?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Stuck In Time</span></span><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Adrenaline</span></span></div>
+        <a href="https://x.com/mee_yawwwwww?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('vivid')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/vivid.jpg" alt="Vivid" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/vivid.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Vivid</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@vivid_exile</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">best Friend, // @vivid_exile</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">An ex-military veteran I met in my very first Discord server. Despite a troubled past he showed incredible strength and kindness. we became </p>
+        
+        <a href="https://x.com/vivid_exile?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('skylar')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/skylar.jpg" alt="Skylar" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/skylar.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Skylar</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@skylar_corgi</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @skylar_corgi</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Skylar is a best friend i met trough vivid on vivid first stream she and vivid are great support</p>
+        
+        <a href="https://x.com/skylar_corgi?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('nox')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/nox.jpg" alt="Nox" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/nox.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Nox</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@Nox_Daemon</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @Nox_Daemon</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Nox is a friend i met trough vivid again lol, i saw vivid inetracting with nox a lot and weeks later she became on of my friends aswell,</p>
+        
+        <a href="https://x.com/Nox_Daemon?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+</div>
 </div>
 </div>
 </section>
@@ -1419,8 +1557,6 @@ body.optimized .glow-hover {
 </div>
 </footer>
 
-<script src="./data.js"></script>
-
 <script>
 /* =========================================================
    DennisZeroVT site — consolidated app script
@@ -1433,80 +1569,292 @@ let personData = {};
 let allPosts = [];
 let categories = [];
 
-// Small embedded fallback so the page still shows real content
-// if ./data/*.json can't be fetched (e.g. opened straight from disk).
-// FALLBACK_START — regenerated by build.js from data/*.json, do not hand-edit the values below
-const FALLBACK = {
-  "songs": [],
-  "people": [],
-  "albums": [],
-  "posts": [],
-  "categories": []
-};
-// FALLBACK_END
+/* ===========================================================================
+   SITE CONTENT — edit everything below directly. No JSON files, no fetch,
+   no build step. Save the file and reload the page — that's it.
+   =========================================================================== */
 
-async function loadAllData() {
-  try {
-    const [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
-      fetch('./data/songs.json').then(r=>r.json()).catch(()=>FALLBACK.songs),
-      fetch('./data/people.json').then(r=>r.json()).catch(()=>FALLBACK.people),
-      fetch('./data/albums.json').then(r=>r.json()).catch(()=>FALLBACK.albums),
-      fetch('./data/posts.json').then(r=>r.json()).catch(()=>FALLBACK.posts),
-      fetch('./data/categories.json').then(r=>r.json()).catch(()=>FALLBACK.categories)
-    ]);
-
-    SONGS = Object.fromEntries(songsData.map(s => [s.id, {
-      name: s.title,
-      artist: s.artist,
-      year: s.year,
-      src: s.audio,
-      cover: s.coverEmoji || '🎵',
-      coverImg: s.cover,
-      badges: s.badges || [],
-      streaming: s.streaming || {},
-      about: s.about || '',
-      thoughts: s.thoughts || '',
-      Miscellaneous: s.miscellaneous || '',
-      behindTheScenes: s.behindTheScenes || ''
-    }]));
-
-    personData = Object.fromEntries(peopleData.map(p => [p.id, {
-      name: p.name,
-      role: p.role,
-      color: p.color || 'from-purple-500/30 to-purple-600/10',
-      icon: p.icon || 'fas fa-user',
-      bio: p.bio,
-      credits: p.credits || [],
-      links: Object.entries(p.links || {}).map(([k,v]) => ({
-        name: k.charAt(0).toUpperCase() + k.slice(1),
-        icon: `fab fa-${k}`,
-        url: v
-      })),
-      projects: p.projects || []
-    }]));
-
-    ALBUMS = Object.fromEntries(albumsData.map(a => [a.id, a]));
-
-    allPosts = [...postsData].sort((a,b) => new Date(b.date) - new Date(a.date));
-    categories = catsData.length ? catsData : [
-      {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
-      {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
-      {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
-    ];
-
-    renderCategories();
-    renderSubs();
-    renderPosts();
-    renderSongsGrid();
-    renderAlbumsGrid();
-    renderPeople(peopleData);
-
-  } catch (e) {
-    console.error('Failed to load data:', e);
+// ---------------------------------------------------------------------------
+// SITE_SONGS — your tracks. Each needs a unique "id" (used in URLs like
+// openSong('this-id') and in ALBUMS tracklists below).
+// ---------------------------------------------------------------------------
+const SITE_SONGS = [
+  {
+    id: "song-1781376702122",
+    title: "Adrenaline",
+    artist: "Dennis van Wijngaarden",
+    year: 2026,
+    coverEmoji: "",
+    badges: [
+      { label: "pending", color: "#6B7280" },
+      { label: "Spotify", color: "#1DB954" },
+      { label: "Apple Music", color: "#FA243C" },
+      { label: "Tidal", color: "#000000" },
+      { label: "Amazon", color: "#FF9900" },
+      { label: "YouTube Music", color: "#FF0000" },
+      { label: "Deezer", color: "#FEAA2D" }
+    ],
+    streaming: {
+      spotify: "",
+      apple: "",
+      tidal: "",
+      youtube: "",
+      amazon: "",
+      deezer: ""
+    },
+    about: "Adrenaline is the third remake of an old song I wrote 2 years ago with the same name.\nI wanted to make the final version to show that I have improved as a music producer.",
+    thoughts: "The song uses a lot of FM instruments and Genesis SoundFonts for some elements. The trumpet has a harmony now, and there are a lot of key changes.",
+    miscellaneous: "I brought back Kula for the drums. We actually had two drum takes — one was a draft and the last one was the final one. Again, he did a great job. I really love the energy of the descending harmony chorus.",
+    behindTheScenes: "",
+    cover: "https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png",
+    audio: "https://denniszerovt.github.io/SongData/Songs/1781377044884-adrenaline-final-mix.mp3"
+  },
+  {
+    id: "snowfall",
+    title: "Snowfall",
+    artist: "Dennis van Wijngaarden",
+    year: "2025",
+    audio: "SongData/Songs/snowfall.mp3",
+    cover: "SongData/AlbumArt/snowfall.png",
+    coverEmoji: "🌨️",
+    badges: [
+      { label: "Released", color: "#10B981" },
+      { label: "Spotify", color: "#1DB954" },
+      { label: "Apple Music", color: "#FA243C" },
+      { label: "Tidal", color: "#000000" },
+      { label: "Amazon", color: "#FF9900" },
+      { label: "YouTube Music", color: "#FF0000" },
+      { label: "Deezer", color: "#FEAA2D" }
+    ],
+    streaming: {
+      spotify: "https://open.spotify.com/track/0TxrNlfNSlwuncbt0wpVH6?utm_source=generator",
+      apple: "https://music.apple.com/be/album/snowfall-single/1840250772?l=nl",
+      tidal: "https://tidal.com/album/460721208/track/460721209",
+      youtube: "https://music.youtube.com/watch?v=9dDbeq0VEbc&si=c9Cb4I4bC4nwWi7e",
+      amazon: "https://music.amazon.com/albums/B0FNKT4Z2X",
+      deezer: "https://link.deezer.com/s/337CFXi1lRmRShDNd2jGO"
+    },
+    about: "Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track.",
+    thoughts: "This was the first time I ever wrote lyrics for a song. I didn't plan it that way — I just wanted to make something for Erik and the words came naturally. I remember sitting with the melody for a long time before anything clicked. When it finally did, it felt like the song wrote itself.",
+    miscellaneous: "The track is the first song I ever released. It was released on Spotify in 2025",
+    behindTheScenes: "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic."
+  },
+  {
+    id: "stuck_in_time",
+    title: "Stuck In Time",
+    artist: "Dennis van Wijngaarden",
+    year: "2026",
+    audio: "SongData/Songs/stuckintime.mp3",
+    cover: "SongData/AlbumArt/stuckintime.png",
+    coverEmoji: "🕒",
+    badges: [
+      { label: "Released", color: "#10B981" },
+      { label: "Spotify", color: "#1DB954" },
+      { label: "Apple Music", color: "#FA243C" },
+      { label: "Tidal", color: "#000000" },
+      { label: "Amazon", color: "#FF9900" },
+      { label: "YouTube Music", color: "#FF0000" },
+      { label: "Deezer", color: "#FEAA2D" }
+    ],
+    streaming: {
+      spotify: "https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x?si=994999e942f14ba4",
+      apple: "https://music.apple.com/be/album/stuck-in-time-single/1893337152?l=nl",
+      tidal: "http://tidal.com/album/514925638/track/514925640",
+      youtube: "https://music.youtube.com/watch?v=pMVXcz9Ztpc&si=tf1PjhIUzJvQK1KT",
+      amazon: "https://music.amazon.com/tracks/B0GWS3FN2G?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_tyzyaI4xxzICjl1682gmmG0om",
+      deezer: "https://link.deezer.com/s/337CHhi5HVwqcozgsSI4d"
+    },
+    about: "Stuck In Time is about the feeling of being trapped in a cycle — staying the same while everything else moves on. It's a reflection on change, growth, and the fear of being left behind.",
+    thoughts: "This song was inspired by a lot of personal experiences and conversations with friends. I wanted to capture that bittersweet feeling of nostalgia mixed with the anxiety of change. The lyrics came from a place of vulnerability, and I hope they resonate with anyone who's ever felt stuck in a moment they can't escape.",
+    miscellaneous: "the harmonies in the song is sang by me its actualy one of the first time i used my own voice in my song.",
+    behindTheScenes: "i went back in cubase for this one. The drums were recorded live by my friend Kula i met during an idol group project, which added a lot of energy to the track. I built the produced the song to finish and i send the mockup drums to kula and told him you can put your own spin to the drums and he killed it, like i put a half time section in it before the key change and he went insane on the half time section and his drums conbined with my guitars and the song just came alive, it was a really fun process and i hope to work with him again in the future."
   }
+];
+
+// ---------------------------------------------------------------------------
+// SITE_ALBUMS — collections/EPs. "tracklist[].key" must match a SITE_SONGS id
+// to make a track clickable straight into the song overlay.
+// ---------------------------------------------------------------------------
+const SITE_ALBUMS = [
+  {
+    id: "album-1780532205221",
+    name: "Solo EP 💿",
+    artist: "Dennis Zero VT",
+    year: 2026,
+    cover: "",
+    status: "In Progress",
+    description: "So|o ep",
+    tracklist: [
+      { name: "Snowfall", duration: "", status: "planned", key: "snowfall" },
+      { name: "Stuck in tims", duration: "", status: "planned", key: "stuck_in_time" }
+    ]
+  }
+];
+
+// ---------------------------------------------------------------------------
+// SITE_PEOPLE — friends & collaborators. "tags" controls where they show up:
+// include "friend" to appear on the Friends page, "collab" for Collaborators
+// (a person can have both). "credits[].songId" must match a SITE_SONGS id to
+// make it clickable into that song.
+// ---------------------------------------------------------------------------
+const SITE_PEOPLE = [
+  {
+    id: "erik",
+    name: "Erik",
+    handle: "eri_k416",
+    role: "Friend // eri_k416",
+    avatar: "Friends/erik.jpg",
+    bio: "Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry atmosphere, the lyrics, the melancholy. He was the reason I wrote vocals for the very first time.",
+    tags: ["friend", "collab"],
+    links: {
+      twitter: "https://x.com/eri_k416?s=20",
+      spotify: "https://open.spotify.com/track/0TxrNlfNSlwuncbt0wpVH6"
+    },
+    credits: [
+      { song: "Snowfall", songId: "snowfall", role: "Inspiration", note: "His character Viona shaped the entire mood of the track" }
+    ],
+    color: "from-blue-500/30 to-blue-600/10",
+    icon: "fas fa-snowflake"
+  },
+  {
+    id: "kula",
+    name: "Kula",
+    handle: "@mee_yawwwwww",
+    role: "Friend, Drummer // @mee_yawwwwww",
+    avatar: "Friends/kula.jpg",
+    bio: "Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music and he turned out to be a really chill guy. He mentioned wanting to be part of something, so I invited him to play drums on my single Stuck In Time. We worked well together, and I will likely ask him to handle the drums again in future projects.",
+    tags: ["friend", "collab"],
+    links: {
+      twitter: "https://x.com/mee_yawwwwww?s=20",
+      spotify: "",
+      instagram: "",
+      website: ""
+    },
+    credits: [
+      { song: "Stuck In Time", songId: "stuck_in_time", role: "Drums", note: "" },
+      { song: "Adrenaline", songId: "song-1781376702122", role: "Drums", note: "" }
+    ],
+    color: "from-[#A596DA]/30 to-[#8B78CB]/10",
+    icon: "fas fa-drum"
+  },
+  {
+    id: "vivid",
+    name: "Vivid",
+    handle: "@vivid_exile",
+    role: "best Friend, // @vivid_exile",
+    avatar: "Friends/vivid.jpg",
+    bio: "An ex-military veteran I met in my very first Discord server. Despite a troubled past he showed incredible strength and kindness. we became friends and helped each other through a lot. as he became my first friend when i came out of my shell, He was the person who got me back into streaming and introduced me to a whole new circle of people — including Erik",
+    tags: ["friend"],
+    links: { twitter: "https://x.com/vivid_exile?s=20" },
+    credits: [],
+    color: "from-pink-500/30 to-pink-600/10",
+    icon: "fas fa-guitar"
+  },
+  {
+    id: "skylar",
+    name: "Skylar",
+    handle: "@skylar_corgi",
+    role: "Friend, // @skylar_corgi",
+    avatar: "Friends/skylar.jpg",
+    bio: "Skylar is a best friend i met trough vivid on vivid first stream she and vivid are great support",
+    tags: ["friend"],
+    links: { twitter: "https://x.com/skylar_corgi?s=20" },
+    credits: [],
+    color: "from-purple-500/30 to-purple-600/10",
+    icon: "fas fa-guitar"
+  },
+  {
+    id: "nox",
+    name: "Nox",
+    handle: "@Nox_Daemon",
+    role: "Friend, // @Nox_Daemon",
+    avatar: "Friends/nox.jpg",
+    bio: "Nox is a friend i met trough vivid again lol, i saw vivid inetracting with nox a lot and weeks later she became on of my friends aswell,",
+    tags: ["friend"],
+    links: { twitter: "https://x.com/Nox_Daemon?s=20" },
+    credits: [],
+    color: "from-blue-500/30 to-blue-600/10",
+    icon: "fas fa-guitar"
+  }
+];
+
+// ---------------------------------------------------------------------------
+// SITE_CATEGORIES — blog category filter pills + their color + subcategories.
+// "name" here must match "category" on posts in SITE_POSTS below.
+// ---------------------------------------------------------------------------
+const SITE_CATEGORIES = [
+  { id: "gaming", name: "Gaming", color: "#A596DA", subs: ["Osu", "speedrunning"] },
+  { id: "game-dev", name: "Game Dev", color: "#A596DA", subs: ["Ohter projects"] },
+  { id: "music-production", name: "Music Production", color: "#ec4899", subs: ["Snowfall", "Originals", "Remixes", "Soundtracks", "Behind the Beat"] }
+];
+
+// ---------------------------------------------------------------------------
+// SITE_POSTS — blog posts. "blocks" render top-to-bottom: {type:'text'},
+// {type:'image', src}, {type:'video', url} (YouTube links auto-embed),
+// {type:'divider'}.
+// ---------------------------------------------------------------------------
+const SITE_POSTS = [
+  {
+    id: "post-1781469379216",
+    title: "my second 200pp play",
+    category: "Gaming",
+    subcategory: "Osu",
+    date: "2026-06-14",
+    color: "#a596da",
+    blocks: [
+      { type: "text", content: "GG i got my second best play on osu 206 pp - my second 200 pp lets go\n\nthe bg gave me powers - bless mika" },
+      { type: "video", src: "", url: "https://youtu.be/PfoJg2idmF8", caption: "" }
+    ]
+  }
+];
+
+/* =========================== END OF SITE CONTENT =========================== */
+
+function initSiteData() {
+  SONGS = Object.fromEntries(SITE_SONGS.map(s => [s.id, {
+    name: s.title,
+    artist: s.artist,
+    year: s.year,
+    src: s.audio,
+    cover: s.coverEmoji || '🎵',
+    coverImg: s.cover,
+    badges: s.badges || [],
+    streaming: s.streaming || {},
+    about: s.about || '',
+    thoughts: s.thoughts || '',
+    Miscellaneous: s.miscellaneous || '',
+    behindTheScenes: s.behindTheScenes || ''
+  }]));
+
+  personData = Object.fromEntries(SITE_PEOPLE.map(p => [p.id, {
+    name: p.name,
+    role: p.role,
+    color: p.color || 'from-purple-500/30 to-purple-600/10',
+    icon: p.icon || 'fas fa-user',
+    bio: p.bio,
+    credits: p.credits || [],
+    links: Object.entries(p.links || {}).filter(([,v]) => v).map(([k,v]) => ({
+      name: k.charAt(0).toUpperCase() + k.slice(1),
+      icon: `fab fa-${k}`,
+      url: v
+    })),
+    projects: p.projects || []
+  }]));
+
+  ALBUMS = Object.fromEntries(SITE_ALBUMS.map(a => [a.id, a]));
+  allPosts = [...SITE_POSTS].sort((a, b) => new Date(b.date) - new Date(a.date));
+  categories = SITE_CATEGORIES;
+
+  renderCategories();
+  renderSubs();
+  renderPosts();
+  renderSongsGrid();
+  renderAlbumsGrid();
+  renderPeople(SITE_PEOPLE);
 }
 
-document.addEventListener('DOMContentLoaded', loadAllData);
+document.addEventListener('DOMContentLoaded', initSiteData);
+
 
 const platformIcons = {
   spotify: '<i class="fab fa-spotify"></i>',
@@ -2138,7 +2486,7 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closePersonOverlay(); closeOverlay(); closeAlbum(); }
 });
 
-/* ---------- Rhythm game stats (filled from data.js's DATA object) ---------- */
+/* ---------- Rhythm game stats (from the hardcoded RHYTHM_GAME_STATS above) ---------- */
 
 function fmtNum(n){ return (n || 0).toLocaleString(); }
 function fmtHours(sec){
@@ -2189,11 +2537,122 @@ function ffrRow(s, i){
   </tr>`;
 }
 
+/* ===========================================================================
+   RHYTHM_GAME_STATS — your osu! / osu!mania / Etterna / FFR stats for the
+   Rhythm page. Edit these numbers directly whenever you want to update them
+   — no external file, no fetch.
+   =========================================================================== */
+const RHYTHM_GAME_STATS = {
+  osuStandard: {
+    rank: 176993,
+    countryRank: 1812,
+    pp: 4056,
+    acc: 98.77,
+    plays: 101213,
+    seconds: 3920880,
+    rankedScore: 5323953652,
+    totalScore: 45289903811,
+    totalHits: 13057980,
+    hitsPerPlay: 129,
+    maxCombo: 1998,
+    replaysWatched: 8,
+    medals: 118,
+    grades: { SS: 94, SSH: 50, S: 123, SH: 509, A: 1961 },
+    top5: [
+      { pp: 214, acc: 98.88, grade: 'S', title: 'Dakara, Hitori ja Nai (TV Size)', subtitle: 'Little Glee Monster — [Happiness]' },
+      { pp: 210, acc: 99.58, grade: 'S', title: 'feeling good (nightcore & cut ver.)', subtitle: "kumocho's extra" },
+      { pp: 206, acc: 100.00, grade: 'SS', title: 'feeling good (nightcore & cut ver.)', subtitle: "mita's extra" },
+      { pp: 206, acc: 99.76, grade: 'S', title: 'Die A Million Times (Nightcore & Cut Ver.)', subtitle: "Kumocho's Extra" },
+      { pp: 194, acc: 99.70, grade: 'S', title: 'WEREWOLF (NIGHTCORE & CUT VER.)', subtitle: "MIMARI'S EXTRA" }
+    ]
+  },
+  osuMania: {
+    rank: 121103,
+    countryRank: 756,
+    pp: 2332,
+    acc: 95.31,
+    plays: 6554,
+    seconds: 349500,
+    rankedScore: 636097699,
+    totalScore: 2193694978,
+    totalHits: 2130538,
+    hitsPerPlay: 325,
+    maxCombo: 2886,
+    replaysWatched: 3,
+    medals: 116,
+    grades: { SS: 0, SSH: 28, S: 0, SH: 424, A: 193 },
+    top5: [
+      { pp: 128, acc: 97.05, grade: 'S', title: 'Ascalon', subtitle: 'Crispy Joybox — [4K] Another' },
+      { pp: 125, acc: 94.67, grade: 'A', title: 'Triumph & Regret', subtitle: 'typeMARS — [4K] Triumph' },
+      { pp: 120, acc: 93.54, grade: 'A', title: 'Triumph & Regret', subtitle: 'typeMARS — [4K] Regret' },
+      { pp: 118, acc: 97.29, grade: 'S', title: 'anomone', subtitle: 'S-C-U feat. Crispy Joybox — [4K] Another' },
+      { pp: 118, acc: 94.88, grade: 'A', title: 'Databata Animation [feat. t+pazolite]', subtitle: 'Kobaryo — [4K] Insane' }
+    ]
+  },
+  etterna: {
+    username: 'DennisZeroVT',
+    rank: 8701,
+    since: '2020',
+    overall: 9.38,
+    skillsets: {
+      stream: 9.75,
+      jumpstream: 6.67,
+      handstream: 5.13,
+      jacks: 8.07,
+      chordjacks: 6.91,
+      stamina: 10.02,
+      technical: 11.27
+    },
+    grades: { AAAA: 0, AAA: 10, AA: 0, A: 2, B: 2, C: 0, D: 0 },
+    top10: [
+      { song: 'Boku ni Invitation', artist: 'JP', msd: 12.37, acc: 97.86 },
+      { song: 'Brave Shine', artist: 'Aimer', msd: 12.36, acc: 99.35 },
+      { song: 'Perfect-Area Complete!', artist: 'Natsuko Aso', msd: 12.20, acc: 98.22 },
+      { song: 'Brave Shine', artist: 'Aimer', msd: 11.56, acc: 99.48 },
+      { song: 'Battle! Gym Leader', artist: 'Junichi Masuda, Go Ichinose, Morikazu Aok', msd: 11.37, acc: 99.48 },
+      { song: 'ILY', artist: 'Panda Eyes', msd: 11.35, acc: 99.50 },
+      { song: 'Kimi ni Mune Kyun', artist: 'Yuu Kobayashi', msd: 11.29, acc: 96.84 },
+      { song: 'Friend Shitai', artist: 'Gakuen Seikatsubu', msd: 11.27, acc: 95.32 },
+      { song: 'Sore Ga Ai Deshou', artist: 'Mikuni Shimokawa', msd: 11.16, acc: 99.38 },
+      { song: 'Connect', artist: 'ClariS', msd: 11.16, acc: 96.49 }
+    ]
+  },
+  ffr: {
+    username: 'DennisZeroVT',
+    rank: 17078,
+    avgRank: 0,
+    skillRating: 16.07,
+    globalRank: 17078,
+    countryRankNL: 86,
+    tierPoints: 1,
+    tierPointsRank: 33906,
+    top5Avg: 34.83,
+    top100Avg: 4.82,
+    games: 21,
+    grandTotal: 24001755,
+    grandTotalRank: 249207,
+    lastPlayed: '2026-05-20',
+    top10: [
+      { song: 'Bits and Bytes (Original Mix)', artist: '', level: 60, score: 36.87 },
+      { song: 'Fear Me (NGADm Entry)', artist: '', level: 60, score: 35.90 },
+      { song: 'COUNTING CARDS', artist: '', level: 60, score: 34.56 },
+      { song: '-Slapstick-', artist: '', level: 60, score: 33.79 },
+      { song: 'burned down the ghost house and...', artist: '', level: 60, score: 33.03 },
+      { song: 'Carissa', artist: '', level: 34, score: 32.30 },
+      { song: 'AM-3P (House Party Dub)', artist: '', level: 34, score: 29.57 },
+      { song: 'Debut', artist: '', level: 60, score: 27.28 },
+      { song: 'GIN TONIC FLAVOR', artist: '', level: 60, score: 24.88 },
+      { song: 'Gacha Gacha Cute Figu atto Matte', artist: '', level: 60, score: 24.40 }
+    ]
+  }
+};
+/* ========================= END OF RHYTHM_GAME_STATS ========================= */
+
 function fillRhythmData(){
-  if (typeof DATA === 'undefined' || !DATA) return;
-  const std = DATA.osuStandard, man = DATA.osuMania, ett = DATA.etterna, ffr = DATA.ffr;
+  const std = RHYTHM_GAME_STATS.osuStandard, man = RHYTHM_GAME_STATS.osuMania, ett = RHYTHM_GAME_STATS.etterna, ffr = RHYTHM_GAME_STATS.ffr;
 
   // Overview tab
+
   setText('overview-std-rank', '#' + fmtNum(std.rank));
   setText('overview-std-pp', std.pp);
   setText('overview-std-acc', std.acc + '%');
