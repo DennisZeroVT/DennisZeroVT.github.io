@@ -1,31 +1,31 @@
 const DATA = {
   osuStandard: {
-    rank: 201537,
-    countryRank: 2054,
-    pp: 3746,
-    acc: 98.29,
-    plays: 98836,
-    seconds: 3830940,
-    rankedScore: 5187635250,
-    totalScore: 43855570948,
-    totalHits: 12759049,
+    rank: 176993,
+    countryRank: 1812,
+    pp: 4056,
+    acc: 98.77,
+    plays: 101213,
+    seconds: 3920880,
+    rankedScore: 5323953652,
+    totalScore: 45289903811,
+    totalHits: 13057980,
     hitsPerPlay: 129,
-    maxCombo: 1298,
+    maxCombo: 1998,
     replaysWatched: 8,
-    medals: 116,
+    medals: 118,
     grades: {
-      SS: 24,
-      SSH: 43,
+      SS: 94,
+      SSH: 50,
       S: 123,
-      SH: 479,
-      A: 1187
+      SH: 509,
+      A: 1961
     },
     top5: [
-      { pp: 214, acc: 98.88, grade: 'S', title: 'Dakara, Hitori ja Nai (TV Size)', subtitle: 'Little Glee Monster â€” [Happiness]' },
-      { pp: 180, acc: 98.97, grade: 'A', title: 'Devchonka ryjaya', subtitle: "Varavaki â€” [Bakari's Extreme]" },
-      { pp: 179, acc: 99.02, grade: 'S', title: 'Bobs Seed', subtitle: 'Daniel Ingram â€” [ztron]' },
-      { pp: 179, acc: 99.53, grade: 'S', title: 'Cage Fight', subtitle: 'Alicia Blocker, Clyde Shoray â€” [Hard]' },
-      { pp: 179, acc: 99.43, grade: 'S', title: 'Passcode 4854 -TV edit-', subtitle: 'Yasuda Rei â€” [Insane]' }
+      { pp: 214, acc: 98.88, grade: 'S', title: 'Dakara, Hitori ja Nai (TV Size)', subtitle: 'Little Glee Monster — [Happiness]' },
+      { pp: 210, acc: 99.58, grade: 'S', title: 'feeling good (nightcore & cut ver.)', subtitle: "kumocho's extra" },
+      { pp: 206, acc: 100.00, grade: 'SS', title: 'feeling good (nightcore & cut ver.)', subtitle: "mita's extra" },
+      { pp: 206, acc: 99.76, grade: 'S', title: 'Die A Million Times (Nightcore & Cut Ver.)', subtitle: "Kumocho's Extra" },
+      { pp: 194, acc: 99.70, grade: 'S', title: 'WEREWOLF (NIGHTCORE & CUT VER.)', subtitle: "MIMARI'S EXTRA" }
     ]
   },
   osuMania: {
@@ -50,26 +50,26 @@ const DATA = {
       A: 193
     },
     top5: [
-      { pp: 128, acc: 97.05, grade: 'S', title: 'Ascalon', subtitle: 'Crispy Joybox â€” [4K] Another' },
-      { pp: 125, acc: 94.67, grade: 'A', title: 'Triumph & Regret', subtitle: 'typeMARS â€” [4K] Triumph' },
-      { pp: 120, acc: 93.54, grade: 'A', title: 'Triumph & Regret', subtitle: 'typeMARS â€” [4K] Regret' },
-      { pp: 118, acc: 97.29, grade: 'S', title: 'anomone', subtitle: 'S-C-U feat. Crispy Joybox â€” [4K] Another' },
-      { pp: 118, acc: 94.88, grade: 'A', title: 'Databata Animation [feat. t+pazolite]', subtitle: 'Kobaryo â€” [4K] Insane' }
+      { pp: 128, acc: 97.05, grade: 'S', title: 'Ascalon', subtitle: 'Crispy Joybox — [4K] Another' },
+      { pp: 125, acc: 94.67, grade: 'A', title: 'Triumph & Regret', subtitle: 'typeMARS — [4K] Triumph' },
+      { pp: 120, acc: 93.54, grade: 'A', title: 'Triumph & Regret', subtitle: 'typeMARS — [4K] Regret' },
+      { pp: 118, acc: 97.29, grade: 'S', title: 'anomone', subtitle: 'S-C-U feat. Crispy Joybox — [4K] Another' },
+      { pp: 118, acc: 94.88, grade: 'A', title: 'Databata Animation [feat. t+pazolite]', subtitle: 'Kobaryo — [4K] Insane' }
     ]
   },
   etterna: {
     username: 'DennisZeroVT',
-    rank: 8374,
+    rank: 8701,
     since: '2020',
-    overall: 8.76,
+    overall: 9.38,
     skillsets: {
-      stream: 9.31,
-      jumpstream: 5.83,
-      handstream: 4.77,
-      jacks: 7.52,
-      chordjacks: 6.53,
-      stamina: 9.36,
-      technical: 10.56
+      stream: 9.75,
+      jumpstream: 6.67,
+      handstream: 5.13,
+      jacks: 8.07,
+      chordjacks: 6.91,
+      stamina: 10.02,
+      technical: 11.27
     },
     grades: {
       AAAA: 0,
@@ -81,16 +81,16 @@ const DATA = {
       D: 0
     },
     top10: [
-      { song: 'Boku ni Invitation', artist: '', msd: 11.04, acc: 97.86 },
-      { song: 'ILY', artist: '', msd: 10.37, acc: 98.32 },
-      { song: 'Der Wald', artist: '', msd: 9.91, acc: 95.24 },
-      { song: 'Battle! (Wild PokÃ©mon)', artist: '', msd: 9.80, acc: 98.83 },
-      { song: 'Perfect-Area Complete', artist: '', msd: 9.70, acc: 94.89 },
-      { song: 'Granat', artist: '', msd: 9.62, acc: 99.18 },
-      { song: 'Aether Ritual', artist: '', msd: 9.29, acc: 90.88 },
-      { song: 'Connect', artist: '', msd: 9.01, acc: 98.48 },
-      { song: 'Kimi ni Mune Kyun', artist: '', msd: 8.79, acc: 93.95 },
-      { song: 'Futari no Kimochi no Honto no Himitsu', artist: '', msd: 8.46, acc: 96.78 }
+      { song: 'Boku ni Invitation', artist: 'JP', msd: 12.37, acc: 97.86 },
+      { song: 'Brave Shine', artist: 'Aimer', msd: 12.36, acc: 99.35 },
+      { song: 'Perfect-Area Complete!', artist: 'Natsuko Aso', msd: 12.20, acc: 98.22 },
+      { song: 'Brave Shine', artist: 'Aimer', msd: 11.56, acc: 99.48 },
+      { song: 'Battle! Gym Leader', artist: 'Junichi Masuda, Go Ichinose, Morikazu Aok', msd: 11.37, acc: 99.48 },
+      { song: 'ILY', artist: 'Panda Eyes', msd: 11.35, acc: 99.50 },
+      { song: 'Kimi ni Mune Kyun', artist: 'Yuu Kobayashi', msd: 11.29, acc: 96.84 },
+      { song: 'Friend Shitai', artist: 'Gakuen Seikatsubu', msd: 11.27, acc: 95.32 },
+      { song: 'Sore Ga Ai Deshou', artist: 'Mikuni Shimokawa', msd: 11.16, acc: 99.38 },
+      { song: 'Connect', artist: 'ClariS', msd: 11.16, acc: 96.49 }
     ]
   },
   ffr: {
