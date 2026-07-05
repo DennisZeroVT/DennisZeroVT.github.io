@@ -1,16 +1,66 @@
-const fs=require('fs'),path=require('path');
-const safeRead=(p,f=[])=>{const c=[p,`data/${path.basename(p)}`,p.toLowerCase()];for(const x of c){try{if(fs.existsSync(x))return JSON.parse(fs.readFileSync(x,'utf8'))}catch(e){}}return f;};
-const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-const yt=u=>{if(!u)return'';try{const p=new URL(u);if(p.hostname.includes('youtu.be'))return`https://www.youtube.com/embed/${p.pathname.slice(1)}`;if(p.searchParams.get('v'))return`https://www.youtube.com/embed/${p.searchParams.get('v')}`;}catch{}return u;};
-const categories=safeRead('data/categories.json'),people=safeRead('data/people.json'),posts=safeRead('data/posts.json'),songs=safeRead('data/songs.json');
-const friends=people.filter(p=>(p.tags||[]).includes('friend')),collabs=people.filter(p=>(p.tags||[]).includes('collab'));
-function build(){
-const SJ=JSON.stringify(songs);
-const songCards=songs.map((s,i)=>{const cov=s.cover?`<img src="${esc(s.cover)}" alt="" class="w-full h-full object-cover">`:`<div class="w-full h-full flex items-center justify-center text-5xl">${esc(s.coverEmoji||'🎵')}</div>`;const tb=(s.badges||[]).slice(0,2).map(b=>`<span class="badge" style="background:${esc(b.color)}">${esc(b.label)}</span>`).join('');const ab=(s.badges||[]).map(b=>`<span class="text-[10px] px-2 py-1 rounded-full border border-white/10 bg-white/5">${esc(b.label)}</span>`).join('');return `<article class="glass rounded-2xl overflow-hidden" onclick="openSong(${i})"><div class="relative aspect-square">${cov}<div class="absolute top-3 left-3 flex gap-1">${tb}</div></div><div class="p-4"><h3>${esc(s.title)}</h3><p class="text-xs text-white/50">${esc(s.artist)} • ${s.year}</p><div class="mt-2 flex flex-wrap gap-1">${ab}</div></div></article>`;}).join('');
-const collabCards=collabs.map(c=>{const tags=(c.tags||[]).map(t=>`<span class="text-[10px] px-2 py-1 rounded-full bg-white/5 border border-white/10">${esc(t)}</span>`).join('');const creds=(c.credits||[]).map(cr=>`<div class="text-xs">${esc(cr.song)} • ${esc(cr.role)}</div>`).join('');return `<div class="glass p-6"><img src="${esc(c.avatar)}" class="w-16 h-16 rounded-full" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}'"/><h3>${esc(c.name)}</h3><p>${esc(c.bio||'')}</p><div>${tags}</div><div>${creds}</div></div>`;}).join('');
-const friendCards=friends.map(f=>`<div class="glass p-5"><img src="${esc(f.avatar)}" class="w-14 h-14 rounded-full"/><h3>${esc(f.name)}</h3><p>${esc(f.bio||'')}</p></div>`).join('');
-const catF=categories.map(c=>`<button data-cat="${esc(c.id)}">${esc(c.name)}</button>`).join('');
-const postCards=posts.map(p=>{const bl=(p.blocks||[]).map(b=>{if(b.type==='text')return `<p>${esc(b.content).replace(/\n/g,'<br>')}</p>`;if(b.type==='image')return `<img src="${esc(b.src||b.url)}" class="rounded-xl"/>`;if(b.type==='video'){const e=yt(b.url||b.src);return e.includes('youtube.com/embed')?`<iframe src="${esc(e)}"></iframe>`:`<a href="${esc(b.url)}">Watch</a>`;}return ''}).join('');return `<article class="glass p-6" data-cat="${esc((p.category||'').toLowerCase())}"><h3>${esc(p.title)}</h3><div>${bl}</div></article>`;}).join('');
-return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DZ</title><script src="https://cdn.tailwindcss.com"></script><style>.glass{background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.1)}</style></head><body class="bg-[#0a0a12] text-white"><main class="max-w-7xl mx-auto p-6 space-y-10"><section id="music"><h2>Music</h2><div class="grid grid-cols-3 gap-4">${songCards}</div></section><section id="blog"><div>${catF}</div><div class="grid md:grid-cols-2 gap-6">${postCards}</div></section><section id="collabs"><div class="grid md:grid-cols-2 gap-4">${collabCards}</div></section><section id="friends"><div class="grid md:grid-cols-3 gap-4">${friendCards}</div></section></main><script>const SONGS=${SJ};function openSong(i){alert(SONGS[i].title)}<\/script></body></html>`;
+// build.js
+// Regenerates the in-page FALLBACK data block in index.html from data/*.json.
+//
+// Why: the site is now a single page (index.html) that fetches
+// data/songs.json, data/people.json, data/albums.json, data/posts.json and
+// data/categories.json at runtime. The FALLBACK object in index.html's
+// <script> is only a safety net for when those fetches fail (e.g. the page
+// is opened straight from disk, or the JSON files 404). This script keeps
+// that safety net in sync with the real data so it never goes stale.
+//
+// Run this after editing anything in /data, or wire it into your GitHub
+// Action the same way the old build.js was used.
+
+const fs = require('fs');
+
+const read = (p, fallback = []) => {
+  try { return JSON.parse(fs.readFileSync(p, 'utf8')); }
+  catch { return fallback; }
+};
+
+const posts = read('data/posts.json');
+const people = read('data/people.json');
+const songs = read('data/songs.json');
+const albums = read('data/albums.json');
+const categories = read('data/categories.json');
+
+// Only keep the fields the FALLBACK object actually uses, so the block
+// stays small and doesn't leak unrelated data into the fallback path.
+const slimSongs = songs.map(s => ({
+  id: s.id, title: s.title, artist: s.artist, year: s.year,
+  cover: s.cover, coverEmoji: s.coverEmoji, audio: s.audio,
+  badges: s.badges, about: s.about
+}));
+
+const slimPeople = people.map(p => ({
+  id: p.id, name: p.name, handle: p.handle, role: p.role,
+  tags: p.tags, avatar: p.avatar, bio: p.bio
+}));
+
+const slimPosts = posts.map(p => ({
+  id: p.id, title: p.title, date: p.date, category: p.category,
+  subcategory: p.subcategory, blocks: p.blocks
+}));
+
+const fallback = {
+  songs: slimSongs,
+  people: slimPeople,
+  albums,
+  posts: slimPosts,
+  categories: []
+};
+
+const block = `// FALLBACK_START — regenerated by build.js from data/*.json, do not hand-edit the values below\nconst FALLBACK = ${JSON.stringify(fallback, null, 2)};\n// FALLBACK_END`;
+
+const file = 'index.html';
+let src = fs.readFileSync(file, 'utf8');
+const re = /\/\/ FALLBACK_START[\s\S]*?\/\/ FALLBACK_END/;
+
+if (!re.test(src)) {
+  console.error('Could not find FALLBACK_START/FALLBACK_END markers in index.html — aborting.');
+  process.exit(1);
 }
-const out=build();require('fs').writeFileSync('index.html',out);require('fs').writeFileSync('dist/index.html',out);console.log('Built',out.length);
+
+src = src.replace(re, block);
+fs.writeFileSync(file, src);
+console.log(`built: synced ${songs.length} songs, ${people.length} people, ${posts.length} posts into FALLBACK block`);

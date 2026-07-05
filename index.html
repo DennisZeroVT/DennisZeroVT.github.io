@@ -100,12 +100,12 @@
     }
     
     .page-section {
-        display: block;
-        animation: fadeInUp 0.5s ease;
+        display: none;
     }
     
     .page-section.active {
         display: block;
+        animation: fadeInUp 0.5s ease;
     }
     
     @keyframes fadeInUp {
@@ -552,32 +552,17 @@ body::after {
   z-index: -1;
   pointer-events: none;
 }
-/* CUSTOM GOLD PLAYER + BG */
-.dz-player{display:flex;align-items:center;gap:12px;background:#1a140a;border:1px solid rgba(253,215,0,0.15);border-radius:28px;padding:10px 16px;height:48px;width:100%;box-sizing:border-box}
-.dz-play{width:34px;height:34px;border-radius:50%;background:#FDD700;color:#000;display:grid;place-items:center;border:none;cursor:pointer;flex-shrink:0}
-.dz-play:hover{transform:scale(1.05)}
-.dz-time,.dz-duration{font-size:12px;color:#FDD700;min-width:38px;text-align:center;font-variant-numeric:tabular-nums}
-.dz-progress{flex:1;height:6px;position:relative;cursor:pointer}
-.dz-progress-bg{position:absolute;inset:0;background:rgba(255,255,255,0.12);border-radius:3px}
-.dz-progress-fill{position:absolute;left:0;top:0;height:100%;width:0%;background:#FDD700;border-radius:3px}
-.dz-progress-handle{position:absolute;top:50%;transform:translate(-50%,-50%);width:12px;height:12px;background:#FDD700;border-radius:50%;left:0%;opacity:0;transition:opacity .15s}
-.dz-progress:hover .dz-progress-handle{opacity:1}
+/* Page background */
 body{background-image:url('bk.png');background-position:center;background-size:cover;background-attachment:fixed;background-color:#0a0a0f}
 body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-index:-1;pointer-events:none}
 
-.page-section{display:none}.page-section.active{display:block}button{cursor:pointer} .mobile-link.active{background:rgba(165,150,218,0.15); color:white}</style>
+</style>
 <link href="/icons/favicon.ico" rel="icon" sizes="any"/>
 <link href="/icons/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
-
-
+<link href="/icons/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
+<link href="/icons/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"/>
 <link href="/icons/site.webmanifest" rel="manifest"/>
 
-    <!-- favicons - purple cat -->
-    
-    
-    
-    <link rel="manifest" href="/icons/site.webmanifest">
-    
     <meta name="theme-color" content="#A596DA">
     <link rel="canonical" href="https://denniszerovt.github.io/">
     <meta property="og:type" content="website">
@@ -662,7 +647,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
   /* 6. Bottom player safe area */
   #bottomPlayer { bottom: 0 !important; padding-bottom: env(safe-area-inset-bottom); }
 }
-.page-section{display:none}.page-section.active{display:block}button{cursor:pointer} .mobile-link.active{background:rgba(165,150,218,0.15); color:white}</style>
+</style>
 
 
 <style>
@@ -701,7 +686,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
     width: 100% !important;
   }
 }
-.page-section{display:none}.page-section.active{display:block}button{cursor:pointer} .mobile-link.active{background:rgba(165,150,218,0.15); color:white}</style>
+</style>
 
 <style>
 @media (max-width: 768px) {
@@ -718,7 +703,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
   }
 }
 html, body { overflow-x: hidden !important; max-width: 100vw !important; }
-.page-section{display:none}.page-section.active{display:block}button{cursor:pointer} .mobile-link.active{background:rgba(165,150,218,0.15); color:white}</style>
+</style>
 
 <style id="hq-styles">
 /* HQ toggle styles */
@@ -742,106 +727,102 @@ body.optimized .glow-hover {
   border-color: #A596DA !important;
   color: white !important;
 }
-.page-section{display:none}.page-section.active{display:block}button{cursor:pointer} .mobile-link.active{background:rgba(165,150,218,0.15); color:white}</style>
+</style>
 
 </head>
-<body style="background-image:url(''); background-size:cover; background-attachment:fixed; background-position:center;" class="antialiased">
-<!-- Preload cover images for JS access -->
-<img alt="" hidden="" id="cover-snowfall" src="SongData/AlbumArt/snowfall.png"/>
-<img alt="" hidden="" id="cover-stuckintime" src="SongData/AlbumArt/stuckintime.png"/>
+
+<body class="antialiased">
 <!-- Navigation -->
-
-
 <nav class="fixed top-0 w-full z-50 glass">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex items-center justify-between h-20">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#A596DA] to-[#C4B5FD] flex items-center justify-center">
-          <img alt="pfp" src="/icons/pfp.png" class="w-full h-full rounded-lg object-cover"/>
-        </div>
-        <div>
-          <h1 class="text-xl font-bold gradient-text">DennisZeroVT</h1>
-          <p class="text-xs text-[var(--text-secondary)]">Producer & Dev</p>
-        </div>
-      </div>
-
-      <!-- Desktop -->
-      <div class="hidden md:flex items-center gap-8">
-        <a href="#home" data-page="home" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white active">Home</a>
-        <a href="#music" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Music</a>
-        <a href="#rhythm" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
-        <a href="#gamedev" data-page="gamedev" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
-        <a href="#friends" data-page="friends" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Friends</a>
-        <a href="#collabs" data-page="collabs" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Collabs</a>
-      </div>
-
-      <!-- Hamburger Button -->
-      <button id="mobile-toggle" class="md:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5 rounded-xl bg-[rgba(165,150,218,0.14)] border border-[rgba(165,150,218,0.28)] hover:bg-[rgba(165,150,218,0.24)] transition-all">
-        <span class="block w-5 h-0.5 bg-[#C4B5FD] rounded-full"></span><span class="block w-5 h-0.5 bg-[#A596DA] rounded-full"></span><span class="block w-5 h-0.5 bg-[#C4B5FD] rounded-full"></span>
-      </button>
-    </div>
-  </div>
-
-  <!-- Mobile Drawer -->
-  <div id="mobile-menu" class="md:hidden hidden border-t border-white/10 bg-[#0e0a18]/95 backdrop-blur-xl">
-    <div class="px-4 py-6 flex flex-col gap-4">
-      <a href="#home" data-page="home" class="mobile-link text-base font-medium py-2 px-3 rounded-lg hover:bg-white/10">Home</a>
-      <a href="#music" data-page="music" class="mobile-link text-base font-medium py-2 px-3 rounded-lg hover:bg-white/10">Music</a>
-      <a href="#rhythm" data-page="rhythm" class="mobile-link text-base font-medium py-2 px-3 rounded-lg hover:bg-white/10">Rhythm</a>
-      <a href="#gamedev" data-page="gamedev" class="mobile-link text-base font-medium py-2 px-3 rounded-lg hover:bg-white/10">Blog</a>
-      <a href="#friends" data-page="friends" class="mobile-link text-base font-medium py-2 px-3 rounded-lg hover:bg-white/10">Friends</a>
-      <a href="#collabs" data-page="collabs" class="mobile-link text-base font-medium py-2 px-3 rounded-lg hover:bg-white/10">Collabs</a>
-    </div>
-  </div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#A596DA] to-[#C4B5FD] flex items-center justify-center">
+<img alt="Image description" src="/icons/pfp.png"/>
+</div>
+<div>
+<h1 class="text-xl font-bold gradient-text">DennisZeroVT</h1>
+<p class="text-xs text-[var(--text-secondary)]">Producer & Dev</p>
+</div>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a href="#home" data-page="home" class="nav-link text-sm font-medium active text-white">Home</a>
+<a href="#music" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">My Music</a>
+<a href="#blog" data-page="blog" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
+<a href="#rhythm" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
+<a href="#collabs" data-page="collabs" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Collaborators</a>
+<a href="#friends" data-page="friends" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Friends</a>
+</div>
+<div class="flex items-center gap-2">
+  <button id="hq-toggle" class="px-3 py-1.5 rounded-lg glass text-xs font-semibold border border-[#A596DA]/30 hover:bg-[#A596DA]/20 transition" title="Toggle HQ mode">HQ</button>
+  <button class="text-2xl md:hidden" id="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+</div>
+</div>
+</div>
+<div class="hidden md:hidden glass border-t border-[#A596DA]/10" id="mobile-menu">
+<div class="px-4 py-6 space-y-4">
+<a href="#home" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-white">Home</a>
+<a href="#music" data-page="music" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">My Music</a>
+<a href="#blog" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Blog</a>
+<a href="#rhythm" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Rhythm</a>
+<a href="#collabs" data-page="collabs" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Collaborators</a>
+<a href="#friends" data-page="friends" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Friends</a>
+</div>
+</div>
 </nav>
-
-
 <!-- Main Content -->
 <main class="relative z-10 pt-20">
-<!-- from music.html -->
-
-
-<!-- MY MUSIC PAGE -->
 
 <!-- HOME PAGE -->
 <section class="page-section active" id="home">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-  <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
-    <div>
-      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[rgba(165,150,218,0.15)] border border-[rgba(165,150,218,0.25)] text-xs text-[#C4B5FD] mb-6">
-        <span class="w-2 h-2 rounded-full bg-[#A596DA] animate-pulse"></span> Available for collabs
-      </div>
-      <h1 class="text-5xl lg:text-7xl font-bold leading-[0.95] mb-6">Music<br><span class="gradient-text">Producer</span><br>& Game Dev</h1>
-      <p class="text-[var(--text-secondary)] text-lg max-w-xl mb-8 leading-relaxed">
-        DennisZeroVT — blending ambient, electronic & orchestral sounds for games and standalone listening. Based in Utrecht, Netherlands.
-      </p>
-      <div class="flex flex-wrap gap-3">
-        <a href="#music" data-page="music" class="px-6 py-3 rounded-xl bg-[#A596DA] text-black font-semibold hover:bg-[#9A8AD0] transition">Explore Music <i class="fas fa-arrow-right ml-2"></i></a>
-        <a href="#rhythm" data-page="rhythm" class="px-6 py-3 rounded-xl glass hover:bg-white/10 font-medium transition">Rhythm Stats</a>
-      </div>
-      <div class="flex items-center gap-6 mt-10 text-sm text-[var(--text-secondary)]">
-        <span><i class="fas fa-map-marker-alt mr-2 text-[#A596DA]"></i>Utrecht, NL</span>
-        <span><i class="fas fa-music mr-2 text-[#A596DA]"></i>100+ tracks</span>
-        <span><i class="fas fa-gamepad mr-2 text-[#A596DA]"></i>Game Dev</span>
-      </div>
-    </div>
-    <div class="relative">
-      <div class="glass rounded-[2rem] p-8 floating">
-        <div class="aspect-square rounded-2xl bg-gradient-to-br from-[#A596DA]/30 to-[#C4B5FD]/10 flex items-center justify-center overflow-hidden">
-          <img src="/icons/pfp.png" alt="DennisZeroVT" class="w-full h-full object-cover rounded-2xl"/>
-        </div>
-        <div class="mt-6 flex items-center justify-between">
-          <div><p class="text-sm text-[var(--text-secondary)]">Now Playing</p><p class="font-semibold">Ambient Mix • 2024</p></div>
-          <div class="flex gap-1 items-end h-6"><div class="music-bar w-1 h-3 bg-[#A596DA] rounded-full"></div><div class="music-bar w-1 h-5 bg-[#A596DA] rounded-full"></div><div class="music-bar w-1 h-4 bg-[#A596DA] rounded-full"></div><div class="music-bar w-1 h-6 bg-[#A596DA] rounded-full"></div><div class="music-bar w-1 h-3 bg-[#A596DA] rounded-full"></div></div>
-        </div>
-      </div>
-      <div class="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-[#A596DA]/20 blur-2xl"></div>
-      <div class="absolute -bottom-8 -left-8 w-32 h-32 rounded-full bg-[#C4B5FD]/15 blur-2xl"></div>
-    </div>
-  </div>
+<div class="grid lg:grid-cols-2 gap-12 items-center">
+<div class="space-y-8">
+<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm">
+<span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+<span class="text-[var(--text-secondary)]">Available for collaborations</span>
+</div>
+<h1 class="text-5xl lg:text-7xl font-bold leading-tight">
+                            Hey, I'm <span class="text-[#A596DA]">Dennis van Wijngaarden</span>
+</h1>
+<p class="text-xl text-[var(--text-secondary)] leading-relaxed">
+                            Independent music producer and game developer 
+                        </p>
+<div class="flex flex-wrap gap-4">
+<button class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover" onclick="navigateTo('music')">
+<i class="fas fa-play mr-2"></i>Listen to My Music
+                            </button>
+<button class="px-8 py-4 rounded-lg glass font-semibold glow-hover" onclick="navigateTo('blog')">
+<i class="fas fa-gamepad mr-2"></i>View Game Projects
+                            </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Featured Projects -->
+<div id="featured-projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="text-center mb-16">
+<h2 class="text-4xl lg:text-5xl font-bold mb-4">Featured <span class="gradient-text">Projects</span></h2>
+<p class="text-[var(--text-secondary)] text-lg">Games &amp; music I'm currently working on</p>
+</div>
+<div class="grid md:grid-cols-2 gap-8">
+<div class="glass rounded-2xl p-8 glow-hover gradient-border">
+<div class="flex items-start justify-between mb-6">
+<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
+<i class="fas fa-snowflake text-2xl text-[#A596DA]"></i>
+</div>
+<span class="px-3 py-1 rounded-full text-xs bg-[#A596DA]/20 text-[#A596DA] font-medium">comming soon</span>
+</div>
+<h3 class="text-2xl font-bold mb-3">Adrenaline</h3>
+<p class="text-[var(--text-secondary)] mb-6 leading-relaxed">
+                            a remaster of my old song with the same name inspired by sonic ost.
+                        </p>
+</div>
+</div>
 </div>
 </section>
 
+<!-- MY MUSIC PAGE -->
 <section class="page-section" id="music">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
@@ -864,23 +845,9 @@ body.optimized .glow-hover {
 </div>
 </div>
 </section>
-<!-- GAME DEV BLOG PAGE -->
-
-<!-- Rhythm Games Page -->
-<!-- Rhythm Games Page -->
-
-<!-- COLLABORATORS PAGE -->
-
-<!-- FRIENDS PAGE -->
-
-
-<!-- from blog.html -->
-
-
-<!-- MY MUSIC PAGE -->
 
 <!-- GAME DEV BLOG PAGE -->
-<section class="page-section" id="gamedev">
+<section class="page-section" id="blog">
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4"><span class="gradient-text">Blog</span></h1>
@@ -898,23 +865,7 @@ body.optimized .glow-hover {
 </div>
 </div>
 </section>
-<!-- Rhythm Games Page -->
-<!-- Rhythm Games Page -->
 
-<!-- COLLABORATORS PAGE -->
-
-<!-- FRIENDS PAGE -->
-
-
-<!-- from rhythm.html -->
-
-
-<!-- MY MUSIC PAGE -->
-
-<!-- GAME DEV BLOG PAGE -->
-
-<!-- Rhythm Games Page -->
-<!-- Rhythm Games Page -->
 <section class="page-section" id="rhythm">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-12">
@@ -972,11 +923,11 @@ body.optimized .glow-hover {
 <span class="text-xs uppercase text-[var(--text-secondary)]">Flash Flash Revolution</span>
 <div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-bolt text-[#A596DA] text-xs"></i></div>
 </div>
-<p class="text-2xl font-bold" id="ffr-skillRating">-</p>
+<p class="text-2xl font-bold" id="overview-ffr-skill">-</p>
 <p class="text-xs text-[var(--text-secondary)] mb-3">Skill Rating</p>
 <div class="flex gap-4 text-sm">
-<span><span class="font-bold text-[#A596DA]" id="ffr-rank">-</span> rank</span>
-<span><span class="font-bold" id="ffr-nl">-</span> NL</span>
+<span><span class="font-bold text-[#A596DA]" id="overview-ffr-rank">-</span> rank</span>
+<span><span class="font-bold" id="overview-ffr-nl">-</span> NL</span>
 </div>
 </div>
 </div>
@@ -1222,88 +1173,8 @@ body.optimized .glow-hover {
 </div>
 </div>
 </div>
-<div style="display:none">
-<span id="osu-panel-rank"></span>
-<span id="osu-panel-country"></span>
-<span id="osu-panel-pp"></span>
-<span id="osu-panel-acc"></span>
-<span id="osu-panel-plays"></span>
-<span id="osu-panel-time"></span>
-<span id="osu-panel-ranked"></span>
-<span id="osu-panel-g-ss"></span>
-<span id="osu-panel-g-ssh"></span>
-<span id="osu-panel-g-s"></span>
-<span id="osu-panel-g-sh"></span>
-<span id="osu-panel-g-a"></span>
-<div id="osu-panel-grade-bar"></div>
-<table><tbody id="osu-panel-top5"></tbody></table>
-<span id="mania-panel-rank"></span>
-<span id="mania-panel-country"></span>
-<span id="mania-panel-pp"></span>
-<span id="mania-panel-acc"></span>
-<span id="mania-panel-plays"></span>
-<span id="mania-panel-time"></span>
-<span id="mania-panel-ranked"></span>
-<span id="mania-panel-g-ss"></span>
-<span id="mania-panel-g-ssh"></span>
-<span id="mania-panel-g-s"></span>
-<span id="mania-panel-g-sh"></span>
-<span id="mania-panel-g-a"></span>
-<div id="mania-panel-grade-bar"></div>
-<table><tbody id="mania-panel-top5"></tbody></table>
-<span id="etterna-username"></span>
-<span id="etterna-rank"></span>
-<span id="etterna-since"></span>
-<span id="etterna-stream"></span>
-<span id="etterna-jumpstream"></span>
-<span id="etterna-handstream"></span>
-<span id="etterna-jacks"></span>
-<span id="etterna-chordjacks"></span>
-<span id="etterna-stamina"></span>
-<span id="etterna-technical"></span>
-<div id="etterna-bar-overall"></div>
-<div id="etterna-bar-stream"></div>
-<div id="etterna-bar-jumpstream"></div>
-<div id="etterna-bar-handstream"></div>
-<div id="etterna-bar-jacks"></div>
-<div id="etterna-bar-chordjacks"></div>
-<div id="etterna-bar-stamina"></div>
-<div id="etterna-bar-technical"></div>
-<span id="etterna-g-aaaa"></span>
-<span id="etterna-g-aaa"></span>
-<span id="etterna-g-aa"></span>
-<span id="etterna-g-a"></span>
-<span id="etterna-g-b"></span>
-<span id="etterna-g-c"></span>
-<span id="etterna-g-d"></span>
-<div id="etterna-panel-grade-bar"></div>
-<table><tbody id="etterna-top10"></tbody></table>
-<span id="ffr-username"></span>
-<span id="ffr-rank"></span>
-<span id="ffr-avg-rank"></span>
-<span id="ffr-skill"></span>
-<span id="ffr-global"></span>
-<span id="ffr-since"></span>
-<table><tbody id="ffr-top10"></tbody></table>
-<div id="panel-ffr"></div>
-</div>
 </section>
-<!-- COLLABORATORS PAGE -->
 
-<!-- FRIENDS PAGE -->
-
-
-<!-- from collabs.html -->
-
-
-<!-- MY MUSIC PAGE -->
-
-<!-- GAME DEV BLOG PAGE -->
-
-<!-- Rhythm Games Page -->
-<!-- Rhythm Games Page -->
-
-<!-- COLLABORATORS PAGE -->
 <section class="page-section" id="collabs">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
@@ -1311,10 +1182,11 @@ body.optimized .glow-hover {
 <h1>Collabs</h1>
 <p>// People I've made things with</p>
 </div>
-<div class="people-grid">
+<div class="people-grid" id="collabs-grid"></div>
+</div>
 </div>
 </section>
-<!-- FRIENDS PAGE -->
+
 <section class="page-section" id="friends">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
@@ -1322,11 +1194,13 @@ body.optimized .glow-hover {
 <h1 class="gradient-text">Friends</h1>
 <p>// The people who made the journey worth it</p>
 </div>
-<div class="people-grid">
-</div></section>
+<div class="people-grid" id="friends-grid"></div>
+</div>
+</div>
+</section>
 
 </main>
-<!-- Person Overlay Modal -->
+<!-- Person Overlay Modal (friends / collaborators) -->
 <div class="overlay" id="person-overlay" onclick="closePersonOverlay(event)">
 <div class="overlay-content glass rounded-2xl gradient-border" onclick="event.stopPropagation()">
 <div class="modal-header">
@@ -1344,440 +1218,8 @@ body.optimized .glow-hover {
 </div>
 </div>
 </div>
-<!-- Song Overlay Modal -->
-<div class="overlay" id="song-overlay" onclick="closeSongOverlay(event)">
-<div class="overlay-content glass rounded-2xl gradient-border" onclick="event.stopPropagation()">
-<div class="modal-header">
-<div class="flex items-start justify-between mb-6">
-<div class="flex items-center gap-4" id="song-header">
-<!-- Dynamic content -->
-</div>
-<button class="w-10 h-10 rounded-lg glass flex items-center justify-center hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0" onclick="closeSongOverlay()">
-<i class="fas fa-times text-xl"></i>
-</button>
-</div>
-</div>
-<div class="modal-body" id="song-body">
-<!-- Dynamic content -->
-</div>
-</div>
-</div>
-<!-- Footer -->
-<footer class="glass border-t border-[#A596DA]/10 mt-20">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-<!-- Info / Contact footer -->
-<div class="info-footer">
-<div class="info-footer-col">
-<div class="info-footer-label">Full Name</div>
-<div class="info-footer-value">Dennis van Wijngaarden</div>
-</div>
-<div class="info-footer-col">
-<div class="info-footer-label">Email</div>
-<div class="info-footer-value"><a href="mailto:Denniszero030@outlook.com">Denniszero030@outlook.com</a></div>
-</div>
-<!-- Social links in footer -->
-<div class="info-footer-social">
-<div>
-<div class="info-footer-label">🎵 Music Platforms</div>
-<div class="social-links-row" style="margin-top:8px;">
-<a class="social-btn sb-spotify" href="https://open.spotify.com/artist/1sDYqTh1SQNJksxNAXbxyS" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"></path></svg>Spotify</a>
-<a class="social-btn sb-amazon" href="https://music.amazon.com/artists/B0FNKV8PTN/denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.699-3.182v.685zm3.186 7.705c-.209.189-.512.201-.745.074-1.052-.872-1.238-1.276-1.814-2.106-1.734 1.767-2.962 2.297-5.209 2.297-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.095v-.41c0-.753.06-1.642-.384-2.294-.385-.578-1.124-.817-1.775-.817-1.206 0-2.277.618-2.54 1.897-.054.285-.261.567-.549.582l-3.061-.333c-.259-.056-.545-.267-.472-.666C5.744 1.896 8.558 1 11.07 1c1.284 0 2.962.342 3.976 1.307C16.309 3.539 16.2 5.176 16.2 6.958v4.738c0 1.423.591 2.048 1.147 2.819.195.274.239.601-.01.806l-2.193 1.474zm3.559 1.688c-2.748 1.472-5.735 2.181-8.453 2.181-4.027 0-7.927-1.393-11.081-3.706-.277-.202-.481.154-.251.416C3.9 21.568 8.324 24 13.217 24c3.767 0 8.128-1.376 11.013-3.963.531-.475-.047-1.203-.527-.554z"></path></svg>Amazon Music</a>
-<a class="social-btn sb-deezer" href="https://www.deezer.com/en/artist/342624221" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M18.81 4.16v1.83H24V4.16h-5.19zm0 3.65v1.83H24V7.81h-5.19zM0 15.11v1.83h5.19v-1.83H0zm6.09 0v1.83h5.19v-1.83H6.09zm6.1 0v1.83H17.4v-1.83h-5.21zm6.1 0v1.83H24v-1.83h-5.19zM0 18.77v1.83h5.19v-1.83H0zm6.09 0v1.83h5.19v-1.83H6.09zm6.1 0v1.83H17.4v-1.83h-5.21zm6.1 0v1.83H24v-1.83h-5.19zM12.19 7.81v1.83h5.19V7.81h-5.19zm6.62 0v1.83H24V7.81h-5.19zm-6.62 3.65v1.83h5.19v-1.83h-5.19zm6.62 0v1.83H24v-1.83h-5.19z"></path></svg>Deezer</a>
-<a class="social-btn sb-apple" href="https://music.apple.com/nl/artist/denniszerovt/1840250778" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"></path></svg>Apple Music</a>
-<a class="social-btn sb-tidal" href="https://tidal.com/artist/66966649" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004L8.008 7.996l4.004 4.004 4.004-4.004zM8.008 16.004l4.004-4.004 4.004 4.004L19.996 12l-3.98-3.98-4.004 4.004L8.008 8.02 4.004 12z"></path></svg>Tidal</a>
-</div>
-</div>
-<div>
-<div class="info-footer-label">🎮 Social &amp; Streaming</div>
-<div class="social-links-row" style="margin-top:8px;">
-<a class="social-btn sb-twitch" href="https://www.twitch.tv/denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"></path></svg>Twitch</a>
-<a class="social-btn sb-youtube" href="https://youtube.com/@denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>YouTube</a>
-<a class="social-btn sb-twitter" href="https://x.com/DennisZeroVT" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632Zm-1.161 17.52h1.833L7.084 4.126H5.117Z"></path></svg>Twitter / X</a>
-<a class="social-btn sb-instagram" href="https://www.instagram.com/DennisZeroVT" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"></path></svg>Instagram</a>
-<a class="social-btn sb-tiktok" href="https://www.tiktok.com/@denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.73a8.24 8.24 0 0 0 4.83 1.56V6.83a4.85 4.85 0 0 1-1.06-.14z"></path></svg>TikTok</a>
-<a class="social-btn sb-steam" href="https://steamcommunity.com/id/DennisZeroVT/" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.718L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.606 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.455 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"></path></svg>Steam</a>
-<a class="social-btn sb-itch" href="https://denniszerovt.itch.io/" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M3.13 1.338C2.08 1.96.02 4.328 0 4.95v1.03c0 1.303 1.22 2.45 2.325 2.45 1.33 0 2.436-1.102 2.436-2.41 0 1.308 1.07 2.41 2.4 2.41 1.328 0 2.362-1.102 2.362-2.41 0 1.308 1.137 2.41 2.467 2.41h.024c1.33 0 2.466-1.102 2.466-2.41 0 1.308 1.034 2.41 2.363 2.41 1.33 0 2.4-1.102 2.4-2.41 0 1.308 1.105 2.41 2.435 2.41C22.78 8.43 24 7.283 24 5.98V4.95c-.02-.622-2.08-2.99-3.13-3.612C17.37.917 8.51.81 3.13 1.337zM8.56 9.817c-.397.006-.812.076-1.13.218C6.323 10.522 6.1 11.25 6 12.917 5.785 16.25 5.17 18.8 5.1 22.17c2.73.572 5.55.886 8.1.826 2.396.013 4.87-.278 7.3-.826-.07-3.37-.688-5.92-.9-9.253-.1-1.667-.325-2.395-1.43-2.882-.36-.157-.832-.225-1.268-.216-.34.007-.68.078-.958.245-1.265.753-2.63.74-3.96.02-.37-.208-.76-.28-1.425-.268zm-.264 3.35h7.388c.103 0 .185.083.185.185v2.656c0 .102-.082.184-.185.184H8.297c-.102 0-.184-.082-.184-.184v-2.656c0-.102.082-.185.184-.185z"></path></svg>itch.io</a>
-</div>
-</div>
-</div>
-<div class="info-footer-copy">
-            © Dennis van Wijngaarden · All music on this page is my own original work. All rights reserved.
-          </div>
-</div>
-</div>
-</footer>
-<script>
-        // SONGS DATA
 
-        // ===== GITHUB DATA LOADER (replaces Firebase + s) =====
-        let SONGS = {};
-        let ALBUMS = {};
-        let personData = {}; let dataLoaded = false;
-        let allPosts = [];
-        let categories = [];
-
-        async 
-function renderPeople(){
-  const friendsGrid = document.getElementById('friends-grid');
-  const collabsGrid = document.getElementById('collabs-grid');
-  if(!personData) return;
-  const people = Array.isArray(personData) ? personData : Object.values(personData);
-  if(friendsGrid){
-    friendsGrid.innerHTML = people.filter(p=>p.tags&&p.tags.includes('friend')).map(p=>`
-      <div class="person-card glass p-6 rounded-xl glow-hover" onclick="openPerson('${p.id}')">
-        <div class="flex gap-4">
-          <img src="${p.avatar}" class="w-20 h-20 rounded-full object-cover">
-          <div>
-            <h3 class="text-xl font-semibold">${p.name} <span class="text-sm opacity-70">${p.handle||''}</span></h3>
-            <p class="text-[var(--text-secondary)] text-sm mb-2">${p.role||''}</p>
-            <p class="text-sm">${p.bio||''}</p>
-          </div>
-        </div>
-      </div>`).join('');
-  }
-  if(collabsGrid){
-    collabsGrid.innerHTML = people.filter(p=>p.tags&&p.tags.includes('collab')).map(p=>`
-      <div class="person-card glass p-6 rounded-xl glow-hover" onclick="openPerson('${p.id}')">
-        <div class="flex gap-4">
-          <img src="${p.avatar}" class="w-20 h-20 rounded-full object-cover">
-          <div>
-            <h3 class="text-xl font-semibold">${p.name}</h3>
-            <p class="text-[var(--text-secondary)] text-sm">${p.role||''}</p>
-          </div>
-        </div>
-      </div>`).join('');
-  }
-}
-
-function loadAllData() {
-          try {
-             [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
-              fetch('./data/songs.json').then(r=>r.json()).catch(()=>[]),
-              fetch('./data/people.json').then(r=>r.json()).catch(()=>[]),
-              fetch('./data/albums.json').then(r=>r.json()).catch(()=>[]),
-              fetch('./data/posts.json').then(r=>r.json()).catch(()=>[]),
-              fetch('./data/categories.json').then(r=>r.json()).catch(()=>[])
-            ]);
-
-            // Convert arrays to the format your site expects
-            SONGS = Object.fromEntries(songsData.map(s => [s.id, {
-              name: s.title,
-              artist: s.artist,
-              year: s.year,
-              src: s.audio,
-              cover: s.coverEmoji || '🎵',
-              coverImg: s.cover,
-              badges: s.badges || [],
-              streaming: s.streaming || {},
-              about: s.about || '',
-              thoughts: s.thoughts || '',
-              Miscellaneous: s.miscellaneous || '',
-              behindTheScenes: s.behindTheScenes || ''
-            }]));
-
-            personData = Object.fromEntries(peopleData.map(p => [p.id, {
-              name: p.name,
-              role: p.role,
-              color: p.color || 'from-purple-500/30 to-purple-600/10',
-              icon: p.icon || 'fas fa-user',
-              bio: p.bio,
-              links: Object.entries(p.links || {}).map(([k,v]) => ({
-                name: k.charAt(0).toUpperCase() + k.slice(1),
-                icon: `fab fa-${k}`,
-                url: v
-              })),
-              projects: p.projects || []
-            }]));
-
-            ALBUMS = Object.fromEntries(albumsData.map(a => [a.id, a]));
-
-            allPosts = postsData.sort((a,b) => new Date(b.date) - new Date(a.date));
-            categories = catsData.length ? catsData : [
-              {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
-              {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
-              {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
-            ];
-
-            // Now initialize your site
-            if (typeof renderCategories === 'function') renderCategories();
-            if (typeof renderSubs === 'function') renderSubs();
-            if (typeof renderPosts === 'function') renderPosts();
-            if (typeof initializeMusic === 'function') initializeMusic();
-            if (typeof renderPeople === 'function') renderPeople();
-            if (typeof renderSongsGrid === 'function') renderSongsGrid();
-            if (typeof renderAlbumsGrid === 'function') renderAlbumsGrid();
-
-          } catch (e) {
-            console.error('Failed to load data:', e);
-          }
-        }
-
-        // Load everything on page load
-        document.addEventListener('DOMContentLoaded', loadAllData);
-
-
-
-         platformIcons = {
-            spotify: '<i class="fab fa-spotify"></i>',
-            apple: '<i class="fab fa-apple"></i>',
-            tidal: '<i class="fas fa-music"></i>',
-            youtube: '<i class="fab fa-youtube"></i>',
-            amazon: '<i class="fab fa-amazon"></i>',
-            deezer: '<i class="fas fa-record-vinyl"></i>'
-        };
-
-        // Render Songs Grid
-        
-        // Badge brand colors
-        function getBadgeStyle(name) {
-             map = {
-                'Spotify': {bg: '#1DB954', color: '#000'},
-                'Apple Music': {bg: '#FA243C', color: '#fff'},
-                'Apple': {bg: '#FA243C', color: '#fff'},
-                'Deezer': {bg: '#00C7F2', color: '#000'},
-                'Tidal': {bg: '#000000', color: '#fff'},
-                'Amazon': {bg: '#FF9900', color: '#000'},
-                'YouTube Music': {bg: '#FF0000', color: '#fff'},
-                'YouTube': {bg: '#FF0000', color: '#fff'},
-                'Released': {bg: '#A596DA', color: '#000'},
-                'Available': {bg: '#A596DA', color: '#000'},
-                'Spotify': {bg: '#1DB954', color: '#fff'}
-            };
-            return map[name] || {bg: 'var(--bg-card-hover)', color: 'var(--text-secondary)'};
-        }
-
-function renderSongsGrid() {
-     grid = document.getElementById('songs-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    // Use Tailwind grid matching new site
-    grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
-    
-    Object.keys(SONGS).forEach(key => {
-         song = SONGS[key];
-         card = document.createElement('div');
-        card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
-        card.onclick = () => openSong(key);
-        
-        card.innerHTML = `
-            <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
-                ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
-                <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">${song.cover || '🎵'}</div>
-                <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
-                    </div>
-                </div>
-            </div>
-            <div class="p-4">
-                <h3 class="font-semibold text-white truncate">${song.name}</h3>
-                <p class="text-sm text-[var(--text-secondary)] mt-1">${song.year || ''} • ${song.artist}</p>
-                <div class="flex gap-1.5 mt-3 flex-wrap">
-                    ${(song.badges || []).slice(0,3).map(b => { const label = typeof b==='string' ? b : b.label; const color = typeof b==='object' && b.color ? b.color : null; const bg = color || 'rgba(255,255,255,0.1)'; const style = color ? `background:${bg};color:#fff` : ''; return `<span class="text-[10px] px-2 py-0.5 rounded-full ${color?'':'bg-white/10 text-white/70'}" ${color?`style="${style}"`:''}>${label}</span>` }).join('')}
-                </div>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-function renderAlbumsGrid() {
-     grid = document.getElementById('albums-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    Object.keys(ALBUMS).forEach(key => {
-         album = ALBUMS[key];
-         card = document.createElement('div');
-        card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
-        card.onclick = () => openAlbum(key);
-        card.innerHTML = `
-            <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
-                ${album.coverImg ? `<img src="${album.coverImg}" alt="${album.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60"></div>
-                <div class="absolute bottom-3 left-3">
-                    <span class="px-2 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] text-[10px] font-medium backdrop-blur">${album.status}</span>
-                </div>
-            </div>
-            <div class="p-4">
-                <h3 class="font-semibold text-white truncate">${album.name}</h3>
-                <p class="text-sm text-[var(--text-secondary)] mt-1">${album.year} • ${album.tracks} tracks</p>
-            </div>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-
-
-        // Page Navigation System
-        function navigateTo(page) {
-            document.querySelectorAll('.page-section').forEach(section => {
-                section.classList.remove('active');
-            document.getElementById(page).classList.add('active');
-            
-            // Hide/show home hero and featured projects
-             homeHero = document.getElementById('home');
-             featured = document.getElementById('featured-projects');
-            if(page === 'home') {
-                if(homeHero) homeHero.style.display = 'block';
-                if(featured) featured.style.display = 'block';
-            } else {
-                if(homeHero) homeHero.style.display = 'none';
-                if(featured) featured.style.display = 'none';
-            }
-            
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-                link.classList.add('text-[var(--text-secondary)]');
-            document.querySelectorAll('.nav-link[data-page="' + page + '"]').forEach(link => {
-                link.classList.add('active');
-                link.classList.remove('text-[var(--text-secondary)]');
-            document.querySelectorAll('.nav-link-mobile').forEach(link => {
-                if (link.getAttribute('data-page') === page) {
-                    link.classList.remove('text-[var(--text-secondary)]');
-                } else {
-                    link.classList.add('text-[var(--text-secondary)]');
-                }
-            document.getElementById('mobile-menu').classList.add('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-        
-        // Nav link clicks
-        document.querySelectorAll('[data-page]').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                 page = link.getAttribute('data-page');
-                navigateTo(page);
-            });
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-            document.getElementById('mobile-menu').classList.toggle('hidden');
-        // Person Overlay System
-        window.openPersonOverlay = function(personId) {
-            const person = personData[personId];
-            if (!person) return;
-            
-            const overlay = document.getElementById('person-overlay');
-            const header = document.getElementById('overlay-header');
-            const body = document.getElementById('overlay-body');
-            
-            header.innerHTML = `
-                <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color || 'from-purple-500/30 to-purple-600/10'} flex items-center justify-center">
-                    <i class="${person.icon || 'fas fa-user'} text-2xl"></i>
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold">${person.name}</h2>
-                    <p class="text-[var(--accent)]">${person.role || ''}</p>
-                </div>
-            `;
-            
-            const rawCredits  = person.credits || [];
-const rawProjects = person.projects || [];   // legacy fallback
-let projectsHTML  = '';
-
-if (rawCredits.length > 0) {
-  // ── NEW: rich credits with per-song role ──
-  const creditButtons = rawCredits.map(cr => {
-    const roleLabel = cr.role  || 'Collaborator';
-    const songLabel = cr.song  || '';
-    const noteLabel = cr.note  || '';
-
-    // Find matching song object for click-through
-    let song = null;
-    const songSources = [window.songData, window.songs, window.FALLBACK_SONGS];
-    for (const source of songSources) {
-      if (!source) continue;
-      const arr = Array.isArray(source) ? source : Object.values(source);
-      song = arr.find(s => s && (
-        (cr.songId && s.id === cr.songId) ||
-        (s.title && s.title.toLowerCase() === songLabel.toLowerCase())
-      ));
-      if (song) break;
-    }
-
-    const noteHTML = noteLabel
-      ? `<span style="display:block;font-size:0.75em;opacity:0.6;margin-top:2px;">${noteLabel}</span>`
-      : '';
-
-    if (song && song.id) {
-      // Clickable card → opens song overlay
-      return `<button
-        onclick="document.getElementById('person-overlay').classList.remove('active'); setTimeout(function(){ openSongOverlay('${song.id}') }, 250)"
-        style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(165,150,218,.1);border:1px solid rgba(165,150,218,.3);cursor:pointer;text-align:left;width:100%;color:inherit;transition:.15s;"
-        onmouseover="this.style.background='rgba(165,150,218,.18)'" onmouseout="this.style.background='rgba(165,150,218,.1)'"
-      >
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;font-size:0.9em;color:#A596DA;">${roleLabel}</div>
-          <div style="font-size:0.85em;opacity:.8;">${songLabel}</div>
-          ${noteHTML}
-        </div>
-        <span style="opacity:.4;font-size:.8em;padding-top:2px;">→</span>
-      </button>`;
-    } else {
-      // Static pill — no matching song found
-      return `<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);">
-        <div style="flex:1;min-width:0;">
-          <div style="font-weight:700;font-size:0.9em;">${roleLabel}</div>
-          <div style="font-size:0.85em;opacity:.7;">${songLabel || '—'}</div>
-          ${noteHTML}
-        </div>
-      </div>`;
-    }
-  }).join('');
-
-  projectsHTML = '<div class="mb-6"><h3 class="font-bold mb-3 text-lg">Collaborated On:</h3><div style="display:grid;gap:8px;">' + creditButtons + '</div></div>';
-
-} else if (rawProjects.length > 0) {
-  // Legacy fallback — old string[] projects
-  const legacy = rawProjects.map(p => `<span class="px-3 py-1 rounded-full glass text-sm">${p}</span>`).join('');
-  projectsHTML = '<div class="mb-6"><h3 class="font-bold mb-3 text-lg">Collaborated On:</h3><div class="flex flex-wrap gap-2">' + legacy + '</div></div>';
-}
-            
-            const links = person.links || {};
-            const linkIcons = {
-                twitter: 'fab fa-twitter',
-                spotify: 'fab fa-spotify',
-                instagram: 'fab fa-instagram',
-                youtube: 'fab fa-youtube',
-                github: 'fab fa-github'
-            };
-            
-            let linksHTML = '';
-            if (Object.keys(links).length > 0) {
-                linksHTML = `
-                <div class="flex gap-4">
-                    ${Object.entries(links).map(([key, url]) => `
-                        <a href="${url}" target="_blank" class="w-12 h-12 rounded-lg glass flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors" onclick="event.stopPropagation()">
-                            <i class="${linkIcons[key] || 'fas fa-link'} text-xl"></i>
-                        </a>
-                    `).join('')}
-                </div>
-                `;
-            }
-            
-            body.innerHTML = `
-                ${projectsHTML}
-                <div class="mb-6">
-                    <h3 class="font-bold mb-3 text-lg">About</h3>
-                    <p class="text-[var(--text-secondary)] leading-relaxed">${person.bio || ''}</p>
-                </div>
-                ${linksHTML}
-            `;
-            
-            overlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        
-        window.closePersonOverlay = function(event) {
-            if (event && event.target !== event.currentTarget) return;
-            document.getElementById('person-overlay').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-
-        // Song Overlay System
-        
-</script>
-<!-- Polished Song Overlay -->
+<!-- Song Overlay -->
 <div class="fixed inset-0 z-[100] hidden" id="songOverlay">
 <div class="absolute inset-0 bg-black/90 backdrop-blur-xl" onclick="closeOverlay()"></div>
 <div class="relative h-full flex items-center justify-center p-4 md:p-8">
@@ -1839,228 +1281,7 @@ if (rawCredits.length > 0) {
 </div>
 </div>
 <audio id="songAudio" preload="metadata"></audio>
-<script>
 
-// Polished Song Player
-const songAudio = document.getElementById('songAudio');
-let currentSongKey = null;
-
-function openSong(key) {
-  const song = SONGS[key];
-  if (!song) return;
-  currentSongKey = key;
-  
-  // Set audio
-  if (songAudio.src !== new URL(song.src, location.href).href) {
-    songAudio.src = song.src;
-    songAudio.load();
-  }
-  songAudio.play().catch(()=>{});
-  
-  // Update overlay UI
-  document.getElementById('ovTitle').textContent = song.name;
-  document.getElementById('ovArtist').textContent = song.artist;
-  
-  const img = document.getElementById('ovCoverImg');
-  const emoji = document.getElementById('ovCoverEmoji');
-  if (song.coverImg) {
-    img.src = song.coverImg;
-    img.classList.remove('hidden');
-    emoji.classList.add('hidden');
-  } else {
-    img.classList.add('hidden');
-    emoji.classList.remove('hidden');
-    emoji.textContent = song.cover || '🎵';
-  }
-  
-  // Update bottom player
-  document.getElementById('bpTitle').textContent = song.name;
-  document.getElementById('bpArtist').textContent = song.artist;
-  const bpImg = document.getElementById('bpCover');
-  const bpEmoji = document.getElementById('bpEmoji');
-  if (song.coverImg) {
-    bpImg.src = song.coverImg;
-    bpImg.classList.remove('hidden');
-    bpEmoji.classList.add('hidden');
-  } else {
-    bpImg.classList.add('hidden');
-    bpEmoji.classList.remove('hidden');
-    bpEmoji.textContent = song.cover || '🎵';
-  }
-  showBottomPlayer();
-  
-  // Tabs
-  showSongTab('about');
-  
-  // Streaming links
-  const streamWrap = document.getElementById('ovStreaming');
-  streamWrap.innerHTML = '';
-  if (song.streaming) {
-    Object.entries(song.streaming).forEach(([platform, url]) => {
-      const a = document.createElement('a');
-      a.href = url;
-      a.target = '_blank';
-      a.className = 'px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs capitalize transition';
-      a.textContent = platform;
-      streamWrap.appendChild(a);
-    });
-  }
-  
-  // Show overlay
-  document.getElementById('songOverlay').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeOverlay() {
-  document.getElementById('songOverlay').classList.add('hidden');
-  document.body.style.overflow = '';
-  // DO NOT pause - let it continue playing
-}
-
-function reopenOverlay() {
-  if (currentSongKey) {
-    document.getElementById('songOverlay').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-  }
-}
-
-function showBottomPlayer() {
-  document.getElementById('bottomPlayer').classList.remove('translate-y-full');
-}
-
-function hideBottomPlayer() {
-  document.getElementById('bottomPlayer').classList.add('translate-y-full');
-}
-
-function stopPlayback() {
-  songAudio.pause();
-  songAudio.currentTime = 0;
-  hideBottomPlayer();
-  closeOverlay();
-}
-
-function toggleSongPlay() {
-  if (songAudio.paused) songAudio.play();
-  else songAudio.pause();
-}
-
-function seekAudio(sec) {
-  songAudio.currentTime = Math.max(0, Math.min(songAudio.duration || 0, songAudio.currentTime + sec));
-}
-
-function fmt(t) {
-  if (!isFinite(t)) return '0:00';
-  const m = Math.floor(t/60), s = Math.floor(t%60).toString().padStart(2,'0');
-  return `${m}:${s}`;
-}
-
-// Progress updates
-songAudio.addEventListener('timeupdate', () => {
-  const pct = songAudio.duration ? (songAudio.currentTime / songAudio.duration * 100) : 0;
-  document.getElementById('ovProgress').style.width = pct + '%';
-  document.getElementById('ovHandle').style.left = pct + '%';
-  document.getElementById('ovCurrent').textContent = fmt(songAudio.currentTime);
-  // bottom
-  document.getElementById('bpProgress').style.width = pct + '%';
-  document.getElementById('bpTime').textContent = fmt(songAudio.currentTime);
-songAudio.addEventListener('loadedmetadata', () => {
-  document.getElementById('ovDuration').textContent = fmt(songAudio.duration);
-songAudio.addEventListener('play', () => {
-  document.getElementById('ovPlayIcon').innerHTML = '<path d="M6 6h4v12H6zm8 0h4v12h-4z"/>';
-  document.getElementById('bpPlayIcon').innerHTML = '<path d="M6 6h4v12H6zm8 0h4v12h-4z"/>';
-  showBottomPlayer();
-});
-songAudio.addEventListener('pause', () => {
-  document.getElementById('ovPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
-  document.getElementById('bpPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
-songAudio.addEventListener('ended', () => {
-  hideBottomPlayer();
-// Click progress
-document.addEventListener('DOMContentLoaded', () => {
-  const wrap = document.getElementById('ovProgressWrap');
-  if (wrap) {
-    wrap.addEventListener('click', (e) => {
-      const rect = wrap.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      songAudio.currentTime = pct * (songAudio.duration || 0);
-    });
-  }
-  const bpWrap = document.getElementById('bpProgressWrap');
-  if (bpWrap) {
-    bpWrap.addEventListener('click', (e) => {
-      const rect = bpWrap.getBoundingClientRect();
-      const pct = (e.clientX - rect.left) / rect.width;
-      songAudio.currentTime = pct * (songAudio.duration || 0);
-    });
-  }
-  const vol = document.getElementById('ovVolume');
-  if (vol) {
-    songAudio.volume = vol.value;
-    vol.addEventListener('input', e => {
-      songAudio.volume = e.target.value;
-      const bpVol = document.getElementById('bpVolume');
-      if (bpVol) bpVol.value = e.target.value;
-    });
-  }
-  const bpVol = document.getElementById('bpVolume');
-  if (bpVol) {
-    bpVol.value = songAudio.volume;
-    bpVol.addEventListener('input', e => {
-      songAudio.volume = e.target.value;
-      if (vol) vol.value = e.target.value;
-    });
-  }
-  
-  // Tabs
-  document.querySelectorAll('.song-tab').forEach(btn => {
-    btn.addEventListener('click', () => showSongTab(btn.dataset.tab));
-  });
-function showSongTab(tab) {
-  document.querySelectorAll('.song-tab').forEach(b => {
-    const active = b.dataset.tab === tab;
-    b.classList.toggle('border-[#A596DA]', active);
-    b.classList.toggle('text-white', active);
-    b.classList.toggle('border-transparent', !active);
-    b.classList.toggle('text-[var(--text-secondary)]', !active);
-  const song = SONGS[currentSongKey];
-  const content = document.getElementById('ovTabContent');
-  if (!song) return;
-  
-  let html = '';
-  if (tab === 'about') html = `<p>${song.about || 'No description.'}</p>`;
-  else if (tab === 'thoughts') html = `<p>${song.thoughts || 'No thoughts shared yet.'}</p>`;
-  else if (tab === 'behind') html = `<p>${song.behindTheScenes || song.Miscellaneous || 'Behind the scenes coming soon.'}</p>`;
-  
-  content.innerHTML = html;
-}
-
-
-function openAlbum(key) {
-  const album = ALBUMS[key];
-  if (!album) return;
-  document.getElementById('alCover').src = album.coverImg || '';
-  document.getElementById('alTitle').textContent = album.name;
-  document.getElementById('alArtist').textContent = album.artist + ' • ' + album.year;
-  document.getElementById('alStatus').textContent = album.status;
-  const wrap = document.getElementById('alTracks');
-  wrap.innerHTML = '';
-  album.tracklist.forEach((t,i)=>{
-    const d = document.createElement('div');
-    d.className = 'flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition cursor-pointer';
-    if(t.key && SONGS[t.key]) d.onclick = ()=>{ closeAlbum(); openSong(t.key); };
-    d.innerHTML = `<div class="w-6 text-sm text-[var(--text-secondary)]">${i+1}</div><div class="flex-1">${t.name}</div><div class="text-xs font-mono text-[var(--text-secondary)]">${t.duration}</div>`;
-    wrap.appendChild(d);
-  });
-  document.getElementById('albumOverlay').classList.remove('hidden');
-  document.body.style.overflow = 'hidden';
-}
-function closeAlbum(){ document.getElementById('albumOverlay').classList.add('hidden'); document.body.style.overflow=''; }
-
-// Close on ESC
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') { closeOverlay(); closeAlbum(); }
-});
-</script>
 <!-- Bottom Persistent Player -->
 <div class="fixed bottom-0 left-0 right-0 z-[90] translate-y-full transition-transform duration-300" id="bottomPlayer">
 <div class="mx-4 mb-4 glass rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
@@ -2117,256 +1338,963 @@ document.addEventListener('keydown', e => {
   </div>
 </div>
 
+<!-- Footer -->
+<footer class="glass border-t border-[#A596DA]/10 mt-20">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<!-- Info / Contact footer -->
+<div class="info-footer">
+<div class="info-footer-col">
+<div class="info-footer-label">Full Name</div>
+<div class="info-footer-value">Dennis van Wijngaarden</div>
+</div>
+<div class="info-footer-col">
+<div class="info-footer-label">Email</div>
+<div class="info-footer-value"><a href="mailto:Denniszero030@outlook.com">Denniszero030@outlook.com</a></div>
+</div>
+<!-- Social links in footer -->
+<div class="info-footer-social">
+<div>
+<div class="info-footer-label">🎵 Music Platforms</div>
+<div class="social-links-row" style="margin-top:8px;">
+<a class="social-btn sb-spotify" href="https://open.spotify.com/artist/1sDYqTh1SQNJksxNAXbxyS" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"></path></svg>Spotify</a>
+<a class="social-btn sb-amazon" href="https://music.amazon.com/artists/B0FNKV8PTN/denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.699-3.182v.685zm3.186 7.705c-.209.189-.512.201-.745.074-1.052-.872-1.238-1.276-1.814-2.106-1.734 1.767-2.962 2.297-5.209 2.297-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.095v-.41c0-.753.06-1.642-.384-2.294-.385-.578-1.124-.817-1.775-.817-1.206 0-2.277.618-2.54 1.897-.054.285-.261.567-.549.582l-3.061-.333c-.259-.056-.545-.267-.472-.666C5.744 1.896 8.558 1 11.07 1c1.284 0 2.962.342 3.976 1.307C16.309 3.539 16.2 5.176 16.2 6.958v4.738c0 1.423.591 2.048 1.147 2.819.195.274.239.601-.01.806l-2.193 1.474zm3.559 1.688c-2.748 1.472-5.735 2.181-8.453 2.181-4.027 0-7.927-1.393-11.081-3.706-.277-.202-.481.154-.251.416C3.9 21.568 8.324 24 13.217 24c3.767 0 8.128-1.376 11.013-3.963.531-.475-.047-1.203-.527-.554z"></path></svg>Amazon Music</a>
+<a class="social-btn sb-deezer" href="https://www.deezer.com/en/artist/342624221" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M18.81 4.16v1.83H24V4.16h-5.19zm0 3.65v1.83H24V7.81h-5.19zM0 15.11v1.83h5.19v-1.83H0zm6.09 0v1.83h5.19v-1.83H6.09zm6.1 0v1.83H17.4v-1.83h-5.21zm6.1 0v1.83H24v-1.83h-5.19zM0 18.77v1.83h5.19v-1.83H0zm6.09 0v1.83h5.19v-1.83H6.09zm6.1 0v1.83H17.4v-1.83h-5.21zm6.1 0v1.83H24v-1.83h-5.19zM12.19 7.81v1.83h5.19V7.81h-5.19zm6.62 0v1.83H24V7.81h-5.19zm-6.62 3.65v1.83h5.19v-1.83h-5.19zm6.62 0v1.83H24v-1.83h-5.19z"></path></svg>Deezer</a>
+<a class="social-btn sb-apple" href="https://music.apple.com/nl/artist/denniszerovt/1840250778" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"></path></svg>Apple Music</a>
+<a class="social-btn sb-tidal" href="https://tidal.com/artist/66966649" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004L8.008 7.996l4.004 4.004 4.004-4.004zM8.008 16.004l4.004-4.004 4.004 4.004L19.996 12l-3.98-3.98-4.004 4.004L8.008 8.02 4.004 12z"></path></svg>Tidal</a>
+</div>
+</div>
+<div>
+<div class="info-footer-label">🎮 Social &amp; Streaming</div>
+<div class="social-links-row" style="margin-top:8px;">
+<a class="social-btn sb-twitch" href="https://www.twitch.tv/denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714z"></path></svg>Twitch</a>
+<a class="social-btn sb-youtube" href="https://youtube.com/@denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"></path></svg>YouTube</a>
+<a class="social-btn sb-twitter" href="https://x.com/DennisZeroVT" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.261 5.632 5.903-5.632Zm-1.161 17.52h1.833L7.084 4.126H5.117Z"></path></svg>Twitter / X</a>
+<a class="social-btn sb-instagram" href="https://www.instagram.com/DennisZeroVT" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"></path></svg>Instagram</a>
+<a class="social-btn sb-tiktok" href="https://www.tiktok.com/@denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.73a8.24 8.24 0 0 0 4.83 1.56V6.83a4.85 4.85 0 0 1-1.06-.14z"></path></svg>TikTok</a>
+<a class="social-btn sb-steam" href="https://steamcommunity.com/id/DennisZeroVT/" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.718L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 11.999-5.373 11.999-12S18.606 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.956.4 1.409 1.5 1.009 2.455-.397.957-1.497 1.41-2.455 1.012H7.54zm11.415-9.303c0-1.662-1.353-3.015-3.015-3.015-1.665 0-3.015 1.353-3.015 3.015 0 1.665 1.35 3.015 3.015 3.015 1.663 0 3.015-1.35 3.015-3.015zm-5.273-.005c0-1.252 1.013-2.266 2.265-2.266 1.249 0 2.266 1.014 2.266 2.266 0 1.251-1.017 2.265-2.266 2.265-1.253 0-2.265-1.014-2.265-2.265z"></path></svg>Steam</a>
+<a class="social-btn sb-itch" href="https://denniszerovt.itch.io/" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M3.13 1.338C2.08 1.96.02 4.328 0 4.95v1.03c0 1.303 1.22 2.45 2.325 2.45 1.33 0 2.436-1.102 2.436-2.41 0 1.308 1.07 2.41 2.4 2.41 1.328 0 2.362-1.102 2.362-2.41 0 1.308 1.137 2.41 2.467 2.41h.024c1.33 0 2.466-1.102 2.466-2.41 0 1.308 1.034 2.41 2.363 2.41 1.33 0 2.4-1.102 2.4-2.41 0 1.308 1.105 2.41 2.435 2.41C22.78 8.43 24 7.283 24 5.98V4.95c-.02-.622-2.08-2.99-3.13-3.612C17.37.917 8.51.81 3.13 1.337zM8.56 9.817c-.397.006-.812.076-1.13.218C6.323 10.522 6.1 11.25 6 12.917 5.785 16.25 5.17 18.8 5.1 22.17c2.73.572 5.55.886 8.1.826 2.396.013 4.87-.278 7.3-.826-.07-3.37-.688-5.92-.9-9.253-.1-1.667-.325-2.395-1.43-2.882-.36-.157-.832-.225-1.268-.216-.34.007-.68.078-.958.245-1.265.753-2.63.74-3.96.02-.37-.208-.76-.28-1.425-.268zm-.264 3.35h7.388c.103 0 .185.083.185.185v2.656c0 .102-.082.184-.185.184H8.297c-.102 0-.184-.082-.184-.184v-2.656c0-.102.082-.185.184-.185z"></path></svg>itch.io</a>
+</div>
+</div>
+</div>
+<div class="info-footer-copy">
+            © Dennis van Wijngaarden · All music on this page is my own original work. All rights reserved.
+          </div>
+</div>
+</div>
+</footer>
 
-
+<script src="./data.js"></script>
 
 <script>
-// HQ toggle - actually changes performance
+/* =========================================================
+   DennisZeroVT site — consolidated app script
+   One data load, one render pass per section, one nav system.
+   ========================================================= */
+
+let SONGS = {};
+let ALBUMS = {};
+let personData = {};
+let allPosts = [];
+let categories = [];
+
+// Small embedded fallback so the page still shows real content
+// if ./data/*.json can't be fetched (e.g. opened straight from disk).
+// FALLBACK_START — regenerated by build.js from data/*.json, do not hand-edit the values below
+const FALLBACK = {
+  songs: [
+    { id:'adrenaline', title:'Adrenaline', artist:'DennisZeroVT', year:2026,
+      cover:'https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png',
+      audio:'https://denniszerovt.github.io/SongData/Songs/1781377044884-adrenaline-final-mix.mp3',
+      badges:['pending','Spotify','Apple Music','Tidal','Amazon','YouTube Music','Deezer'],
+      about:"Adrenaline is the third remake of an old song I wrote 2 years ago with the same name. I wanted to make the final version to show that I have improved as a music producer." },
+    { id:'snowfall', title:'Snowfall', artist:'DennisZeroVT', year:2025, coverEmoji:'🌨️',
+      cover:'SongData/AlbumArt/snowfall.png', audio:'SongData/Songs/snowfall.mp3',
+      badges:['Released','Spotify','Apple Music','Tidal','Amazon','YouTube Music','Deezer'],
+      about:"Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track." },
+    { id:'stuckintime', title:'Stuck In Time', artist:'DennisZeroVT', year:2026, coverEmoji:'🕒',
+      cover:'SongData/AlbumArt/stuckintime.png', audio:'SongData/Songs/stuckintime.mp3',
+      badges:['Released','Spotify','Apple Music','Tidal','Amazon','YouTube Music','Deezer'],
+      about:"Stuck In Time is about the feeling of being trapped in a cycle — staying the same while everything else moves on. It's a reflection on change, growth, and the fear of being left behind." }
+  ],
+  people: [
+    { id:'erik', name:'Erik', handle:'eri_k416', role:'Friend // eri_k416', tags:['friend'], avatar:'Friends/erik.jpg',
+      bio:"Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry atmosphere, the lyrics, the melancholy. He was the reason I wrote vocals for the very first time." },
+    { id:'kula', name:'Kula', handle:'@mee_yawwwwww', role:'Friend, Drummer // @mee_yawwwwww', tags:['friend'], avatar:'Friends/kula.jpg',
+      bio:"Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music and he turned out to be a really chill guy. He played drums on my single Stuck In Time." },
+    { id:'vivid', name:'Vivid', handle:'@vivid_exile', role:'best Friend // @vivid_exile', tags:['friend'], avatar:'Friends/vivid.jpg',
+      bio:"An ex-military veteran I met in my very first Discord server. Despite a troubled past he showed incredible strength and kindness. He was the person who got me back into streaming and introduced me to a whole new circle of people — including Erik." },
+    { id:'skylar', name:'Skylar', handle:'@skylar_corgi', role:'Friend // @skylar_corgi', tags:['friend'], avatar:'Friends/skylar.jpg',
+      bio:"Skylar is a best friend I met through Vivid on Vivid's first stream — she and Vivid are great support." },
+    { id:'nox', name:'Nox', handle:'@Nox_Daemon', role:'Friend // @Nox_Daemon', tags:['friend'], avatar:'Friends/nox.jpg',
+      bio:"Nox is a friend I met through Vivid — weeks after seeing them interact, Nox became one of my friends too." }
+  ],
+  albums: [],
+  posts: [
+    { id:'200pp', title:'my second 200pp play', date:'2026-06-14', category:'Gaming', subcategory:'Osu',
+      blocks:[
+        { type:'text', content:"GG i got my second best play on osu 206 pp - my second 200 pp lets go\n\nthe bg gave me powers - bless mika" },
+        { type:'video', url:'https://youtu.be/PfoJg2idmF8' }
+      ] }
+  ],
+  categories: []
+};
+// FALLBACK_END
+
+async function loadAllData() {
+  try {
+    const [songsData, peopleData, albumsData, postsData, catsData] = await Promise.all([
+      fetch('./data/songs.json').then(r=>r.json()).catch(()=>FALLBACK.songs),
+      fetch('./data/people.json').then(r=>r.json()).catch(()=>FALLBACK.people),
+      fetch('./data/albums.json').then(r=>r.json()).catch(()=>FALLBACK.albums),
+      fetch('./data/posts.json').then(r=>r.json()).catch(()=>FALLBACK.posts),
+      fetch('./data/categories.json').then(r=>r.json()).catch(()=>FALLBACK.categories)
+    ]);
+
+    SONGS = Object.fromEntries(songsData.map(s => [s.id, {
+      name: s.title,
+      artist: s.artist,
+      year: s.year,
+      src: s.audio,
+      cover: s.coverEmoji || '🎵',
+      coverImg: s.cover,
+      badges: s.badges || [],
+      streaming: s.streaming || {},
+      about: s.about || '',
+      thoughts: s.thoughts || '',
+      Miscellaneous: s.miscellaneous || '',
+      behindTheScenes: s.behindTheScenes || ''
+    }]));
+
+    personData = Object.fromEntries(peopleData.map(p => [p.id, {
+      name: p.name,
+      role: p.role,
+      color: p.color || 'from-purple-500/30 to-purple-600/10',
+      icon: p.icon || 'fas fa-user',
+      bio: p.bio,
+      credits: p.credits || [],
+      links: Object.entries(p.links || {}).map(([k,v]) => ({
+        name: k.charAt(0).toUpperCase() + k.slice(1),
+        icon: `fab fa-${k}`,
+        url: v
+      })),
+      projects: p.projects || []
+    }]));
+
+    ALBUMS = Object.fromEntries(albumsData.map(a => [a.id, a]));
+
+    allPosts = [...postsData].sort((a,b) => new Date(b.date) - new Date(a.date));
+    categories = catsData.length ? catsData : [
+      {id:'game-dev', name:'Game Dev', color:'#A596DA', subs:['Snowfall','Stuck In Time','Other Projects']},
+      {id:'music-production', name:'Music Production', color:'#ec4899', subs:['Snowfall','Originals','Remixes','Soundtracks','Behind the Beat']},
+      {id:'daily-life', name:'Daily Life', color:'#22c55e', subs:['Workflow','Thoughts','Updates','Gear']}
+    ];
+
+    renderCategories();
+    renderSubs();
+    renderPosts();
+    renderSongsGrid();
+    renderAlbumsGrid();
+    renderPeople(peopleData);
+
+  } catch (e) {
+    console.error('Failed to load data:', e);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadAllData);
+
+const platformIcons = {
+  spotify: '<i class="fab fa-spotify"></i>',
+  apple: '<i class="fab fa-apple"></i>',
+  tidal: '<i class="fas fa-music"></i>',
+  youtube: '<i class="fab fa-youtube"></i>',
+  amazon: '<i class="fab fa-amazon"></i>',
+  deezer: '<i class="fas fa-record-vinyl"></i>'
+};
+
+function badgeLabel(b){ return typeof b === 'string' ? b : ((b && b.label) || ''); }
+function badgeColor(b){ return (b && typeof b === 'object' && b.color) || null; }
+
+function getBadgeStyle(name) {
+  const map = {
+    'Spotify': {bg: '#1DB954', color: '#fff'},
+    'Apple Music': {bg: '#FA243C', color: '#fff'},
+    'Apple': {bg: '#FA243C', color: '#fff'},
+    'Deezer': {bg: '#00C7F2', color: '#000'},
+    'Tidal': {bg: '#000000', color: '#fff'},
+    'Amazon': {bg: '#FF9900', color: '#000'},
+    'YouTube Music': {bg: '#FF0000', color: '#fff'},
+    'YouTube': {bg: '#FF0000', color: '#fff'},
+    'Released': {bg: '#A596DA', color: '#000'},
+    'Available': {bg: '#A596DA', color: '#000'}
+  };
+  return map[name] || {bg: 'var(--bg-card-hover)', color: 'var(--text-secondary)'};
+}
+
+/* ---------- Music: songs & albums grids ---------- */
+
+function renderSongsGrid() {
+  const grid = document.getElementById('songs-grid');
+  if (!grid) return;
+  grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+  grid.innerHTML = Object.keys(SONGS).map(key => {
+    const song = SONGS[key];
+    const badges = (song.badges || []).slice(0,3).map(b => {
+      const label = badgeLabel(b), color = badgeColor(b);
+      return color
+        ? `<span class="text-[10px] px-2 py-0.5 rounded-full" style="background:${color};color:#fff">${label}</span>`
+        : `<span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">${label}</span>`;
+    }).join('');
+    return `
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('${key}')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">${song.cover || '🎵'}</div>
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">${song.name}</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">${song.year || ''} • ${song.artist}</p>
+            <div class="flex gap-1.5 mt-3 flex-wrap">${badges}</div>
+        </div>
+    </div>`;
+  }).join('');
+}
+
+function renderAlbumsGrid() {
+  const grid = document.getElementById('albums-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.keys(ALBUMS).map(key => {
+    const album = ALBUMS[key];
+    return `
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openAlbum('${key}')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            ${album.coverImg ? `<img src="${album.coverImg}" alt="${album.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60"></div>
+            <div class="absolute bottom-3 left-3">
+                <span class="px-2 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] text-[10px] font-medium backdrop-blur">${album.status || ''}</span>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">${album.name}</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">${album.year || ''} • ${(album.tracks || (album.tracklist||[]).length) || 0} tracks</p>
+        </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Friends & Collaborators ---------- */
+
+function renderPeople(peopleList) {
+  const collabsGrid = document.getElementById('collabs-grid');
+  const friendsGrid = document.getElementById('friends-grid');
+  if (!collabsGrid || !friendsGrid) return;
+  collabsGrid.innerHTML = '';
+  friendsGrid.innerHTML = '';
+
+  peopleList.forEach(p => {
+    const tags = (p.tags || []).map(t => t.toLowerCase());
+    const isCollab = tags.includes('collab');
+    const isFriend = tags.includes('friend') || (!isCollab && tags.length === 0);
+
+    const avatarBase = (p.avatar || `Friends/${p.id}.jpg`).replace(/\.jpg$|\.png$/i, '');
+    const tryJpg = avatarBase + '.jpg';
+    const tryPng = avatarBase + '.png';
+    const twitter = (p.links && p.links.twitter) || '';
+
+    const credits = p.credits || [];
+    const collabChips = credits.map(cr => {
+      const roleLabel = cr.role || 'Collaborator';
+      const songLabel = cr.song || '';
+      return `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">${roleLabel}${songLabel ? ` · <span style="opacity:.75;font-weight:400">${songLabel}</span>` : ''}</span>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'person-card';
+    card.style.cssText = 'background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;';
+    card.onclick = () => openPersonOverlay(p.id);
+    card.innerHTML = `
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="${tryJpg}" alt="${p.name}" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='${tryPng}';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">${p.name}</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">${p.handle || ''}</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">${p.role || ''}</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">${(p.bio || '').substring(0,140)}</p>
+        ${collabChips ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">${collabChips}</div>` : ''}
+        ${twitter ? `<a href="${twitter}" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>` : ''}
+      </div>`;
+
+    if (isCollab) collabsGrid.appendChild(card.cloneNode(true));
+    if (isFriend) friendsGrid.appendChild(card.cloneNode(true));
+  });
+
+  // Re-bind clicks (cloneNode drops JS-assigned handlers)
+  [collabsGrid, friendsGrid].forEach((grid, gi) => {
+    const list = peopleList.filter(p => {
+      const tags = (p.tags || []).map(t => t.toLowerCase());
+      const isCollab = tags.includes('collab');
+      const isFriend = tags.includes('friend') || (!isCollab && tags.length === 0);
+      return gi === 0 ? isCollab : isFriend;
+    });
+    Array.from(grid.children).forEach((card, i) => {
+      const person = list[i];
+      if (person) card.onclick = () => openPersonOverlay(person.id);
+    });
+  });
+}
+
+window.openPersonOverlay = function(personId) {
+  const person = personData[personId];
+  if (!person) return;
+
+  const overlay = document.getElementById('person-overlay');
+  const header = document.getElementById('overlay-header');
+  const body = document.getElementById('overlay-body');
+
+  header.innerHTML = `
+      <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color} flex items-center justify-center">
+          <i class="${person.icon} text-2xl"></i>
+      </div>
+      <div>
+          <h2 class="text-2xl font-bold">${person.name}</h2>
+          <p class="text-[var(--accent)]">${person.role || ''}</p>
+      </div>
+  `;
+
+  const rawCredits = person.credits || [];
+  const rawProjects = person.projects || [];
+  let projectsHTML = '';
+
+  if (rawCredits.length > 0) {
+    const creditButtons = rawCredits.map(cr => {
+      const roleLabel = cr.role || 'Collaborator';
+      const songLabel = cr.song || '';
+      const noteLabel = cr.note || '';
+      const songEntry = Object.entries(SONGS).find(([key, s]) =>
+        (cr.songId && key === cr.songId) || (s.name && s.name.toLowerCase() === songLabel.toLowerCase())
+      );
+      const noteHTML = noteLabel ? `<span style="display:block;font-size:0.75em;opacity:0.6;margin-top:2px;">${noteLabel}</span>` : '';
+
+      if (songEntry) {
+        const songKey = songEntry[0];
+        return `<button
+          onclick="document.getElementById('person-overlay').classList.remove('active'); setTimeout(function(){ openSong('${songKey}') }, 250)"
+          style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(165,150,218,.1);border:1px solid rgba(165,150,218,.3);cursor:pointer;text-align:left;width:100%;color:inherit;transition:.15s;"
+          onmouseover="this.style.background='rgba(165,150,218,.18)'" onmouseout="this.style.background='rgba(165,150,218,.1)'"
+        >
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:0.9em;color:#A596DA;">${roleLabel}</div>
+            <div style="font-size:0.85em;opacity:.8;">${songLabel}</div>
+            ${noteHTML}
+          </div>
+          <span style="opacity:.4;font-size:.8em;padding-top:2px;">→</span>
+        </button>`;
+      }
+      return `<div style="display:flex;align-items:flex-start;gap:12px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);">
+        <div style="flex:1;min-width:0;">
+          <div style="font-weight:700;font-size:0.9em;">${roleLabel}</div>
+          <div style="font-size:0.85em;opacity:.7;">${songLabel || '—'}</div>
+          ${noteHTML}
+        </div>
+      </div>`;
+    }).join('');
+    projectsHTML = `<div class="mb-6"><h3 class="font-bold mb-3 text-lg">Collaborated On:</h3><div style="display:grid;gap:8px;">${creditButtons}</div></div>`;
+  } else if (rawProjects.length > 0) {
+    const legacy = rawProjects.map(p => `<span class="px-3 py-1 rounded-full glass text-sm">${p}</span>`).join('');
+    projectsHTML = `<div class="mb-6"><h3 class="font-bold mb-3 text-lg">Collaborated On:</h3><div class="flex flex-wrap gap-2">${legacy}</div></div>`;
+  }
+
+  const links = person.links || [];
+  let linksHTML = '';
+  if (links.length > 0) {
+    linksHTML = `
+    <div class="flex gap-4">
+        ${links.map(l => `
+            <a href="${l.url}" target="_blank" class="w-12 h-12 rounded-lg glass flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors" onclick="event.stopPropagation()">
+                <i class="${l.icon} text-xl"></i>
+            </a>
+        `).join('')}
+    </div>`;
+  }
+
+  body.innerHTML = `
+      ${projectsHTML}
+      <div class="mb-6">
+          <h3 class="font-bold mb-3 text-lg">About</h3>
+          <p class="text-[var(--text-secondary)] leading-relaxed">${person.bio || ''}</p>
+      </div>
+      ${linksHTML}
+  `;
+
+  overlay.classList.add('active');
+  document.body.style.overflow = 'hidden';
+};
+
+window.closePersonOverlay = function(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById('person-overlay').classList.remove('active');
+  document.body.style.overflow = '';
+};
+
+/* ---------- Blog: categories, filters, posts ---------- */
+
+let currentCat = 'All';
+let currentSub = 'All';
+
+function renderCategories(){
+  const wrap = document.getElementById('category-filters');
+  if(!wrap) return;
+  wrap.innerHTML = '';
+
+  const makeBtn = (name, isActive, color) => {
+    const btn = document.createElement('button');
+    btn.dataset.cat = name;
+    btn.className = 'cat-btn px-4 py-2 rounded-full glass text-sm font-medium border transition';
+    if(isActive){
+      btn.classList.add('bg-[#A596DA]/20','border-[#A596DA]','text-[#d6ccf7]');
+      btn.style.borderColor = color || '#A596DA';
+      btn.style.backgroundColor = (color ? color+'33' : 'rgba(165,150,218,0.2)');
+    } else {
+      btn.classList.add('border-white/10','hover:border-[#A596DA]/50','text-[var(--text-secondary)]');
+    }
+    btn.textContent = name;
+    btn.onclick = () => selectCat(name);
+    return btn;
+  };
+
+  wrap.appendChild(makeBtn('All', currentCat === 'All', '#A596DA'));
+  categories.forEach(c => wrap.appendChild(makeBtn(c.name, currentCat === c.name, c.color)));
+}
+
+function selectCat(name){
+  currentCat = name;
+  currentSub = 'All';
+  renderCategories();
+  renderSubs();
+  renderPosts();
+}
+
+function renderSubs(){
+  const sub = document.getElementById('subcategory-filters');
+  if(!sub) return;
+  const cat = categories.find(c => c.name === currentCat);
+  if(!cat || currentCat === 'All'){ sub.classList.add('hidden'); sub.innerHTML = ''; return; }
+  sub.classList.remove('hidden');
+  sub.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === 'All' ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10');
+  allBtn.textContent = `All ${currentCat}`;
+  allBtn.onclick = () => { currentSub = 'All'; renderSubs(); renderPosts(); };
+  sub.appendChild(allBtn);
+  (cat.subs || []).forEach(s => {
+    const b = document.createElement('button');
+    b.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === s ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10 hover:border-[#A596DA]/30');
+    b.textContent = s;
+    b.onclick = () => { currentSub = s; renderSubs(); renderPosts(); };
+    sub.appendChild(b);
+  });
+}
+
+function renderPosts(){
+  const c = document.getElementById('blog-posts-container');
+  if(!c) return;
+  let p = [...allPosts];
+  if(currentCat !== 'All') p = p.filter(x => x.category === currentCat);
+  if(currentSub !== 'All') p = p.filter(x => x.subcategory === currentSub);
+  if(p.length === 0){
+    c.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet in this category.</div>';
+    return;
+  }
+  c.innerHTML = p.map(post => {
+    const cat = categories.find(x => x.name === post.category);
+    const col = post.color || (cat && cat.color) || '#A596DA';
+
+    const renderBlocks = () => {
+      if(!post.blocks || !Array.isArray(post.blocks) || post.blocks.length === 0) return null;
+      return post.blocks.map(b => {
+        if(b.type === 'image' && b.src){
+          return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')"></div>`;
+        }
+        if(b.type === 'text'){
+          const txt = (b.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          return `<div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">${txt}</p></div>`;
+        }
+        if(b.type === 'video' && b.url){
+          return `<div class="mb-5"><a href="${b.url}" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div>`;
+        }
+        if(b.type === 'divider'){
+          return `<div class="my-8 w-full flex justify-center"><div class="h-[3px] w-full max-w-3xl rounded-full" style="background:${col};opacity:0.35"></div></div>`;
+        }
+        return '';
+      }).join('');
+    };
+
+    const blocksHtml = renderBlocks();
+    const imgs = post.images || [];
+    const imgHtml = imgs.length === 1
+      ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>`
+      : imgs.length > 1
+        ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>`
+        : '';
+    const legacyHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${(post.body||'').replace(/</g,'&lt;')}</p>${imgHtml}`;
+
+    return `<article class="glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">${post.title}</h3>${blocksHtml || legacyHtml}</article>`;
+  }).join('');
+}
+
+/* ---------- Navigation (single-page routing) ---------- */
+
+function navigateTo(page) {
+  document.querySelectorAll('.page-section').forEach(section => section.classList.remove('active'));
+  const target = document.getElementById(page);
+  if (target) target.classList.add('active');
+
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.classList.remove('active');
+    link.classList.add('text-[var(--text-secondary)]');
+  });
+  document.querySelectorAll('.nav-link[data-page="' + page + '"]').forEach(link => {
+    link.classList.add('active');
+    link.classList.remove('text-[var(--text-secondary)]');
+  });
+  document.querySelectorAll('.nav-link-mobile').forEach(link => {
+    if (link.getAttribute('data-page') === page) link.classList.remove('text-[var(--text-secondary)]');
+    else link.classList.add('text-[var(--text-secondary)]');
+  });
+
+  document.getElementById('mobile-menu').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (history.replaceState) history.replaceState(null, '', '#' + page);
+}
+
+document.querySelectorAll('[data-page]').forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    navigateTo(link.getAttribute('data-page'));
+  });
+});
+
+document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+  document.getElementById('mobile-menu').classList.toggle('hidden');
+});
+
+document.addEventListener('click', function(e) {
+  if (e.target.matches('.rhythm-tab')) {
+    document.querySelectorAll('.rhythm-tab').forEach(btn => {
+      btn.classList.remove('active', 'bg-[#A596DA]/20', 'text-[#A596DA]');
+      btn.classList.add('bg-white/5');
+    });
+    e.target.classList.add('active', 'bg-[#A596DA]/20', 'text-[#A596DA]');
+    e.target.classList.remove('bg-white/5');
+
+    document.querySelectorAll('.rhythm-panel').forEach(p => p.classList.add('hidden'));
+    const target = e.target.dataset.rhythm;
+    document.getElementById('rhythm-' + target).classList.remove('hidden');
+  }
+});
+
+window.addEventListener('load', () => {
+  updateHardwareTablet();
+  fillRhythmData();
+  const hash = window.location.hash.substring(1);
+  if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('page-section')) {
+    navigateTo(hash);
+  }
+});
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.substring(1);
+  if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('page-section')) {
+    navigateTo(hash);
+  }
+});
+
+/* ---------- Song overlay / persistent bottom player ---------- */
+
+const songAudio = document.getElementById('songAudio');
+let currentSongKey = null;
+
+function openSong(key) {
+  const song = SONGS[key];
+  if (!song) return;
+  currentSongKey = key;
+
+  if (songAudio.src !== new URL(song.src, location.href).href) {
+    songAudio.src = song.src;
+    songAudio.load();
+  }
+  songAudio.play().catch(()=>{});
+
+  document.getElementById('ovTitle').textContent = song.name;
+  document.getElementById('ovArtist').textContent = song.artist;
+
+  const img = document.getElementById('ovCoverImg');
+  const emoji = document.getElementById('ovCoverEmoji');
+  if (song.coverImg) {
+    img.src = song.coverImg;
+    img.classList.remove('hidden');
+    emoji.classList.add('hidden');
+  } else {
+    img.classList.add('hidden');
+    emoji.classList.remove('hidden');
+    emoji.textContent = song.cover || '🎵';
+  }
+
+  document.getElementById('bpTitle').textContent = song.name;
+  document.getElementById('bpArtist').textContent = song.artist;
+  const bpImg = document.getElementById('bpCover');
+  const bpEmoji = document.getElementById('bpEmoji');
+  if (song.coverImg) {
+    bpImg.src = song.coverImg;
+    bpImg.classList.remove('hidden');
+    bpEmoji.classList.add('hidden');
+  } else {
+    bpImg.classList.add('hidden');
+    bpEmoji.classList.remove('hidden');
+    bpEmoji.textContent = song.cover || '🎵';
+  }
+  showBottomPlayer();
+  showSongTab('about');
+
+  const streamWrap = document.getElementById('ovStreaming');
+  streamWrap.innerHTML = '';
+  if (song.streaming) {
+    Object.entries(song.streaming).forEach(([platform, url]) => {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.className = 'px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs capitalize transition';
+      a.textContent = platform;
+      streamWrap.appendChild(a);
+    });
+  }
+
+  document.getElementById('songOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeOverlay() {
+  document.getElementById('songOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  // intentionally does not pause playback
+}
+
+function reopenOverlay() {
+  if (currentSongKey) {
+    document.getElementById('songOverlay').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function showBottomPlayer() { document.getElementById('bottomPlayer').classList.remove('translate-y-full'); }
+function hideBottomPlayer() { document.getElementById('bottomPlayer').classList.add('translate-y-full'); }
+
+function stopPlayback() {
+  songAudio.pause();
+  songAudio.currentTime = 0;
+  hideBottomPlayer();
+  closeOverlay();
+}
+
+function toggleSongPlay() {
+  if (songAudio.paused) songAudio.play();
+  else songAudio.pause();
+}
+
+function seekAudio(sec) {
+  songAudio.currentTime = Math.max(0, Math.min(songAudio.duration || 0, songAudio.currentTime + sec));
+}
+
+function fmt(t) {
+  if (!isFinite(t)) return '0:00';
+  const m = Math.floor(t/60), s = Math.floor(t%60).toString().padStart(2,'0');
+  return `${m}:${s}`;
+}
+
+songAudio.addEventListener('timeupdate', () => {
+  const pct = songAudio.duration ? (songAudio.currentTime / songAudio.duration * 100) : 0;
+  document.getElementById('ovProgress').style.width = pct + '%';
+  document.getElementById('ovHandle').style.left = pct + '%';
+  document.getElementById('ovCurrent').textContent = fmt(songAudio.currentTime);
+  document.getElementById('bpProgress').style.width = pct + '%';
+  document.getElementById('bpTime').textContent = fmt(songAudio.currentTime);
+});
+songAudio.addEventListener('loadedmetadata', () => {
+  document.getElementById('ovDuration').textContent = fmt(songAudio.duration);
+});
+songAudio.addEventListener('play', () => {
+  document.getElementById('ovPlayIcon').innerHTML = '<path d="M6 6h4v12H6zm8 0h4v12h-4z"/>';
+  document.getElementById('bpPlayIcon').innerHTML = '<path d="M6 6h4v12H6zm8 0h4v12h-4z"/>';
+  showBottomPlayer();
+});
+songAudio.addEventListener('pause', () => {
+  document.getElementById('ovPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+  document.getElementById('bpPlayIcon').innerHTML = '<path d="M8 5v14l11-7z"/>';
+});
+songAudio.addEventListener('ended', () => { hideBottomPlayer(); });
+
+document.addEventListener('DOMContentLoaded', () => {
+  const wrap = document.getElementById('ovProgressWrap');
+  if (wrap) wrap.addEventListener('click', (e) => {
+    const rect = wrap.getBoundingClientRect();
+    songAudio.currentTime = ((e.clientX - rect.left) / rect.width) * (songAudio.duration || 0);
+  });
+  const bpWrap = document.getElementById('bpProgressWrap');
+  if (bpWrap) bpWrap.addEventListener('click', (e) => {
+    const rect = bpWrap.getBoundingClientRect();
+    songAudio.currentTime = ((e.clientX - rect.left) / rect.width) * (songAudio.duration || 0);
+  });
+  const vol = document.getElementById('ovVolume');
+  const bpVol = document.getElementById('bpVolume');
+  if (vol) {
+    songAudio.volume = vol.value;
+    vol.addEventListener('input', e => { songAudio.volume = e.target.value; if (bpVol) bpVol.value = e.target.value; });
+  }
+  if (bpVol) {
+    bpVol.value = songAudio.volume;
+    bpVol.addEventListener('input', e => { songAudio.volume = e.target.value; if (vol) vol.value = e.target.value; });
+  }
+  document.querySelectorAll('.song-tab').forEach(btn => btn.addEventListener('click', () => showSongTab(btn.dataset.tab)));
+});
+
+function showSongTab(tab) {
+  document.querySelectorAll('.song-tab').forEach(b => {
+    const active = b.dataset.tab === tab;
+    b.classList.toggle('border-[#A596DA]', active);
+    b.classList.toggle('text-white', active);
+    b.classList.toggle('border-transparent', !active);
+    b.classList.toggle('text-[var(--text-secondary)]', !active);
+  });
+
+  const song = SONGS[currentSongKey];
+  const content = document.getElementById('ovTabContent');
+  if (!song) return;
+
+  let html = '';
+  if (tab === 'about') html = `<p>${song.about || 'No description.'}</p>`;
+  else if (tab === 'thoughts') html = `<p>${song.thoughts || 'No thoughts shared yet.'}</p>`;
+  else if (tab === 'behind') html = `<p>${song.behindTheScenes || song.Miscellaneous || 'Behind the scenes coming soon.'}</p>`;
+  content.innerHTML = html;
+}
+
+function openAlbum(key) {
+  const album = ALBUMS[key];
+  if (!album) return;
+  document.getElementById('alCover').src = album.coverImg || '';
+  document.getElementById('alTitle').textContent = album.name;
+  document.getElementById('alArtist').textContent = album.artist + ' • ' + album.year;
+  document.getElementById('alStatus').textContent = album.status;
+  const wrap = document.getElementById('alTracks');
+  wrap.innerHTML = '';
+  (album.tracklist || []).forEach((t,i)=>{
+    const d = document.createElement('div');
+    d.className = 'flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition cursor-pointer';
+    if (t.key && SONGS[t.key]) d.onclick = () => { closeAlbum(); openSong(t.key); };
+    d.innerHTML = `<div class="w-6 text-sm text-[var(--text-secondary)]">${i+1}</div><div class="flex-1">${t.name}</div><div class="text-xs font-mono text-[var(--text-secondary)]">${t.duration}</div>`;
+    wrap.appendChild(d);
+  });
+  document.getElementById('albumOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeAlbum(){ document.getElementById('albumOverlay').classList.add('hidden'); document.body.style.overflow=''; }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closePersonOverlay(); closeOverlay(); closeAlbum(); }
+});
+
+/* ---------- Rhythm game stats (filled from data.js's DATA object) ---------- */
+
+function fmtNum(n){ return (n || 0).toLocaleString(); }
+function fmtHours(sec){
+  const h = (sec || 0) / 3600;
+  return (h >= 100 ? Math.round(h) : h.toFixed(1)) + 'h';
+}
+function setText(id, val){ const el = document.getElementById(id); if (el) el.textContent = val; }
+
+function gradeBg(grade){
+  return { SS:'#Fdd700', SSH:'#C0C0C0', S:'#Fdd700', SH:'#C0C0C0', A:'#8BC34A' }[grade] || '#A596DA';
+}
+function gradeFg(grade){
+  return (grade === 'SSH' || grade === 'SH' || grade === 'A') ? '#000' : '#000';
+}
+
+function playRow(p, i){
+  return `<tr class="border-b border-white/5 last:border-0">
+    <td class="py-3 pr-3 text-[var(--text-secondary)] w-6">${i+1}</td>
+    <td class="py-3 pr-3">
+      <div class="font-medium">${p.title}</div>
+      <div class="text-xs text-[var(--text-secondary)]">${p.subtitle || ''}</div>
+    </td>
+    <td class="py-3 pr-3 text-right font-mono text-[#A596DA]">${p.pp}pp</td>
+    <td class="py-3 pr-3 text-right font-mono">${p.acc}%</td>
+    <td class="py-3 text-right"><span class="grade-pill" style="background:${gradeBg(p.grade)};color:${gradeFg(p.grade)}">${p.grade}</span></td>
+  </tr>`;
+}
+function fillTop5(id, arr){
+  const tb = document.getElementById(id);
+  if (!tb || !arr) return;
+  tb.innerHTML = arr.map(playRow).join('');
+}
+
+function etternaRow(s, i){
+  return `<tr class="border-b border-white/5 last:border-0">
+    <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
+    <td class="py-2">${s.song}${s.artist ? ` <span class="text-xs text-[var(--text-secondary)]">— ${s.artist}</span>` : ''}</td>
+    <td class="py-2 text-right font-mono text-[#A596DA]">${s.msd.toFixed(2)}</td>
+    <td class="py-2 text-right font-mono">${s.acc}%</td>
+  </tr>`;
+}
+function ffrRow(s, i){
+  return `<tr class="border-b border-white/5 last:border-0">
+    <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
+    <td class="py-2">${s.song}</td>
+    <td class="py-2 text-right font-mono">${s.level}</td>
+    <td class="py-2 text-right font-mono text-[#A596DA]">${s.score}</td>
+  </tr>`;
+}
+
+function fillRhythmData(){
+  if (typeof DATA === 'undefined' || !DATA) return;
+  const std = DATA.osuStandard, man = DATA.osuMania, ett = DATA.etterna, ffr = DATA.ffr;
+
+  // Overview tab
+  setText('overview-std-rank', '#' + fmtNum(std.rank));
+  setText('overview-std-pp', std.pp);
+  setText('overview-std-acc', std.acc + '%');
+  setText('overview-mania-rank', '#' + fmtNum(man.rank));
+  setText('overview-mania-pp', man.pp);
+  setText('overview-mania-acc', man.acc + '%');
+  setText('overview-etterna-rank', '#' + fmtNum(ett.rank));
+  setText('overview-etterna-overall', ett.overall);
+  setText('overview-ffr-skill', ffr.skillRating);
+  setText('overview-ffr-rank', '#' + fmtNum(ffr.rank));
+  setText('overview-ffr-nl', '#' + fmtNum(ffr.countryRankNL));
+
+  // osu! standard tab
+  setText('osu-panel-rank', '#' + fmtNum(std.rank));
+  setText('osu-panel-country', '#' + fmtNum(std.countryRank));
+  setText('osu-panel-pp', std.pp + 'pp');
+  setText('osu-panel-acc', std.acc + '%');
+  setText('osu-panel-plays', fmtNum(std.plays));
+  setText('osu-panel-time', fmtHours(std.seconds));
+  setText('osu-panel-ranked', fmtNum(std.rankedScore));
+  setText('osu-panel-g-ss', std.grades.SS);
+  setText('osu-panel-g-ssh', std.grades.SSH);
+  setText('osu-panel-g-s', std.grades.S);
+  setText('osu-panel-g-sh', std.grades.SH);
+  setText('osu-panel-g-a', std.grades.A);
+  fillTop5('osu-panel-top5', std.top5);
+
+  // osu!mania tab
+  setText('mania-panel-rank', '#' + fmtNum(man.rank));
+  setText('mania-panel-country', '#' + fmtNum(man.countryRank));
+  setText('mania-panel-pp', man.pp + 'pp');
+  setText('mania-panel-acc', man.acc + '%');
+  setText('mania-panel-plays', fmtNum(man.plays));
+  setText('mania-panel-time', fmtHours(man.seconds));
+  setText('mania-panel-g-ss', man.grades.SS);
+  setText('mania-panel-g-ssh', man.grades.SSH);
+  setText('mania-panel-g-s', man.grades.S);
+  setText('mania-panel-g-sh', man.grades.SH);
+  setText('mania-panel-g-a', man.grades.A);
+  fillTop5('mania-panel-top5', man.top5);
+
+  // Etterna tab
+  setText('etterna-rank', '#' + fmtNum(ett.rank));
+  setText('etterna-since', 'Since ' + ett.since);
+  setText('etterna-overall', ett.overall);
+  Object.entries(ett.skillsets).forEach(([k, v]) => {
+    setText('etterna-' + k, v);
+    const bar = document.getElementById('etterna-bar-' + k);
+    if (bar) { bar.style.width = Math.min(100, (v/12)*100) + '%'; bar.style.background = '#A596DA'; }
+  });
+  const etTb = document.getElementById('etterna-top10');
+  if (etTb) etTb.innerHTML = ett.top10.map(etternaRow).join('');
+
+  // FFR tab
+  setText('ffr-rank', '#' + fmtNum(ffr.rank));
+  setText('ffr-avg-rank', ffr.avgRank ? fmtNum(ffr.avgRank) : '-');
+  setText('ffr-skill', ffr.skillRating);
+  const ffrTb = document.getElementById('ffr-top10');
+  if (ffrTb) ffrTb.innerHTML = ffr.top10.map(ffrRow).join('');
+}
+
+/* ---------- Hardware tablet-area visualizer (rhythm page) ---------- */
+
+const TABLET_AREA = { width: 95, height: 65, x: 47.5, y: 32.5, rotation: 0, unit: 'mm' };
+const TABLET_BOUNDS = { xMin: 47.5, xMax: 104.5, yMin: 32.5, yMax: 62.5 };
+
+function updateHardwareTablet() {
+  const viz = document.getElementById('tablet-viz');
+  const active = document.getElementById('tablet-active');
+  if (!viz || !active) return;
+
+  const x = Math.max(TABLET_BOUNDS.xMin, Math.min(TABLET_BOUNDS.xMax, TABLET_AREA.x));
+  const y = Math.max(TABLET_BOUNDS.yMin, Math.min(TABLET_BOUNDS.yMax, TABLET_AREA.y));
+  const FULL_W = 152, FULL_H = 95;
+  const wPercent = (TABLET_AREA.width / FULL_W) * 100;
+  const hPercent = (TABLET_AREA.height / FULL_H) * 100;
+  const xPercent = ((x - TABLET_AREA.width/2) / FULL_W) * 100;
+  const yPercent = ((y - TABLET_AREA.height/2) / FULL_H) * 100;
+
+  active.style.width = wPercent + '%';
+  active.style.height = hPercent + '%';
+  active.style.left = xPercent + '%';
+  active.style.top = yPercent + '%';
+  active.style.bottom = 'auto';
+  active.style.transform = `rotate(${TABLET_AREA.rotation}deg)`;
+  active.style.transformOrigin = 'center';
+
+  const labelW = document.getElementById('tablet-label-w');
+  const labelH = document.getElementById('tablet-label-h');
+  if (labelW) labelW.textContent = TABLET_AREA.width + 'mm';
+  if (labelH) labelH.textContent = TABLET_AREA.height + 'mm';
+
+  const specs = document.getElementById('tablet-specs');
+  if (specs) {
+    const ratio = (TABLET_AREA.width / TABLET_AREA.height).toFixed(4);
+    specs.textContent = `Full: ${FULL_W}×${FULL_H}mm • Active: ${TABLET_AREA.width}×${TABLET_AREA.height}mm (${ratio}) • X:${x.toFixed(1)} Y:${y.toFixed(1)}`;
+  }
+}
+
+/* ---------- HQ / performance toggle ---------- */
+
 document.addEventListener('DOMContentLoaded', function() {
   const hqBtn = document.getElementById('hq-toggle');
-  // default to HQ ON (false = optimized off)
   let isOptimized = localStorage.getItem('mobileOptimized') === 'true';
-  
+
   function applyMode() {
-    if(isOptimized) {
+    if (isOptimized) {
       document.body.classList.add('optimized');
       document.body.classList.remove('hq-mode');
-      if(hqBtn) {
-        hqBtn.textContent = 'LQ';
-        hqBtn.classList.add('active');
-        hqBtn.title = 'Tap for HQ (high quality)';
-      }
-      // Pause all videos, stop heavy effects
-      document.querySelectorAll('video').forEach(v => { try{v.pause();}catch(e){} });
+      if (hqBtn) { hqBtn.textContent = 'LQ'; hqBtn.classList.add('active'); hqBtn.title = 'Tap for HQ (high quality)'; }
+      document.querySelectorAll('video').forEach(v => { try { v.pause(); } catch(e){} });
     } else {
       document.body.classList.remove('optimized');
       document.body.classList.add('hq-mode');
-      if(hqBtn) {
-        hqBtn.textContent = 'HQ';
-        hqBtn.classList.remove('active');
-        hqBtn.title = 'Tap for LQ (save battery)';
-      }
-      // Resume videos if any
-      document.querySelectorAll('video[autoplay]').forEach(v => { try{v.play().catch(()=>{});}catch(e){} });
+      if (hqBtn) { hqBtn.textContent = 'HQ'; hqBtn.classList.remove('active'); hqBtn.title = 'Tap for LQ (save battery)'; }
+      document.querySelectorAll('video[autoplay]').forEach(v => { try { v.play().catch(()=>{}); } catch(e){} });
     }
-    console.log('Mobile mode:', isOptimized ? 'OPTIMIZED (LQ)' : 'HQ');
   }
-  
+
   applyMode();
-  
-  if(hqBtn) {
+
+  if (hqBtn) {
     hqBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       isOptimized = !isOptimized;
       localStorage.setItem('mobileOptimized', isOptimized);
       applyMode();
-      // Haptic feedback on mobile
-      if(navigator.vibrate) navigator.vibrate(10);
+      if (navigator.vibrate) navigator.vibrate(10);
     });
   }
 });
 </script>
 
-
-
-
-<!-- Blog / Categories rendering (JSON-only, no Firebase) -->
-<script>
-  // State for blog/category filters
-  let currentCat = 'All';
-  let currentSub = 'All';
-
-  function renderCategories(){
-    const wrap = document.getElementById('category-filters');
-    if(!wrap) return;
-    wrap.innerHTML = '';
-
-    const makeBtn = (name, isActive, color) => {
-      const btn = document.createElement('button');
-      btn.dataset.cat = name;
-      btn.className = 'cat-btn px-4 py-2 rounded-full glass text-sm font-medium border transition';
-      if(isActive){
-        btn.classList.add('bg-[#A596DA]/20','border-[#A596DA]','text-[#d6ccf7]');
-        btn.style.borderColor = color || '#A596DA';
-        btn.style.backgroundColor = (color ? color+'33' : 'rgba(165,150,218,0.2)');
-      } else {
-        btn.classList.add('border-white/10','hover:border-[#A596DA]/50','text-[var(--text-secondary)]');
-      }
-      btn.textContent = name;
-      btn.onclick = () => selectCat(name);
-      return btn;
-    };
-
-    wrap.appendChild(makeBtn('All', currentCat === 'All', '#A596DA'));
-    categories.forEach(c => wrap.appendChild(makeBtn(c.name, currentCat === c.name, c.color)));
-  }
-
-  function selectCat(name){
-    currentCat = name;
-    currentSub = 'All';
-    renderCategories();
-    renderSubs();
-    renderPosts();
-  }
-
-  function renderSubs(){
-    const sub = document.getElementById('subcategory-filters');
-    if(!sub) return;
-    const cat = categories.find(c => c.name === currentCat);
-    if(!cat || currentCat === 'All'){ sub.classList.add('hidden'); sub.innerHTML = ''; return; }
-    sub.classList.remove('hidden');
-    sub.innerHTML = '';
-    const allBtn = document.createElement('button');
-    allBtn.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === 'All' ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10');
-    allBtn.textContent = `All ${currentCat}`;
-    allBtn.onclick = () => { currentSub = 'All'; renderSubs(); renderPosts(); };
-    sub.appendChild(allBtn);
-    cat.subs.forEach(s => {
-      const b = document.createElement('button');
-      b.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === s ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10 hover:border-[#A596DA]/30');
-      b.textContent = s;
-      b.onclick = () => { currentSub = s; renderSubs(); renderPosts(); };
-      sub.appendChild(b);
-    });
-  }
-
-  function renderPosts(){
-    const c = document.getElementById('blog-posts-container');
-    if(!c) return;
-    let p = [...allPosts];
-    if(currentCat !== 'All') p = p.filter(x => x.category === currentCat);
-    if(currentSub !== 'All') p = p.filter(x => x.subcategory === currentSub);
-    if(p.length === 0){
-      c.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet in this category.</div>';
-      return;
-    }
-    c.innerHTML = p.map(post => {
-      const cat = categories.find(x => x.name === post.category);
-      const col = post.color || cat?.color || '#A596DA';
-
-      const renderBlocks = () => {
-        if(!post.blocks || !Array.isArray(post.blocks) || post.blocks.length === 0) return null;
-        return post.blocks.map(b => {
-          if(b.type === 'image' && b.src){
-            return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')"></div>`;
-          }
-          if(b.type === 'text'){
-            const txt = (b.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-            return `<div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">${txt}</p></div>`;
-          }
-          if(b.type === 'divider'){
-            return `<div class="my-8 w-full flex justify-center"><div class="h-[3px] w-full max-w-3xl rounded-full" style="background:${col};opacity:0.35"></div></div>`;
-          }
-          return '';
-        }).join('');
-      };
-
-      const blocksHtml = renderBlocks();
-      const imgs = post.images || [];
-      const imgHtml = imgs.length === 1
-        ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>`
-        : imgs.length > 1
-          ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>`
-          : '';
-      const legacyHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${(post.body||'').replace(/</g,'&lt;')}</p>${imgHtml}`;
-
-      return `<article class="blog-post active glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">${post.title}</h3>${blocksHtml || legacyHtml}</article>`;
-    }).join('');
-  }
-</script>
-
-
-
-
-
-
-
-
-
-
-<!-- Rhythm Game Data -->
-
-<!-- Rhythm Game Data - SEPARATE FILES -->
-
-
-<!-- MARKERS FOR GITHUB ACTION - DO NOT DELETE -->
-<div id="posts-container" style="display:none">
-  <!-- POSTS_START -->
-  <!-- POSTS_END -->
-</div>
-<div id="songs-container" style="display:none">
-  <!-- SONGS_START -->
-<div class="glass p-6 rounded-xl">
-    <img src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" class="w-full rounded-lg mb-4">
-    <h3 class="text-xl font-semibold"> Adrenaline (2026)</h3>
-    <p class="text-sm my-2">Adrenaline is the third remake of an old song I wrote 2 years ago with the same name.
-I wanted to make the final version to show that I have improved as a music producer.</p>
-    <div class="flex flex-wrap gap-2 text-xs mb-3"><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#6B7280">pending</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#1DB954">Spotify</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FA243C">Apple Music</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#000000">Tidal</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FF9900">Amazon</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FF0000">YouTube Music</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FEAA2D">Deezer</span></div>
-    <audio controls src="https://denniszerovt.github.io/SongData/Songs/1781377044884-adrenaline-final-mix.mp3" class="w-full"></audio>
-  </div>
-<div class="glass p-6 rounded-xl">
-    <img src="SongData/AlbumArt/snowfall.png" class="w-full rounded-lg mb-4">
-    <h3 class="text-xl font-semibold">🌨️ Snowfall (2025)</h3>
-    <p class="text-sm my-2">Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track.</p>
-    <div class="flex flex-wrap gap-2 text-xs mb-3"><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#10B981">Released</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#1DB954">Spotify</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FA243C">Apple Music</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#000000">Tidal</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FF9900">Amazon</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FF0000">YouTube Music</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FEAA2D">Deezer</span></div>
-    <audio controls src="SongData/Songs/snowfall.mp3" class="w-full"></audio>
-  </div>
-<div class="glass p-6 rounded-xl">
-    <img src="SongData/AlbumArt/stuckintime.png" class="w-full rounded-lg mb-4">
-    <h3 class="text-xl font-semibold">🕒 Stuck In Time (2026)</h3>
-    <p class="text-sm my-2">Stuck In Time is about the feeling of being trapped in a cycle — staying the same while everything else moves on. It's a reflection on change, growth, and the fear of being left behind.</p>
-    <div class="flex flex-wrap gap-2 text-xs mb-3"><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#10B981">Released</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#1DB954">Spotify</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FA243C">Apple Music</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#000000">Tidal</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FF9900">Amazon</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FF0000">YouTube Music</span><span class="px-2 py-1 rounded text-white font-medium" style="background-color:#FEAA2D">Deezer</span></div>
-    <audio controls src="SongData/Songs/stuckintime.mp3" class="w-full"></audio>
-  </div>
-<!-- SONGS_END -->
-</div>
-<div id="friends-container" style="display:none">
-  <!-- FRIENDS_START -->
-  <!-- FRIENDS_END -->
-</div>
-<div id="collabs-container" style="display:none">
-  <!-- COLLABS_START -->
-  <!-- COLLABS_END -->
-</div>
-
-
-
-<script>
-// Clean SPA Navigation - single source of truth
-function showPage(id){
-  document.querySelectorAll('.page-section').forEach(s=>{
-    const active = s.id === id;
-    s.classList.toggle('active', active);
-    s.style.display = active ? 'block' : 'none';
-  });
-  document.querySelectorAll('.nav-link, .mobile-link').forEach(a=>{
-    const active = a.dataset.page === id;
-    a.classList.toggle('active', active);
-    a.classList.toggle('text-white', active);
-  });
-  const menu = document.getElementById('mobile-menu');
-  if(menu) menu.classList.add('hidden');
-  history.replaceState(null,'','#'+id);
-  window.scrollTo({top:0, behavior:'smooth'});
-}
-document.addEventListener('DOMContentLoaded',()=>{
-  document.querySelectorAll('[data-page]').forEach(a=>{
-    a.addEventListener('click', e=>{
-      e.preventDefault();
-      showPage(a.dataset.page);
-    });
-  });
-  const toggle = document.getElementById('mobile-toggle');
-  const menu = document.getElementById('mobile-menu');
-  if(toggle && menu){
-    toggle.addEventListener('click', ()=> menu.classList.toggle('hidden'));
-  }
-  const initial = location.hash.replace('#','') || 'home';
-  showPage(initial);
-});
-</script>
 
 </body>
-
-
 </html>
