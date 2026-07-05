@@ -23,6 +23,7 @@
   font-family: "Optimistic Mono", ui-monospace, monospace;
 }
 </style>
+<script>document.documentElement.classList.add('js');</script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>DennisZeroVT | Music Producer &amp; Game Developer</title>
@@ -120,12 +121,22 @@
         color: var(--accent) !important;
     }
     
+    /* SEO FIX: Progressive enhancement - visible by default for crawlers, hidden by JS */
     .page-section {
+        display: block;
+        margin-bottom: 2rem;
+    }
+    /* When JS is enabled, hide inactive sections instantly */
+    .js .page-section {
         display: none;
     }
-    .page-section.active {
+    .js .page-section.active {
         display: block;
         animation: fadeInUp 0.5s ease;
+    }
+    /* Fallback for old CSS that used clip */
+    .page-section.active {
+        display: block;
     }
     
     @keyframes fadeInUp {
@@ -750,21 +761,8 @@ body.optimized .glow-hover {
 </style>
 
 
-<!-- SEO FIX: show all sections when JS disabled -->
-<noscript>
-  <style>
-    .page-section { display: block !important; margin-bottom: 4rem; }
-  </style>
-</noscript>
 <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "MusicGroup",
-  "name": "DennisZeroVT",
-  "url": "https://denniszerovt.github.io/",
-  "genre": ["Ambient","Electronic","Orchestral"],
-  "track": [{"@type":"MusicRecording","name":"Adrenaline"},{"@type":"MusicRecording","name":"Snowfall"},{"@type":"MusicRecording","name":"Stuck In Time"}]
-}
+{"@context":"https://schema.org","@type":"MusicGroup","name":"DennisZeroVT","url":"https://denniszerovt.github.io/","track":[{"@type":"MusicRecording","name":"Adrenaline"},{"@type":"MusicRecording","name":"Snowfall"},{"@type":"MusicRecording","name":"Stuck In Time"}]}
 </script>
 
 </head>
@@ -861,7 +859,7 @@ body.optimized .glow-hover {
 </section>
 
 <!-- MY MUSIC PAGE -->
-<section class="page-section" id="music" >
+<section class="page-section" id="music">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4">My <span class="gradient-text">Music</span></h1>
@@ -949,7 +947,7 @@ body.optimized .glow-hover {
 </section>
 
 <!-- GAME DEV BLOG PAGE -->
-<section class="page-section" id="blog" >
+<section class="page-section" id="blog">
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4"><span class="gradient-text">Blog</span></h1>
@@ -968,7 +966,7 @@ body.optimized .glow-hover {
 </div>
 </section>
 
-<section class="page-section" id="rhythm" >
+<section class="page-section" id="rhythm">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-12">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4">Rhythm <span class="gradient-text">Games</span></h1>
@@ -1277,7 +1275,7 @@ body.optimized .glow-hover {
 </div>
 </section>
 
-<section class="page-section" id="collabs" >
+<section class="page-section" id="collabs">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
 <div class="title-header">
@@ -1313,7 +1311,7 @@ body.optimized .glow-hover {
 </div>
 </section>
 
-<section class="page-section" id="friends" >
+<section class="page-section" id="friends">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
 <div class="title-header">
@@ -2246,7 +2244,6 @@ function navigateTo(page) {
     const target = document.getElementById(page);
     if (!target) {
       console.warn('navigateTo: no section #' + page);
-      // fallback to home
       const home = document.getElementById('home');
       if (home) { home.classList.add('active'); home.removeAttribute('aria-hidden'); }
       return;
@@ -2289,6 +2286,15 @@ function initNav(){
       menu.classList.toggle('hidden');
     });
   }
+  // On first load, if JS is enabled, hide all except active (home or hash)
+  const hash = window.location.hash.substring(1);
+  if(hash && document.getElementById(hash)){
+    navigateTo(hash);
+  } else {
+    // ensure only home is active on load for JS users
+    document.querySelectorAll('.page-section').forEach(s=>{ if(s.id!=='home'){ s.classList.remove('active'); s.setAttribute('aria-hidden','true'); } });
+    const home=document.getElementById('home'); if(home){ home.classList.add('active'); home.removeAttribute('aria-hidden'); }
+  }
 }
 if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', initNav); } else { initNav(); }
 
@@ -2308,14 +2314,7 @@ document.addEventListener('click', function(e) {
   }
 });
 
-window.addEventListener('load', () => {
-  updateHardwareTablet();
-  fillRhythmData();
-  const hash = window.location.hash.substring(1);
-  if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('page-section')) {
-    navigateTo(hash);
-  }
-});
+
 window.addEventListener('hashchange', () => {
   const hash = window.location.hash.substring(1);
   if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('page-section')) {
