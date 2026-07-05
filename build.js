@@ -1,63 +1,16 @@
-const fs = require('fs');
-const path = require('path');
-
-const safeRead = (p, fallback = []) => {
-  try {
-    if (!fs.existsSync(p)) { console.warn(`Missing ${p}, using fallback`); return fallback; }
-    return JSON.parse(fs.readFileSync(p, 'utf8'));
-  } catch (e) {
-    console.error(`Failed to read ${p}: ${e.message}`);
-    return fallback;
-  }
-};
-
-const esc = (s = '') => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-
-const posts = safeRead('data/posts.json');
-const people = safeRead('data/people.json');
-const songs = safeRead('data/songs.json');
-const albums = safeRead('data/albums.json');
-const categories = safeRead('data/categories.json');
-
-const renderPosts = () => posts.map(p => {
-  const blocks = (p.blocks||[]).map(b => {
-    if (b.type === 'text') return `<p class="mb-3 leading-relaxed">${esc(b.content).replace(/\n/g,'<br>')}</p>`;
-    if (b.type === 'video') return `<a href="${esc(b.url)}" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[#A596DA] hover:underline">Watch video</a>`;
-    if (b.type === 'image') return `<img src="${esc(b.url)}" alt="" class="rounded-xl w-full my-3">`;
-    return '';
-  }).join('');
-  return `<article class="glass p-6 rounded-2xl glow-hover"><h2 class="text-2xl font-semibold mb-2">${esc(p.title)}</h2><div class="text-sm text-[var(--text-secondary)] mb-3">${esc(p.date)} • ${esc(p.category)}${p.subcategory?' / '+esc(p.subcategory):''}</div><p class="text-sm text-[var(--text-secondary)] mb-4">${esc(p.excerpt||'')}</p>${blocks}</article>`;
-}).join('\n');
-
-const renderSongs = () => songs.map(s => {
-  const badges = (s.badges||[]).map(b=>{const label=typeof b==='string'?b:b.label;const color=typeof b==='object'&&b.color?b.color:null;return color?`<span class="px-2 py-1 rounded-full text-xs font-medium text-white" style="background:${esc(color)}">${esc(label)}</span>`:`<span class="px-2 py-1 rounded-full text-xs bg-[rgba(165,150,218,0.15)] border border-[rgba(165,150,218,0.25)] text-[#C4B5FD]">${esc(label)}</span>`;}).join('');
-  return `<div class="glass p-5 rounded-2xl glow-hover group">${s.cover ? `<img src="${esc(s.cover)}" alt="" class="w-full aspect-square object-cover rounded-xl mb-4">` : `<div class="w-full aspect-square rounded-xl mb-4 bg-gradient-to-br from-[#A596DA]/20 to-[#C4B5FD]/10 flex items-center justify-center text-4xl">${esc(s.coverEmoji||'🎵')}</div>`}<h3 class="font-semibold text-lg">${esc(s.coverEmoji||'')} ${esc(s.title)} <span class="opacity-60 text-sm">(${esc(s.year||'')})</span></h3><p class="text-sm text-[var(--text-secondary)] mb-2">${esc(s.artist||'DennisZeroVT')}</p><p class="text-sm mb-3">${esc(s.about||'')}</p><div class="flex flex-wrap gap-2 mb-3">${badges}</div>${s.audio ? `<audio controls src="${esc(s.audio)}" class="w-full mt-2"></audio>` : ''}</div>`;
-}).join('\n');
-
-const renderAlbums = () => albums.map(a => `<div class="glass p-5 rounded-2xl">${a.cover ? `<img src="${esc(a.cover)}" class="w-full rounded-xl mb-3">` : ''}<h3 class="font-semibold">${esc(a.title)}</h3><p class="text-sm text-[var(--text-secondary)]">${esc(a.year||'')} • ${(a.songs||[]).length} tracks</p></div>`).join('\n');
-
-const renderPeople = (filter) => {
-  const list = people.filter(p => { if (filter === 'friends') return (p.tags||[]).includes('friend') || p.type === 'friend' || !p.type; if (filter === 'collabs') return (p.tags||[]).includes('collab') || p.type === 'collab'; return true; });
-  return list.map(f => `<div class="glass p-6 rounded-2xl glow-hover"><div class="flex gap-4 items-start"><img src="${esc(f.avatar||'/icons/pfp.png')}" alt="${esc(f.name)}" class="w-16 h-16 rounded-full object-cover border border-white/10"><div class="flex-1 min-w-0"><h3 class="font-semibold">${esc(f.name)} <span class="text-sm opacity-60">${esc(f.handle||'')}</span></h3><p class="text-xs text-[#A596DA] uppercase tracking-widest mt-1">${esc(f.role||'')}</p><p class="text-sm mt-2 text-[var(--text-secondary)]">${esc(f.bio||'')}</p></div></div></div>`).join('\n') || `<p class="glass p-6 rounded-xl text-sm">No ${filter} yet.</p>`;
-};
-
-const replaceSection = (file, start, end, html) => {
-  let src = fs.readFileSync(file,'utf8');
-  if (!src.includes(start) || !src.includes(end)) return false;
-  const escRe = s => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-  const re = new RegExp(`${escRe(start)}[\\s\\S]*?${escRe(end)}`, 'm');
-  const next = `${start}\n${html}\n${end}`;
-  src = src.replace(re, next);
-  fs.writeFileSync(file, src, 'utf8');
-  return true;
-};
-
-const candidates = ['index.html','blog.html','music.html','friends.html','collabs.html','rhythm.html',...fs.readdirSync('.').filter(f=>f.startsWith('DennisZeroVT_optimized') && f.endsWith('.html'))].filter(f=>fs.existsSync(f));
-if (candidates.length === 0) { console.error('No HTML files found'); process.exit(1); }
-let baked = 0;
-for (const file of candidates) {
-  console.log(`Baking ${file}...`);
-  const did = [replaceSection(file, '<!-- POSTS_START -->','<!-- POSTS_END -->',renderPosts()),replaceSection(file,'<!-- SONGS_START -->','<!-- SONGS_END -->',renderSongs()),replaceSection(file,'<!-- ALBUMS_START -->','<!-- ALBUMS_END -->',renderAlbums()),replaceSection(file,'<!-- FRIENDS_START -->','<!-- FRIENDS_END -->',renderPeople('friends')),replaceSection(file,'<!-- COLLABS_START -->','<!-- COLLABS_END -->',renderPeople('collabs')),replaceSection(file,'<!-- CATEGORIES_START -->','<!-- CATEGORIES_END -->',categories.map(c=>`<button class="px-3 py-1 rounded-full bg-white/5 text-sm">${esc(c)}</button>`).join('\n'))].filter(Boolean).length;
-  console.log(` -> baked ${did} sections`); baked+=did;
+const fs=require('fs'),path=require('path');
+const safeRead=(p,f=[])=>{const c=[p,`data/${path.basename(p)}`,p.toLowerCase()];for(const x of c){try{if(fs.existsSync(x))return JSON.parse(fs.readFileSync(x,'utf8'))}catch(e){}}return f;};
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+const yt=u=>{if(!u)return'';try{const p=new URL(u);if(p.hostname.includes('youtu.be'))return`https://www.youtube.com/embed/${p.pathname.slice(1)}`;if(p.searchParams.get('v'))return`https://www.youtube.com/embed/${p.searchParams.get('v')}`;}catch{}return u;};
+const categories=safeRead('data/categories.json'),people=safeRead('data/people.json'),posts=safeRead('data/posts.json'),songs=safeRead('data/songs.json');
+const friends=people.filter(p=>(p.tags||[]).includes('friend')),collabs=people.filter(p=>(p.tags||[]).includes('collab'));
+function build(){
+const SJ=JSON.stringify(songs);
+const songCards=songs.map((s,i)=>{const cov=s.cover?`<img src="${esc(s.cover)}" alt="" class="w-full h-full object-cover">`:`<div class="w-full h-full flex items-center justify-center text-5xl">${esc(s.coverEmoji||'🎵')}</div>`;const tb=(s.badges||[]).slice(0,2).map(b=>`<span class="badge" style="background:${esc(b.color)}">${esc(b.label)}</span>`).join('');const ab=(s.badges||[]).map(b=>`<span class="text-[10px] px-2 py-1 rounded-full border border-white/10 bg-white/5">${esc(b.label)}</span>`).join('');return `<article class="glass rounded-2xl overflow-hidden" onclick="openSong(${i})"><div class="relative aspect-square">${cov}<div class="absolute top-3 left-3 flex gap-1">${tb}</div></div><div class="p-4"><h3>${esc(s.title)}</h3><p class="text-xs text-white/50">${esc(s.artist)} • ${s.year}</p><div class="mt-2 flex flex-wrap gap-1">${ab}</div></div></article>`;}).join('');
+const collabCards=collabs.map(c=>{const tags=(c.tags||[]).map(t=>`<span class="text-[10px] px-2 py-1 rounded-full bg-white/5 border border-white/10">${esc(t)}</span>`).join('');const creds=(c.credits||[]).map(cr=>`<div class="text-xs">${esc(cr.song)} • ${esc(cr.role)}</div>`).join('');return `<div class="glass p-6"><img src="${esc(c.avatar)}" class="w-16 h-16 rounded-full" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(c.name)}'"/><h3>${esc(c.name)}</h3><p>${esc(c.bio||'')}</p><div>${tags}</div><div>${creds}</div></div>`;}).join('');
+const friendCards=friends.map(f=>`<div class="glass p-5"><img src="${esc(f.avatar)}" class="w-14 h-14 rounded-full"/><h3>${esc(f.name)}</h3><p>${esc(f.bio||'')}</p></div>`).join('');
+const catF=categories.map(c=>`<button data-cat="${esc(c.id)}">${esc(c.name)}</button>`).join('');
+const postCards=posts.map(p=>{const bl=(p.blocks||[]).map(b=>{if(b.type==='text')return `<p>${esc(b.content).replace(/\n/g,'<br>')}</p>`;if(b.type==='image')return `<img src="${esc(b.src||b.url)}" class="rounded-xl"/>`;if(b.type==='video'){const e=yt(b.url||b.src);return e.includes('youtube.com/embed')?`<iframe src="${esc(e)}"></iframe>`:`<a href="${esc(b.url)}">Watch</a>`;}return ''}).join('');return `<article class="glass p-6" data-cat="${esc((p.category||'').toLowerCase())}"><h3>${esc(p.title)}</h3><div>${bl}</div></article>`;}).join('');
+return `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DZ</title><script src="https://cdn.tailwindcss.com"></script><style>.glass{background:rgba(255,255,255,0.06);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.1)}</style></head><body class="bg-[#0a0a12] text-white"><main class="max-w-7xl mx-auto p-6 space-y-10"><section id="music"><h2>Music</h2><div class="grid grid-cols-3 gap-4">${songCards}</div></section><section id="blog"><div>${catF}</div><div class="grid md:grid-cols-2 gap-6">${postCards}</div></section><section id="collabs"><div class="grid md:grid-cols-2 gap-4">${collabCards}</div></section><section id="friends"><div class="grid md:grid-cols-3 gap-4">${friendCards}</div></section></main><script>const SONGS=${SJ};function openSong(i){alert(SONGS[i].title)}<\/script></body></html>`;
 }
-console.log(`Done. Baked ${baked} sections across ${candidates.length} files.`);
+const out=build();require('fs').writeFileSync('index.html',out);require('fs').writeFileSync('dist/index.html',out);console.log('Built',out.length);
