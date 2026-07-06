@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>DennisZeroVT | Music Producer & Game Developer</title>
-<meta name="description" content="Music producer and game developer. Original tracks, dev blog, rhythm game stats, friends & collaborators."/>
+<title>Blog | DennisZeroVT</title>
+<meta name="description" content="Dev logs, progress updates, and behind-the-scenes content from DennisZeroVT."/>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -27,9 +27,9 @@
 </div>
 </div>
 <div class="hidden md:flex items-center gap-8">
-<a href="index.html" data-page="home" class="nav-link text-sm font-medium active text-white">Home</a>
+<a href="index.html" data-page="home" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Home</a>
 <a href="music.html" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">My Music</a>
-<a href="blog.html" data-page="blog" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
+<a href="blog.html" data-page="blog" class="nav-link text-sm font-medium active text-white">Blog</a>
 <a href="rhythm.html" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
 <a href="collabs.html" data-page="collabs" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Collaborators</a>
 <a href="friends.html" data-page="friends" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Friends</a>
@@ -42,9 +42,9 @@
 </div>
 <div class="hidden md:hidden glass border-t border-[#A596DA]/10" id="mobile-menu">
 <div class="px-4 py-6 space-y-4">
-<a href="index.html" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-white">Home</a>
+<a href="index.html" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Home</a>
 <a href="music.html" data-page="music" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">My Music</a>
-<a href="blog.html" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Blog</a>
+<a href="blog.html" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-white">Blog</a>
 <a href="rhythm.html" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Rhythm</a>
 <a href="collabs.html" data-page="collabs" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Collaborators</a>
 <a href="friends.html" data-page="friends" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Friends</a>
@@ -52,57 +52,25 @@
 </div>
 </nav>
 <main class="relative z-10 pt-20">
-
-<!-- HOME PAGE -->
-<section id="home">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-<div class="grid lg:grid-cols-2 gap-12 items-center">
-<div class="space-y-8">
-<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm">
-<span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-<span class="text-[var(--text-secondary)]">Available for collaborations</span>
-</div>
-<h1 class="text-5xl lg:text-7xl font-bold leading-tight">
-                            Hey, I'm <span class="text-[#A596DA]">Dennis van Wijngaarden</span>
-</h1>
-<p class="text-xl text-[var(--text-secondary)] leading-relaxed">
-                            Independent music producer and game developer 
-                        </p>
-<div class="flex flex-wrap gap-4">
-<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="music.html">
-<i class="fas fa-play mr-2"></i>Listen to My Music
-                            </a>
-<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="blog.html">
-<i class="fas fa-gamepad mr-2"></i>View Game Projects
-                            </a>
-</div>
-</div>
-</div>
-</div>
-<!-- Featured Projects -->
-<div id="featured-projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<section id="blog">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
-<h2 class="text-4xl lg:text-5xl font-bold mb-4">Featured <span class="gradient-text">Projects</span></h2>
-<p class="text-[var(--text-secondary)] text-lg">Games &amp; music I'm currently working on</p>
+<h1 class="text-5xl lg:text-6xl font-bold mb-4"><span class="gradient-text">Blog</span></h1>
+<p class="text-[var(--text-secondary)] text-lg">
+                        Dev logs, progress updates, and behind-the-scenes content from Snowfall and Stuck In Time.
+                    </p>
+
+<div class="flex flex-wrap justify-center gap-3 mt-8 mb-4" id="category-filters"></div>
+<div id="subcategory-filters" class="flex flex-wrap justify-center gap-2 mb-8 hidden"></div>
+
 </div>
-<div class="grid md:grid-cols-2 gap-8">
-<div class="glass rounded-2xl p-8 glow-hover gradient-border">
-<div class="flex items-start justify-between mb-6">
-<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
-<i class="fas fa-snowflake text-2xl text-[#A596DA]"></i>
-</div>
-<span class="px-3 py-1 rounded-full text-xs bg-[#A596DA]/20 text-[#A596DA] font-medium">comming soon</span>
-</div>
-<h3 class="text-2xl font-bold mb-3">Adrenaline</h3>
-<p class="text-[var(--text-secondary)] mb-6 leading-relaxed">
-                            a remaster of my old song with the same name inspired by sonic ost.
-                        </p>
-</div>
+<!-- Blog Posts -->
+<div id="blog-posts-container" class="space-y-8 mb-12">
+<article class="glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:#a596da20;color:#a596da;border:1px solid #a596da40">Gaming</span><span class="text-[var(--text-secondary)]">Osu</span><span class="ml-auto text-[var(--text-secondary)]">2026-06-14</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">my second 200pp play</h3><div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">GG i got my second best play on osu 206 pp - my second 200 pp lets go<br><br>the bg gave me powers - bless mika</p></div><div class="mb-5"><a href="https://youtu.be/PfoJg2idmF8" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div></article>
 </div>
 </div>
 </section>
 
-<!-- MY MUSIC PAGE -->
 </main>
 <!-- Person Overlay Modal (friends / collaborators) -->
 <div class="overlay" id="person-overlay" onclick="closePersonOverlay(event)">

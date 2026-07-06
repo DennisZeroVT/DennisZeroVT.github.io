@@ -394,7 +394,11 @@ const REPO = 'denniszerovt/denniszerovt.github.io';
 const BRANCH = 'main';
 const OWNER = 'denniszerovt';
 
-const INDEX_PATH = 'index.html';
+// Content constants (SITE_SONGS, SITE_PEOPLE, etc.) now live in app.js, not
+// index.html — index.html/music.html/blog.html/etc. are just markup that
+// includes <script src="app.js">. The variable's still called INDEX_PATH
+// for the rest of this file's naming; it just points somewhere else now.
+const INDEX_PATH = 'app.js';
 
 const UPLOADS = {
   posts: 'images/posts/',

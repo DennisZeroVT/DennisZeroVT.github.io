@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>DennisZeroVT | Music Producer & Game Developer</title>
-<meta name="description" content="Music producer and game developer. Original tracks, dev blog, rhythm game stats, friends & collaborators."/>
+<title>Rhythm Games | DennisZeroVT</title>
+<meta name="description" content="osu!, osu!mania, Etterna, and FFR stats and top plays for DennisZeroVT."/>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -27,10 +27,10 @@
 </div>
 </div>
 <div class="hidden md:flex items-center gap-8">
-<a href="index.html" data-page="home" class="nav-link text-sm font-medium active text-white">Home</a>
+<a href="index.html" data-page="home" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Home</a>
 <a href="music.html" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">My Music</a>
 <a href="blog.html" data-page="blog" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
-<a href="rhythm.html" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
+<a href="rhythm.html" data-page="rhythm" class="nav-link text-sm font-medium active text-white">Rhythm</a>
 <a href="collabs.html" data-page="collabs" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Collaborators</a>
 <a href="friends.html" data-page="friends" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Friends</a>
 </div>
@@ -42,67 +42,325 @@
 </div>
 <div class="hidden md:hidden glass border-t border-[#A596DA]/10" id="mobile-menu">
 <div class="px-4 py-6 space-y-4">
-<a href="index.html" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-white">Home</a>
+<a href="index.html" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Home</a>
 <a href="music.html" data-page="music" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">My Music</a>
 <a href="blog.html" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Blog</a>
-<a href="rhythm.html" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Rhythm</a>
+<a href="rhythm.html" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-white">Rhythm</a>
 <a href="collabs.html" data-page="collabs" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Collaborators</a>
 <a href="friends.html" data-page="friends" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Friends</a>
 </div>
 </div>
 </nav>
 <main class="relative z-10 pt-20">
-
-<!-- HOME PAGE -->
-<section id="home">
+<section id="rhythm">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-<div class="grid lg:grid-cols-2 gap-12 items-center">
-<div class="space-y-8">
-<div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm">
-<span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-<span class="text-[var(--text-secondary)]">Available for collaborations</span>
-</div>
-<h1 class="text-5xl lg:text-7xl font-bold leading-tight">
-                            Hey, I'm <span class="text-[#A596DA]">Dennis van Wijngaarden</span>
-</h1>
-<p class="text-xl text-[var(--text-secondary)] leading-relaxed">
-                            Independent music producer and game developer 
-                        </p>
-<div class="flex flex-wrap gap-4">
-<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="music.html">
-<i class="fas fa-play mr-2"></i>Listen to My Music
-                            </a>
-<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="blog.html">
-<i class="fas fa-gamepad mr-2"></i>View Game Projects
-                            </a>
+<div class="text-center mb-12">
+<h1 class="text-5xl lg:text-6xl font-bold mb-4">Rhythm <span class="gradient-text">Games</span></h1>
+<p class="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
+                    DennisZeroChaos • Netherlands NL • producing music
+                </p>
+<div class="flex justify-center gap-2 mt-6 flex-wrap">
+<button class="rhythm-tab active px-4 py-2 rounded-lg bg-[#A596DA]/20 text-[#A596DA] text-sm font-medium" data-rhythm="overview">Overview</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="osu">osu!</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="mania">osu!mania 4K</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="etterna">Etterna</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="ffr">FFR</button>
 </div>
 </div>
+<div class="rhythm-panel" id="rhythm-overview">
+<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">osu! Standard</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-circle text-[#A596DA] text-xs"></i></div>
+</div>
+<p class="text-2xl font-bold" id="overview-std-rank">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Wereldwijde Ranking</p>
+<div class="flex gap-4 text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-std-pp">-</span> pp</span>
+<span><span class="font-bold" id="overview-std-acc">-</span> acc</span>
 </div>
 </div>
-<!-- Featured Projects -->
-<div id="featured-projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-<div class="text-center mb-16">
-<h2 class="text-4xl lg:text-5xl font-bold mb-4">Featured <span class="gradient-text">Projects</span></h2>
-<p class="text-[var(--text-secondary)] text-lg">Games &amp; music I'm currently working on</p>
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">osu!mania 4K</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-th text-[#A596DA] text-xs"></i></div>
 </div>
-<div class="grid md:grid-cols-2 gap-8">
-<div class="glass rounded-2xl p-8 glow-hover gradient-border">
-<div class="flex items-start justify-between mb-6">
-<div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
-<i class="fas fa-snowflake text-2xl text-[#A596DA]"></i>
+<p class="text-2xl font-bold" id="overview-mania-rank">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Wereldwijde Ranking</p>
+<div class="flex gap-4 text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-mania-pp">-</span> pp</span>
+<span><span class="font-bold" id="overview-mania-acc">-</span> acc</span>
 </div>
-<span class="px-3 py-1 rounded-full text-xs bg-[#A596DA]/20 text-[#A596DA] font-medium">comming soon</span>
 </div>
-<h3 class="text-2xl font-bold mb-3">Adrenaline</h3>
-<p class="text-[var(--text-secondary)] mb-6 leading-relaxed">
-                            a remaster of my old song with the same name inspired by sonic ost.
-                        </p>
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">Etterna Online</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-chart-line text-[#A596DA] text-xs"></i></div>
+</div>
+<p class="text-2xl font-bold" id="overview-etterna-rank">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Wereldwijde Ranking</p>
+<div class="text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-etterna-overall">-</span> Overall Skill</span>
+</div>
+</div>
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">Flash Flash Revolution</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-bolt text-[#A596DA] text-xs"></i></div>
+</div>
+<p class="text-2xl font-bold" id="overview-ffr-skill">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Skill Rating</p>
+<div class="flex gap-4 text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-ffr-rank">-</span> rank</span>
+<span><span class="font-bold" id="overview-ffr-nl">-</span> NL</span>
+</div>
+</div>
+</div>
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 glass rounded-2xl p-6" style="overflow:hidden">
+<h3 class="text-sm uppercase tracking-wide text-[var(--text-secondary)] mb-4">Keyboard Layout</h3>
+<div class="bg-black/30 rounded-xl p-6" style="overflow:hidden">
+<div class="flex flex-col items-center gap-2" style="transform:scale(0.8);transform-origin:top center">
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">Q</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">W</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">E</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">R</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">T</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">Y</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">U</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">I</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">O</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">P</div>
+</div>
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">A</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">S</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">D</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">F</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">G</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">H</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">J</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">K</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">L</div>
+</div>
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">Z</div>
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">X</div>
+<div class="w-8 h-8 rounded bg-[#A596DA] text-black flex items-center justify-center text-xs font-bold">C</div>
+<div class="w-8 h-8 rounded bg-[#A596DA] text-black flex items-center justify-center text-xs font-bold">V</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">B</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">N</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">M</div>
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">-</div>
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">/</div>
+</div>
+</div>
+<div class="flex justify-center gap-6 mt-4 text-xs text-[var(--text-secondary)]">
+<span><span class="text-[#A596DA]">●</span> osu!standard — A + S</span>
+<span><span style="color:#FF6B00">●</span> 4K mania — Z X - /</span>
+</div>
+</div>
+</div>
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-4">Hardware focus</h3>
+<div class="space-y-3">
+<div>
+<div class="flex items-start gap-3"><div class="w-8 h-8 rounded-lg bg-[#6B5BFF]/20 flex items-center justify-center flex-shrink-0"><span class="text-[#8B7FFF] font-bold text-sm">W</span></div><div><p class="text-sm font-medium" id="tablet-model">Wacom CTL-4100WL — area</p><p class="text-xs text-[var(--text-secondary)]" id="tablet-specs">Full: 152×95mm (1.6) • Active: 135.111×76mm (1.7778)</p></div></div>
+</div>
+<div class="bg-black/30 rounded-lg p-4 h-48 flex items-center justify-center">
+<div class="relative" id="tablet-viz" style="width: 240px; height: 150px;">
+<!-- Full area outline -->
+<div class="absolute inset-0 border-2 border-white/70"></div>
+<div class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-white/70 font-mono">152mm</div>
+<div class="absolute -left-8 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-white/70 font-mono">95mm</div>
+<!-- Active area -->
+<div id="tablet-active" class="absolute bg-[#A596DA]" style="width: 95%; height: 65%; left:0; bottom:0;">
+<div id="tablet-label-w" class="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] text-black/70 font-mono">95mm</div>
+<div id="tablet-label-h" class="absolute left-1 top-1/2 -translate-y-1/2 -rotate-90 origin-left text-[10px] text-black/70 font-mono">65mm</div>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<div class="w-1 h-1 bg-black rounded-full mb-1"></div>
+<div class="text-[11px] text-black font-mono font-bold">1.7778</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- OSU STANDARD -->
+<div class="rhythm-panel hidden" id="rhythm-osu">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#A596DA]"></span> osu! Standard</h3>
+<div class="grid grid-cols-2 gap-4 text-sm">
+<div><p class="text-xs text-[var(--text-secondary)]">WERELDWIJDE RANKING</p><p class="text-xl font-bold" id="osu-panel-rank">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">NEDERLANDSE RANKING</p><p class="text-xl font-bold" id="osu-panel-country">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PP</p><p class="text-lg font-bold text-[#A596DA]" id="osu-panel-pp">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">ACCURACY</p><p class="text-lg font-bold" id="osu-panel-acc">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAY COUNT</p><p id="osu-panel-plays">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAYTIME</p><p id="osu-panel-time">-</p></div>
+</div>
+<div class="mt-4 pt-4 border-t border-white/10">
+<p class="text-xs text-[var(--text-secondary)]">RANKED SCORE</p>
+<p class="font-mono" id="osu-panel-ranked">-</p>
+</div>
+</div>
+<div class="glass rounded-2xl p-6">
+<h4 class="text-xs uppercase text-[var(--text-secondary)] mb-3">Grades</h4>
+<div class="flex justify-between text-center">
+<div><div class="w-8 h-6 rounded bg-[#Fdd700] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SS</div><p class="text-xs" id="osu-panel-g-ss">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SSH</div><p class="text-xs" id="osu-panel-g-ssh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#Fdd700]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">S</div><p class="text-xs" id="osu-panel-g-s">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SH</div><p class="text-xs" id="osu-panel-g-sh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#8BC34A] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">A</div><p class="text-xs" id="osu-panel-g-a">-</p></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">Top Plays</h3>
+<span class="text-xs px-2 py-1 rounded bg-[#A596DA]/20 text-[#A596DA]">pp farm</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<tbody id="osu-panel-top5">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="rhythm-panel hidden" id="rhythm-mania">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#A596DA]"></span> osu!mania 4K</h3>
+<div class="grid grid-cols-2 gap-4 text-sm">
+<div><p class="text-xs text-[var(--text-secondary)]">WERELDWIJDE</p><p class="text-xl font-bold" id="mania-panel-rank">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">NEDERLANDSE</p><p class="text-xl font-bold" id="mania-panel-country">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PP</p><p class="text-lg font-bold text-[#A596DA]" id="mania-panel-pp">-pp</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">ACCURACY</p><p class="text-lg font-bold" id="mania-panel-acc">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAY COUNT</p><p id="mania-panel-plays">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAYTIME</p><p id="mania-panel-time">-</p></div>
+</div>
+</div>
+<div class="glass rounded-2xl p-6">
+<h4 class="text-xs uppercase text-[var(--text-secondary)] mb-3">Grades</h4>
+<div class="flex justify-between text-center">
+<div><div class="w-8 h-6 rounded bg-[#Fdd700] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SS</div><p class="text-xs" id="mania-panel-g-ss">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SSH</div><p class="text-xs" id="mania-panel-g-ssh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#Fdd700]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">S</div><p class="text-xs" id="mania-panel-g-s">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SH</div><p class="text-xs" id="mania-panel-g-sh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#8BC34A] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">A</div><p class="text-xs" id="mania-panel-g-a">-</p></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">Top Plays — 4K</h3>
+<span class="text-xs px-2 py-1 rounded bg-[#A596DA]/20 text-[#A596DA]">LN focus</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<tbody id="mania-panel-top5">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="rhythm-panel hidden" id="rhythm-etterna">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-2">Etterna Online</h3>
+<p class="text-sm text-[var(--text-secondary)]">USERNAME</p>
+<p class="text-xl font-bold mb-3">DennisZeroVT</p>
+<p class="text-xs text-[var(--text-secondary)]">OVERALL RANK</p>
+<p class="text-2xl font-bold text-[#A596DA]"><span id="etterna-rank">-</span></p>
+<p class="text-2xl font-bold text-[#A596DA]"></p>
+<p class="text-xs mt-3"><span id="etterna-since">-</span></p>
+</div>
+<div class="glass rounded-2xl p-6">
+<h4 class="text-xs uppercase text-[var(--text-secondary)] mb-3">Skillsets</h4>
+<div class="space-y-2 text-sm">
+<div><div class="flex justify-between mb-1"><span>Overall</span><span class="font-mono" id="etterna-overall">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-overall" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Stream</span><span class="font-mono" id="etterna-stream">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-stream" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Jumpstream</span><span class="font-mono" id="etterna-jumpstream">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-jumpstream" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Handstream</span><span class="font-mono" id="etterna-handstream">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-handstream" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Jacks</span><span class="font-mono" id="etterna-jacks">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-jacks" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Chordjacks</span><span class="font-mono" id="etterna-chordjacks">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-chordjacks" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Stamina</span><span class="font-mono" id="etterna-stamina">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-stamina" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Technical</span><span class="font-mono" id="etterna-technical">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-technical" style="width:0%"></div></div></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">Recent Top 10</h3>
+<span class="text-xs px-2 py-1 rounded bg-white/5">6 mei 2026</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b border-white/10 text-xs text-[var(--text-secondary)]">
+<th class="py-2 text-left w-8">#</th>
+<th class="py-2 text-left">SONG</th>
+<th class="py-2 text-right w-16">RATE</th>
+<th class="py-2 text-right w-16">ACC</th>
+</tr>
+</thead>
+<tbody id="etterna-top10">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]" colspan="4">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="rhythm-panel hidden" id="rhythm-ffr">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-2">Flash Flash Revolution</h3>
+<p class="text-sm text-[var(--text-secondary)]">USERNAME</p>
+<p class="text-xl font-bold mb-3">DennisZeroVT</p>
+<div class="grid grid-cols-2 gap-4">
+<div><p class="text-xs text-[var(--text-secondary)]">FFR RANK</p> <p class="text-xl font-bold" id="ffr-rank">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">AVG RANK</p><p class="text-xl font-bold" id="ffr-avg-rank">-</p></div>
+</div>
+<div class="mt-3"><p class="text-xs text-[var(--text-secondary)]">SKILL RATING</p><p class="text-2xl font-bold text-[#A596DA]"><p id="ffr-skill">-</p></p></div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<h3 class="font-bold mb-4">Top Scores</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b border-white/10 text-xs text-[var(--text-secondary)]">
+<th class="py-2 text-left w-8">#</th>
+<th class="py-2 text-left">SONG</th>
+<th class="py-2 text-right w-12">LVL</th>
+<th class="py-2 text-right w-16">SCORE</th>
+</tr>
+</thead>
+<tbody id="ffr-top10">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]" colspan="4">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 </div>
 </section>
 
-<!-- MY MUSIC PAGE -->
 </main>
 <!-- Person Overlay Modal (friends / collaborators) -->
 <div class="overlay" id="person-overlay" onclick="closePersonOverlay(event)">
