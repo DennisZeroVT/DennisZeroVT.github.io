@@ -353,7 +353,6 @@ function renderSongsGrid() {
             <h3 class="font-semibold text-white truncate">${song.name}</h3>
             <p class="text-sm text-[var(--text-secondary)] mt-1">${song.year || ''} • ${song.artist}</p>
             <div class="flex gap-1.5 mt-3 flex-wrap">${badges}</div>
-            ${song.about ? `<p class="text-sm text-[var(--text-secondary)] mt-3 leading-relaxed">${song.about.split('\n')[0]}</p>` : ''}
         </div>
     </div>`;
   }).join('');
@@ -655,7 +654,7 @@ function renderPosts(){
   }).join('');
 }
 
-/* ---------- Navigation (one page — nav links are #anchors, not separate URLs) ---------- */
+/* ---------- Navigation (one page — nav links are anchor jumps to sections) ---------- */
 
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 if (mobileMenuBtn) {
@@ -664,33 +663,35 @@ if (mobileMenuBtn) {
   });
 }
 
-// Close the mobile menu once a link is tapped (anchor jump doesn't reload the page).
-document.querySelectorAll('.nav-link, .nav-link-mobile').forEach(link => {
+// Close the mobile menu once a link is tapped (the browser handles the
+// actual scroll natively via the #anchor href — no JS needed for that part).
+document.querySelectorAll('.nav-link-mobile').forEach(link => {
   link.addEventListener('click', () => {
     const menu = document.getElementById('mobile-menu');
     if (menu) menu.classList.add('hidden');
   });
 });
 
-// Highlight whichever section is currently in view as you scroll.
+// Highlight whichever section is currently in view in the nav bar, so it
+// still feels like "you're on the Music tab" etc. even though everything
+// lives on one scrollable page.
 const sectionIds = ['home', 'music', 'blog', 'rhythm', 'collabs', 'friends'];
-const navSections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
-if (navSections.length && 'IntersectionObserver' in window) {
-  const setActiveNav = (id) => {
+const navObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const id = entry.target.id;
     document.querySelectorAll('.nav-link, .nav-link-mobile').forEach(link => {
-      const isActive = link.getAttribute('data-page') === id;
-      link.classList.toggle('active', isActive);
-      link.classList.toggle('text-white', isActive);
-      link.classList.toggle('text-[var(--text-secondary)]', !isActive);
+      const isMatch = link.getAttribute('data-page') === id;
+      link.classList.toggle('active', isMatch);
+      link.classList.toggle('text-white', isMatch);
+      link.classList.toggle('text-[var(--text-secondary)]', !isMatch);
     });
-  };
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) setActiveNav(entry.target.id);
-    });
-  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
-  navSections.forEach(section => observer.observe(section));
-}
+  });
+}, { rootMargin: '-40% 0px -55% 0px' });
+sectionIds.forEach(id => {
+  const el = document.getElementById(id);
+  if (el) navObserver.observe(el);
+});
 
 document.addEventListener('click', function(e) {
   if (e.target.matches('.rhythm-tab')) {
@@ -701,11 +702,9 @@ document.addEventListener('click', function(e) {
     e.target.classList.add('active', 'bg-[#A596DA]/20', 'text-[#A596DA]');
     e.target.classList.remove('bg-white/5');
 
-    // All rhythm panels stay visible (real content, not hidden) — the tabs
-    // are just a quick-jump shortcut down the page, same idea as the main nav.
+    document.querySelectorAll('.rhythm-panel').forEach(p => p.classList.add('hidden'));
     const target = e.target.dataset.rhythm;
-    const panel = document.getElementById('rhythm-' + target);
-    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('rhythm-' + target).classList.remove('hidden');
   }
 });
 
