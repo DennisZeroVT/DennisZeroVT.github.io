@@ -353,6 +353,7 @@ function renderSongsGrid() {
             <h3 class="font-semibold text-white truncate">${song.name}</h3>
             <p class="text-sm text-[var(--text-secondary)] mt-1">${song.year || ''} • ${song.artist}</p>
             <div class="flex gap-1.5 mt-3 flex-wrap">${badges}</div>
+            ${song.about ? `<p class="text-sm text-[var(--text-secondary)] mt-3 leading-relaxed">${song.about.split('\n')[0]}</p>` : ''}
         </div>
     </div>`;
   }).join('');
@@ -654,13 +655,41 @@ function renderPosts(){
   }).join('');
 }
 
-/* ---------- Navigation (plain multi-page — every link is a real URL) ---------- */
+/* ---------- Navigation (one page — nav links are #anchors, not separate URLs) ---------- */
 
 const mobileMenuBtn = document.getElementById('mobile-menu-btn');
 if (mobileMenuBtn) {
   mobileMenuBtn.addEventListener('click', () => {
     document.getElementById('mobile-menu').classList.toggle('hidden');
   });
+}
+
+// Close the mobile menu once a link is tapped (anchor jump doesn't reload the page).
+document.querySelectorAll('.nav-link, .nav-link-mobile').forEach(link => {
+  link.addEventListener('click', () => {
+    const menu = document.getElementById('mobile-menu');
+    if (menu) menu.classList.add('hidden');
+  });
+});
+
+// Highlight whichever section is currently in view as you scroll.
+const sectionIds = ['home', 'music', 'blog', 'rhythm', 'collabs', 'friends'];
+const navSections = sectionIds.map(id => document.getElementById(id)).filter(Boolean);
+if (navSections.length && 'IntersectionObserver' in window) {
+  const setActiveNav = (id) => {
+    document.querySelectorAll('.nav-link, .nav-link-mobile').forEach(link => {
+      const isActive = link.getAttribute('data-page') === id;
+      link.classList.toggle('active', isActive);
+      link.classList.toggle('text-white', isActive);
+      link.classList.toggle('text-[var(--text-secondary)]', !isActive);
+    });
+  };
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) setActiveNav(entry.target.id);
+    });
+  }, { rootMargin: '-45% 0px -50% 0px', threshold: 0 });
+  navSections.forEach(section => observer.observe(section));
 }
 
 document.addEventListener('click', function(e) {
@@ -672,9 +701,11 @@ document.addEventListener('click', function(e) {
     e.target.classList.add('active', 'bg-[#A596DA]/20', 'text-[#A596DA]');
     e.target.classList.remove('bg-white/5');
 
-    document.querySelectorAll('.rhythm-panel').forEach(p => p.classList.add('hidden'));
+    // All rhythm panels stay visible (real content, not hidden) — the tabs
+    // are just a quick-jump shortcut down the page, same idea as the main nav.
     const target = e.target.dataset.rhythm;
-    document.getElementById('rhythm-' + target).classList.remove('hidden');
+    const panel = document.getElementById('rhythm-' + target);
+    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 });
 

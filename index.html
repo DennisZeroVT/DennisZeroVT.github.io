@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-<title>DennisZeroVT | Music Producer & Game Developer</title>
+<title>DennisZeroVT | Music Producer &amp; Game Developer</title>
 <meta name="description" content="Music producer and game developer. Original tracks, dev blog, rhythm game stats, friends & collaborators."/>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
@@ -27,12 +27,12 @@
 </div>
 </div>
 <div class="hidden md:flex items-center gap-8">
-<a href="index.html" data-page="home" class="nav-link text-sm font-medium active text-white">Home</a>
-<a href="music.html" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">My Music</a>
-<a href="blog.html" data-page="blog" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
-<a href="rhythm.html" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
-<a href="collabs.html" data-page="collabs" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Collaborators</a>
-<a href="friends.html" data-page="friends" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Friends</a>
+<a href="#home" data-page="home" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Home</a>
+<a href="#music" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">My Music</a>
+<a href="#blog" data-page="blog" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
+<a href="#rhythm" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
+<a href="#collabs" data-page="collabs" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Collaborators</a>
+<a href="#friends" data-page="friends" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Friends</a>
 </div>
 <div class="flex items-center gap-2">
   <button id="hq-toggle" class="px-3 py-1.5 rounded-lg glass text-xs font-semibold border border-[#A596DA]/30 hover:bg-[#A596DA]/20 transition" title="Toggle HQ mode">HQ</button>
@@ -42,12 +42,12 @@
 </div>
 <div class="hidden md:hidden glass border-t border-[#A596DA]/10" id="mobile-menu">
 <div class="px-4 py-6 space-y-4">
-<a href="index.html" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-white">Home</a>
-<a href="music.html" data-page="music" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">My Music</a>
-<a href="blog.html" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Blog</a>
-<a href="rhythm.html" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Rhythm</a>
-<a href="collabs.html" data-page="collabs" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Collaborators</a>
-<a href="friends.html" data-page="friends" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Friends</a>
+<a href="#home" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Home</a>
+<a href="#music" data-page="music" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">My Music</a>
+<a href="#blog" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Blog</a>
+<a href="#rhythm" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Rhythm</a>
+<a href="#collabs" data-page="collabs" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Collaborators</a>
+<a href="#friends" data-page="friends" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Friends</a>
 </div>
 </div>
 </nav>
@@ -69,10 +69,10 @@
                             Independent music producer and game developer 
                         </p>
 <div class="flex flex-wrap gap-4">
-<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="music.html">
+<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="#music">
 <i class="fas fa-play mr-2"></i>Listen to My Music
                             </a>
-<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="blog.html">
+<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="#blog">
 <i class="fas fa-gamepad mr-2"></i>View Game Projects
                             </a>
 </div>
@@ -103,6 +103,542 @@
 </section>
 
 <!-- MY MUSIC PAGE -->
+
+<div class="border-t border-white/5"></div>
+<section id="music">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="text-center mb-16">
+<h1 class="text-5xl lg:text-6xl font-bold mb-4">My <span class="gradient-text">Music</span></h1>
+<p class="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
+                        Original compositions blending ambient, electronic, and orchestral elements for games and standalone listening.
+                    </p>
+</div>
+<!-- Featured Songs -->
+<div class="mb-16">
+<h2 class="text-3xl font-bold mb-8">Featured Singles</h2>
+<div class="grid md:grid-cols-2 gap-6" id="songs-grid">
+
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('song-1781376702122')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            <img src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" alt="Adrenaline" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🎵</div>
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Adrenaline</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2026 • Dennis van Wijngaarden</p>
+            <div class="flex gap-1.5 mt-3 flex-wrap"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#6B7280;color:#fff">pending</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#1DB954;color:#fff">Spotify</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#FA243C;color:#fff">Apple Music</span></div>
+        </div>
+    </div>
+
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('snowfall')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            <img src="SongData/AlbumArt/snowfall.png" alt="Snowfall" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🌨️</div>
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Snowfall</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2025 • Dennis van Wijngaarden</p>
+            <div class="flex gap-1.5 mt-3 flex-wrap"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#10B981;color:#fff">Released</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#1DB954;color:#fff">Spotify</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#FA243C;color:#fff">Apple Music</span></div>
+        </div>
+    </div>
+
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('stuck_in_time')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            <img src="SongData/AlbumArt/stuckintime.png" alt="Stuck In Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🕒</div>
+            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Stuck In Time</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2026 • Dennis van Wijngaarden</p>
+            <div class="flex gap-1.5 mt-3 flex-wrap"><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#10B981;color:#fff">Released</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#1DB954;color:#fff">Spotify</span><span class="text-[10px] px-2 py-0.5 rounded-full" style="background:#FA243C;color:#fff">Apple Music</span></div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Albums -->
+<div>
+<h2 class="text-3xl font-bold mb-8">Albums &amp; Collections</h2><div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="albums-grid">
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openAlbum('album-1780532205221')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60"></div>
+            <div class="absolute bottom-3 left-3">
+                <span class="px-2 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] text-[10px] font-medium backdrop-blur">In Progress</span>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">Solo EP 💿</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">2026 • 2 tracks</p>
+        </div>
+    </div>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- GAME DEV BLOG PAGE -->
+
+<div class="border-t border-white/5"></div>
+<section id="blog">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="text-center mb-16">
+<h1 class="text-5xl lg:text-6xl font-bold mb-4"><span class="gradient-text">Blog</span></h1>
+<p class="text-[var(--text-secondary)] text-lg">
+                        Dev logs, progress updates, and behind-the-scenes content from Snowfall and Stuck In Time.
+                    </p>
+
+<div class="flex flex-wrap justify-center gap-3 mt-8 mb-4" id="category-filters"></div>
+<div id="subcategory-filters" class="flex flex-wrap justify-center gap-2 mb-8 hidden"></div>
+
+</div>
+<!-- Blog Posts -->
+<div id="blog-posts-container" class="space-y-8 mb-12">
+<article class="glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:#a596da20;color:#a596da;border:1px solid #a596da40">Gaming</span><span class="text-[var(--text-secondary)]">Osu</span><span class="ml-auto text-[var(--text-secondary)]">2026-06-14</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">my second 200pp play</h3><div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">GG i got my second best play on osu 206 pp - my second 200 pp lets go<br><br>the bg gave me powers - bless mika</p></div><div class="mb-5"><a href="https://youtu.be/PfoJg2idmF8" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div></article>
+</div>
+</div>
+</section>
+
+
+<div class="border-t border-white/5"></div>
+<section id="rhythm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="text-center mb-12">
+<h1 class="text-5xl lg:text-6xl font-bold mb-4">Rhythm <span class="gradient-text">Games</span></h1>
+<p class="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
+                    DennisZeroChaos • Netherlands NL • producing music
+                </p>
+<div class="flex justify-center gap-2 mt-6 flex-wrap">
+<button class="rhythm-tab active px-4 py-2 rounded-lg bg-[#A596DA]/20 text-[#A596DA] text-sm font-medium" data-rhythm="overview">Overview</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="osu">osu!</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="mania">osu!mania 4K</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="etterna">Etterna</button>
+<button class="rhythm-tab px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-sm" data-rhythm="ffr">FFR</button>
+</div>
+</div>
+<div class="rhythm-panel" id="rhythm-overview">
+<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">osu! Standard</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-circle text-[#A596DA] text-xs"></i></div>
+</div>
+<p class="text-2xl font-bold" id="overview-std-rank">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Wereldwijde Ranking</p>
+<div class="flex gap-4 text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-std-pp">-</span> pp</span>
+<span><span class="font-bold" id="overview-std-acc">-</span> acc</span>
+</div>
+</div>
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">osu!mania 4K</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-th text-[#A596DA] text-xs"></i></div>
+</div>
+<p class="text-2xl font-bold" id="overview-mania-rank">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Wereldwijde Ranking</p>
+<div class="flex gap-4 text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-mania-pp">-</span> pp</span>
+<span><span class="font-bold" id="overview-mania-acc">-</span> acc</span>
+</div>
+</div>
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">Etterna Online</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-chart-line text-[#A596DA] text-xs"></i></div>
+</div>
+<p class="text-2xl font-bold" id="overview-etterna-rank">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Wereldwijde Ranking</p>
+<div class="text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-etterna-overall">-</span> Overall Skill</span>
+</div>
+</div>
+<div class="glass rounded-2xl p-6 glow-hover">
+<div class="flex items-center justify-between mb-3">
+<span class="text-xs uppercase text-[var(--text-secondary)]">Flash Flash Revolution</span>
+<div class="w-8 h-8 rounded-lg bg-[#A596DA]/20 flex items-center justify-center"><i class="fas fa-bolt text-[#A596DA] text-xs"></i></div>
+</div>
+<p class="text-2xl font-bold" id="overview-ffr-skill">-</p>
+<p class="text-xs text-[var(--text-secondary)] mb-3">Skill Rating</p>
+<div class="flex gap-4 text-sm">
+<span><span class="font-bold text-[#A596DA]" id="overview-ffr-rank">-</span> rank</span>
+<span><span class="font-bold" id="overview-ffr-nl">-</span> NL</span>
+</div>
+</div>
+</div>
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 glass rounded-2xl p-6" style="overflow:hidden">
+<h3 class="text-sm uppercase tracking-wide text-[var(--text-secondary)] mb-4">Keyboard Layout</h3>
+<div class="bg-black/30 rounded-xl p-6" style="overflow:hidden">
+<div class="flex flex-col items-center gap-2" style="transform:scale(0.8);transform-origin:top center">
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">Q</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">W</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">E</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">R</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">T</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">Y</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">U</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">I</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">O</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">P</div>
+</div>
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">A</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">S</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">D</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">F</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">G</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">H</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">J</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">K</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">L</div>
+</div>
+<div class="flex gap-1.5">
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">Z</div>
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">X</div>
+<div class="w-8 h-8 rounded bg-[#A596DA] text-black flex items-center justify-center text-xs font-bold">C</div>
+<div class="w-8 h-8 rounded bg-[#A596DA] text-black flex items-center justify-center text-xs font-bold">V</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">B</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">N</div>
+<div class="w-8 h-8 rounded bg-white/10 flex items-center justify-center text-xs">M</div>
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">-</div>
+<div class="w-8 h-8 rounded bg-[#FF6B00] text-black flex items-center justify-center text-xs font-bold">/</div>
+</div>
+</div>
+<div class="flex justify-center gap-6 mt-4 text-xs text-[var(--text-secondary)]">
+<span><span class="text-[#A596DA]">●</span> osu!standard — A + S</span>
+<span><span style="color:#FF6B00">●</span> 4K mania — Z X - /</span>
+</div>
+</div>
+</div>
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-4">Hardware focus</h3>
+<div class="space-y-3">
+<div>
+<div class="flex items-start gap-3"><div class="w-8 h-8 rounded-lg bg-[#6B5BFF]/20 flex items-center justify-center flex-shrink-0"><span class="text-[#8B7FFF] font-bold text-sm">W</span></div><div><p class="text-sm font-medium" id="tablet-model">Wacom CTL-4100WL — area</p><p class="text-xs text-[var(--text-secondary)]" id="tablet-specs">Full: 152×95mm (1.6) • Active: 135.111×76mm (1.7778)</p></div></div>
+</div>
+<div class="bg-black/30 rounded-lg p-4 h-48 flex items-center justify-center">
+<div class="relative" id="tablet-viz" style="width: 240px; height: 150px;">
+<!-- Full area outline -->
+<div class="absolute inset-0 border-2 border-white/70"></div>
+<div class="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] text-white/70 font-mono">152mm</div>
+<div class="absolute -left-8 top-1/2 -translate-y-1/2 -rotate-90 text-[10px] text-white/70 font-mono">95mm</div>
+<!-- Active area -->
+<div id="tablet-active" class="absolute bg-[#A596DA]" style="width: 95%; height: 65%; left:0; bottom:0;">
+<div id="tablet-label-w" class="absolute top-1 left-1/2 -translate-x-1/2 text-[10px] text-black/70 font-mono">95mm</div>
+<div id="tablet-label-h" class="absolute left-1 top-1/2 -translate-y-1/2 -rotate-90 origin-left text-[10px] text-black/70 font-mono">65mm</div>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<div class="w-1 h-1 bg-black rounded-full mb-1"></div>
+<div class="text-[11px] text-black font-mono font-bold">1.7778</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- OSU STANDARD -->
+<div class="rhythm-panel" id="rhythm-osu">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#A596DA]"></span> osu! Standard</h3>
+<div class="grid grid-cols-2 gap-4 text-sm">
+<div><p class="text-xs text-[var(--text-secondary)]">WERELDWIJDE RANKING</p><p class="text-xl font-bold" id="osu-panel-rank">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">NEDERLANDSE RANKING</p><p class="text-xl font-bold" id="osu-panel-country">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PP</p><p class="text-lg font-bold text-[#A596DA]" id="osu-panel-pp">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">ACCURACY</p><p class="text-lg font-bold" id="osu-panel-acc">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAY COUNT</p><p id="osu-panel-plays">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAYTIME</p><p id="osu-panel-time">-</p></div>
+</div>
+<div class="mt-4 pt-4 border-t border-white/10">
+<p class="text-xs text-[var(--text-secondary)]">RANKED SCORE</p>
+<p class="font-mono" id="osu-panel-ranked">-</p>
+</div>
+</div>
+<div class="glass rounded-2xl p-6">
+<h4 class="text-xs uppercase text-[var(--text-secondary)] mb-3">Grades</h4>
+<div class="flex justify-between text-center">
+<div><div class="w-8 h-6 rounded bg-[#Fdd700] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SS</div><p class="text-xs" id="osu-panel-g-ss">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SSH</div><p class="text-xs" id="osu-panel-g-ssh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#Fdd700]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">S</div><p class="text-xs" id="osu-panel-g-s">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SH</div><p class="text-xs" id="osu-panel-g-sh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#8BC34A] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">A</div><p class="text-xs" id="osu-panel-g-a">-</p></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">Top Plays</h3>
+<span class="text-xs px-2 py-1 rounded bg-[#A596DA]/20 text-[#A596DA]">pp farm</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<tbody id="osu-panel-top5">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="rhythm-panel" id="rhythm-mania">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-4 flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#A596DA]"></span> osu!mania 4K</h3>
+<div class="grid grid-cols-2 gap-4 text-sm">
+<div><p class="text-xs text-[var(--text-secondary)]">WERELDWIJDE</p><p class="text-xl font-bold" id="mania-panel-rank">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">NEDERLANDSE</p><p class="text-xl font-bold" id="mania-panel-country">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PP</p><p class="text-lg font-bold text-[#A596DA]" id="mania-panel-pp">-pp</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">ACCURACY</p><p class="text-lg font-bold" id="mania-panel-acc">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAY COUNT</p><p id="mania-panel-plays">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">PLAYTIME</p><p id="mania-panel-time">-</p></div>
+</div>
+</div>
+<div class="glass rounded-2xl p-6">
+<h4 class="text-xs uppercase text-[var(--text-secondary)] mb-3">Grades</h4>
+<div class="flex justify-between text-center">
+<div><div class="w-8 h-6 rounded bg-[#Fdd700] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SS</div><p class="text-xs" id="mania-panel-g-ss">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SSH</div><p class="text-xs" id="mania-panel-g-ssh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#Fdd700]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">S</div><p class="text-xs" id="mania-panel-g-s">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#C0C0C0]/40 text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">SH</div><p class="text-xs" id="mania-panel-g-sh">-</p></div>
+<div><div class="w-8 h-6 rounded bg-[#8BC34A] text-black text-xs flex items-center justify-center font-bold mx-auto mb-1">A</div><p class="text-xs" id="mania-panel-g-a">-</p></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">Top Plays — 4K</h3>
+<span class="text-xs px-2 py-1 rounded bg-[#A596DA]/20 text-[#A596DA]">LN focus</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<tbody id="mania-panel-top5">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="rhythm-panel" id="rhythm-etterna">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-2">Etterna Online</h3>
+<p class="text-sm text-[var(--text-secondary)]">USERNAME</p>
+<p class="text-xl font-bold mb-3">DennisZeroVT</p>
+<p class="text-xs text-[var(--text-secondary)]">OVERALL RANK</p>
+<p class="text-2xl font-bold text-[#A596DA]"><span id="etterna-rank">-</span></p>
+<p class="text-2xl font-bold text-[#A596DA]"></p>
+<p class="text-xs mt-3"><span id="etterna-since">-</span></p>
+</div>
+<div class="glass rounded-2xl p-6">
+<h4 class="text-xs uppercase text-[var(--text-secondary)] mb-3">Skillsets</h4>
+<div class="space-y-2 text-sm">
+<div><div class="flex justify-between mb-1"><span>Overall</span><span class="font-mono" id="etterna-overall">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-overall" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Stream</span><span class="font-mono" id="etterna-stream">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-stream" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Jumpstream</span><span class="font-mono" id="etterna-jumpstream">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-jumpstream" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Handstream</span><span class="font-mono" id="etterna-handstream">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-handstream" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Jacks</span><span class="font-mono" id="etterna-jacks">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-jacks" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Chordjacks</span><span class="font-mono" id="etterna-chordjacks">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-chordjacks" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Stamina</span><span class="font-mono" id="etterna-stamina">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-stamina" style="width:0%"></div></div></div>
+<div><div class="flex justify-between mb-1"><span>Technical</span><span class="font-mono" id="etterna-technical">-</span></div><div class="h-1.5 bg-white/10 rounded"><div class="h-full rounded" id="etterna-bar-technical" style="width:0%"></div></div></div>
+</div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<div class="flex items-center justify-between mb-4">
+<h3 class="font-bold">Recent Top 10</h3>
+<span class="text-xs px-2 py-1 rounded bg-white/5">6 mei 2026</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b border-white/10 text-xs text-[var(--text-secondary)]">
+<th class="py-2 text-left w-8">#</th>
+<th class="py-2 text-left">SONG</th>
+<th class="py-2 text-right w-16">RATE</th>
+<th class="py-2 text-right w-16">ACC</th>
+</tr>
+</thead>
+<tbody id="etterna-top10">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]" colspan="4">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="rhythm-panel" id="rhythm-ffr">
+<div class="grid lg:grid-cols-3 gap-6">
+<div class="space-y-6">
+<div class="glass rounded-2xl p-6">
+<h3 class="font-bold mb-2">Flash Flash Revolution</h3>
+<p class="text-sm text-[var(--text-secondary)]">USERNAME</p>
+<p class="text-xl font-bold mb-3">DennisZeroVT</p>
+<div class="grid grid-cols-2 gap-4">
+<div><p class="text-xs text-[var(--text-secondary)]">FFR RANK</p> <p class="text-xl font-bold" id="ffr-rank">-</p></div>
+<div><p class="text-xs text-[var(--text-secondary)]">AVG RANK</p><p class="text-xl font-bold" id="ffr-avg-rank">-</p></div>
+</div>
+<div class="mt-3"><p class="text-xs text-[var(--text-secondary)]">SKILL RATING</p><p class="text-2xl font-bold text-[#A596DA]"><p id="ffr-skill">-</p></p></div>
+</div>
+</div>
+<div class="lg:col-span-2 glass rounded-2xl p-6">
+<h3 class="font-bold mb-4">Top Scores</h3>
+<div class="overflow-x-auto">
+<table class="w-full text-sm">
+<thead>
+<tr class="border-b border-white/10 text-xs text-[var(--text-secondary)]">
+<th class="py-2 text-left w-8">#</th>
+<th class="py-2 text-left">SONG</th>
+<th class="py-2 text-right w-12">LVL</th>
+<th class="py-2 text-right w-16">SCORE</th>
+</tr>
+</thead>
+<tbody id="ffr-top10">
+<tr><td class="py-4 text-center text-[var(--text-secondary)]" colspan="4">-</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+<div class="border-t border-white/5"></div>
+<section id="collabs">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="content">
+<div class="title-header">
+<h1>Collabs</h1>
+<p>// People I've made things with</p>
+</div>
+<div class="people-grid" id="collabs-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry at</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Inspiration · <span style="opacity:.75;font-weight:400">Snowfall</span></span></div>
+        <a href="https://x.com/eri_k416?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Stuck In Time</span></span><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Adrenaline</span></span></div>
+        <a href="https://x.com/mee_yawwwwww?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+</section>
+
+
+<div class="border-t border-white/5"></div>
+<section id="friends">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="content">
+<div class="title-header">
+<h1 class="gradient-text">Friends</h1>
+<p>// The people who made the journey worth it</p>
+</div>
+<div class="people-grid" id="friends-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry at</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Inspiration · <span style="opacity:.75;font-weight:400">Snowfall</span></span></div>
+        <a href="https://x.com/eri_k416?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music</p>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Stuck In Time</span></span><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Adrenaline</span></span></div>
+        <a href="https://x.com/mee_yawwwwww?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('vivid')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/vivid.jpg" alt="Vivid" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/vivid.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Vivid</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@vivid_exile</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">best Friend, // @vivid_exile</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">An ex-military veteran I met in my very first Discord server. Despite a troubled past he showed incredible strength and kindness. we became </p>
+        
+        <a href="https://x.com/vivid_exile?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('skylar')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/skylar.jpg" alt="Skylar" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/skylar.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Skylar</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@skylar_corgi</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @skylar_corgi</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Skylar is a best friend i met trough vivid on vivid first stream she and vivid are great support</p>
+        
+        <a href="https://x.com/skylar_corgi?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('nox')">
+      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
+      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
+        <img src="Friends/nox.jpg" alt="Nox" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/nox.png';">
+        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Nox</h3>
+        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@Nox_Daemon</div>
+        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @Nox_Daemon</div>
+        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Nox is a friend i met trough vivid again lol, i saw vivid inetracting with nox a lot and weeks later she became on of my friends aswell,</p>
+        
+        <a href="https://x.com/Nox_Daemon?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
+      </div>
+    </div>
+</div>
+</div>
+</div>
+</section>
+
+
+<div class="border-t border-white/5"></div>
 </main>
 <!-- Person Overlay Modal (friends / collaborators) -->
 <div class="overlay" id="person-overlay" onclick="closePersonOverlay(event)">

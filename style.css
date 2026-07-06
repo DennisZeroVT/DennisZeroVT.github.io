@@ -13,6 +13,10 @@
         scroll-behavior: smooth;
     }
     
+    main > section, .rhythm-panel {
+        scroll-margin-top: 90px;
+    }
+    
     body {
         background-color: var(--bg-main);
         color: var(--text-primary);
