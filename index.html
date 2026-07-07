@@ -731,9 +731,65 @@ section[id] {
   scroll-margin-top: 80px;
 }
 
+
+/* ===== NEW HAMBURGER + DRAWER ===== */
+#mobile-menu-btn{
+  width:44px;height:44px;
+  border-radius:12px;
+  background:rgba(16,12,28,0.6);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  border:1px solid rgba(165,150,218,0.2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  cursor:pointer;transition:all .25s ease;
+}
+#mobile-menu-btn:hover{border-color:rgba(165,150,218,0.4);background:rgba(165,150,218,0.15);transform:translateY(-1px)}
+#mobile-menu-btn:active{transform:scale(0.96)}
+#mobile-menu-btn .line{
+  width:18px;height:2px;background:#fff;border-radius:2px;
+  transition:transform .32s cubic-bezier(.4,0,.2,1),opacity .2s ease,width .2s ease;
+  transform-origin:center;display:block;
+}
+#mobile-menu-btn .line-2{width:14px;margin-left:4px}
+#mobile-menu-btn:hover .line-2{width:18px;margin-left:0}
+#mobile-menu-btn.open .line-1{transform:translateY(7px) rotate(45deg)}
+#mobile-menu-btn.open .line-2{opacity:0;transform:scaleX(0)}
+#mobile-menu-btn.open .line-3{transform:translateY(-7px) rotate(-45deg)}
+#mobile-menu-btn.open{background:rgba(165,150,218,0.2);border-color:#A596DA}
+
+#mobile-menu-overlay{
+  position:fixed;inset:0;z-index:40;
+  background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .32s ease;
+}
+#mobile-menu-overlay.open{opacity:1;pointer-events:auto}
+
+#mobile-menu{
+  position:fixed;top:0;right:0;bottom:0;z-index:50;
+  width:320px;max-width:86vw;
+  background:rgba(14,10,24,0.88);
+  backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);
+  border-left:1px solid rgba(165,150,218,0.18);
+  box-shadow:-20px 0 60px rgba(0,0,0,0.5);
+  transform:translateX(100%);transition:transform .38s cubic-bezier(.32,.72,0,1);
+  display:flex;flex-direction:column;
+}
+#mobile-menu.open{transform:translateX(0)}
+#mobile-menu .drawer-header{padding:24px 24px 16px;border-bottom:1px solid rgba(165,150,218,0.12)}
+#mobile-menu .drawer-nav{padding:20px 16px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:6px}
+#mobile-menu .nav-drawer-link{
+  display:flex;align-items:center;gap:14px;
+  padding:14px 16px;border-radius:14px;
+  font-size:15px;font-weight:500;color:var(--text-secondary);
+  transition:all .2s ease;position:relative;
+}
+#mobile-menu .nav-drawer-link:hover{background:rgba(165,150,218,0.12);color:#fff;transform:translateX(4px)}
+#mobile-menu .nav-drawer-link.active{background:linear-gradient(135deg,rgba(165,150,218,0.22),rgba(196,181,253,0.12));color:#fff;border:1px solid rgba(165,150,218,0.25)}
+#mobile-menu .nav-drawer-link i{width:22px;text-align:center;font-size:16px;opacity:0.9}
+#mobile-menu .drawer-footer{padding:20px 24px;border-top:1px solid rgba(165,150,218,0.1);margin-top:auto}
+
 </style>
 <style>
-/* TAB SYSTEM - only Home shows hero+featured */
 html.js main > section{display:none !important}
 html.js main > section.active{display:block !important;animation:fadeInUp .35s ease}
 </style>
@@ -764,19 +820,43 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 <div class="flex items-center gap-2">
   <button id="hq-toggle" class="px-3 py-1.5 rounded-lg glass text-xs font-semibold border border-[#A596DA]/30 hover:bg-[#A596DA]/20 transition" title="Toggle HQ mode">HQ</button>
-  <button class="text-2xl md:hidden" id="mobile-menu-btn" onclick="document.getElementById('mobile-menu')?.classList.toggle('hidden')" aria-label="Menu"><i class="fas fa-bars"></i></button>
+  <button type="button" id="mobile-menu-btn" class="md:hidden" aria-label="Open menu" aria-expanded="false">
+    <span class="line line-1"></span>
+    <span class="line line-2"></span>
+    <span class="line line-3"></span>
+  </button>
 </div>
 </div>
 </div>
-<div class="hidden md:hidden glass border-t border-[#A596DA]/10" id="mobile-menu">
-<div class="px-4 py-6 space-y-4">
-<a href="#home" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Home</a>
-<a href="#music" data-page="music" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">My Music</a>
-<a href="#blog" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Blog</a>
-<a href="#rhythm" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Rhythm</a>
-<a href="#collabs" data-page="collabs" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Collaborators</a>
-<a href="#friends" data-page="friends" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Friends</a>
-</div>
+<!-- New Drawer Overlay + Menu -->
+<div id="mobile-menu-overlay" class="md:hidden"></div>
+<div id="mobile-menu" class="md:hidden" aria-hidden="true">
+  <div class="drawer-header">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A596DA] to-[#C4B5FD] flex items-center justify-center font-bold text-black">D</div>
+      <div>
+        <div class="font-bold gradient-text">DennisZeroVT</div>
+        <div class="text-xs text-[var(--text-secondary)]">Producer & Dev</div>
+      </div>
+    </div>
+  </div>
+  <nav class="drawer-nav">
+    <a href="#home" data-page="home" class="nav-drawer-link active"><i class="fas fa-house"></i> Home</a>
+    <a href="#music" data-page="music" class="nav-drawer-link"><i class="fas fa-music"></i> My Music</a>
+    <a href="#blog" data-page="blog" class="nav-drawer-link"><i class="fas fa-book-open"></i> Blog</a>
+    <a href="#rhythm" data-page="rhythm" class="nav-drawer-link"><i class="fas fa-gamepad"></i> Rhythm</a>
+    <a href="#collabs" data-page="collabs" class="nav-drawer-link"><i class="fas fa-handshake"></i> Collaborators</a>
+    <a href="#friends" data-page="friends" class="nav-drawer-link"><i class="fas fa-users"></i> Friends</a>
+  </nav>
+  <div class="drawer-footer">
+    <div class="flex gap-3">
+      <a href="https://open.spotify.com/artist/1sDYqTh1SQNJksxNAXbxyS" target="_blank" class="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/10 transition"><i class="fab fa-spotify text-sm"></i></a>
+      <a href="https://x.com/DennisZeroVT" target="_blank" class="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/10 transition"><i class="fab fa-x-twitter text-sm"></i></a>
+      <a href="https://www.instagram.com/DennisZeroVT" target="_blank" class="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/10 transition"><i class="fab fa-instagram text-sm"></i></a>
+      <a href="https://youtube.com/@denniszerovt" target="_blank" class="w-9 h-9 rounded-full glass flex items-center justify-center hover:bg-white/10 transition"><i class="fab fa-youtube text-sm"></i></a>
+    </div>
+    <div class="text-[11px] text-[var(--text-secondary)] mt-4 opacity-60">© Dennis van Wijngaarden</div>
+  </div>
 </div>
 </nav>
 <main class="relative z-10 pt-20">
