@@ -16,7 +16,8 @@ let categories = [];
 
 // ---------------------------------------------------------------------------
 // SITE_SONGS — your tracks. Each needs a unique "id" (used in URLs like
-// openSong('this-id') and in ALBUMS tracklists below).
+// openSong('this-id') and in ALBUMS tracklists below). "genres" is an array
+// of strings used for the genre filter chips and search on the Music page.
 // ---------------------------------------------------------------------------
 const SITE_SONGS = [
   {
@@ -24,6 +25,7 @@ const SITE_SONGS = [
     title: "Adrenaline",
     artist: "Dennis van Wijngaarden",
     year: 2026,
+    genres: ["Electronic", "Orchestral"],
     coverEmoji: "",
     badges: [
       { label: "pending", color: "#6B7280" },
@@ -54,6 +56,7 @@ const SITE_SONGS = [
     title: "Snowfall",
     artist: "Dennis van Wijngaarden",
     year: "2025",
+    genres: ["Ambient", "Lo-fi"],
     audio: "SongData/Songs/snowfall.mp3",
     cover: "SongData/AlbumArt/snowfall.png",
     coverEmoji: "🌨️",
@@ -84,6 +87,7 @@ const SITE_SONGS = [
     title: "Stuck In Time",
     artist: "Dennis van Wijngaarden",
     year: "2026",
+    genres: ["Rock", "Alternative"],
     audio: "SongData/Songs/stuckintime.mp3",
     cover: "SongData/AlbumArt/stuckintime.png",
     coverEmoji: "🕒",
@@ -252,9 +256,11 @@ const SITE_POSTS = [
 
 function initSiteData() {
   SONGS = Object.fromEntries(SITE_SONGS.map(s => [s.id, {
+    id: s.id,
     name: s.title,
     artist: s.artist,
     year: s.year,
+    genres: s.genres || [],
     src: s.audio,
     cover: s.coverEmoji || '🎵',
     coverImg: s.cover,
@@ -290,6 +296,7 @@ function initSiteData() {
   renderCategories();
   renderSubs();
   renderPosts();
+  renderGenreFilters();
   renderSongsGrid();
   renderAlbumsGrid();
   renderPeople(SITE_PEOPLE);
@@ -382,18 +389,130 @@ function getBadgeStyle(name) {
 
 /* ---------- Music: songs & albums grids ---------- */
 
+let currentSongSearch = '';
+let currentSongSort = 'newest';
+let currentSongYear = 'All';
+let currentSongGenre = 'All';
+let currentSongView = 'grid';
+
+function songYearOf(song){
+  const y = parseInt(song.year, 10);
+  return isNaN(y) ? 'Unknown' : String(y);
+}
+
+function renderGenreFilters(){
+  const wrap = document.getElementById('genre-filters');
+  if (!wrap) return;
+  const all = Object.values(SONGS);
+  const counts = {};
+  all.forEach(s => (s.genres || []).forEach(g => { counts[g] = (counts[g]||0) + 1; }));
+  const genreNames = Object.keys(counts).sort();
+
+  const makeBtn = (name, count, isActive) => {
+    const btn = document.createElement('button');
+    btn.className = 'genre-pill-btn' + (isActive ? ' active' : '');
+    btn.innerHTML = `<span>${name}</span><span class="count">${count}</span>`;
+    btn.onclick = () => { currentSongGenre = name; renderGenreFilters(); renderSongsGrid(); };
+    return btn;
+  };
+
+  wrap.innerHTML = '';
+  wrap.appendChild(makeBtn('All Genres', all.length, currentSongGenre === 'All'));
+  wrap.lastChild.onclick = () => { currentSongGenre = 'All'; renderGenreFilters(); renderSongsGrid(); };
+  genreNames.forEach(g => wrap.appendChild(makeBtn(g, counts[g], currentSongGenre === g)));
+
+  // Populate year dropdown dynamically
+  const yearSelect = document.getElementById('songYearSelect');
+  if (yearSelect) {
+    const years = Array.from(new Set(all.map(songYearOf))).sort((a,b) => b.localeCompare(a));
+    const prev = yearSelect.value || currentSongYear;
+    yearSelect.innerHTML = '<option value="All">All years</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
+    yearSelect.value = years.includes(prev) ? prev : 'All';
+  }
+}
+
+window.onSongSearch = function(value){ currentSongSearch = (value||'').trim().toLowerCase(); renderSongsGrid(); };
+window.onSongSort = function(value){ currentSongSort = value; renderSongsGrid(); };
+window.onSongYear = function(value){ currentSongYear = value; renderSongsGrid(); };
+
+window.setSongView = function(view){
+  currentSongView = view;
+  document.querySelectorAll('#songViewToggle button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  renderSongsGrid();
+};
+
+function getFilteredSortedSongs(){
+  let entries = Object.keys(SONGS).map(key => [key, SONGS[key]]);
+
+  if (currentSongGenre !== 'All') {
+    entries = entries.filter(([,s]) => (s.genres||[]).includes(currentSongGenre));
+  }
+  if (currentSongYear !== 'All') {
+    entries = entries.filter(([,s]) => songYearOf(s) === currentSongYear);
+  }
+  if (currentSongSearch) {
+    entries = entries.filter(([,s]) => {
+      const haystack = [s.name, s.artist, ...(s.genres||[])].join(' ').toLowerCase();
+      return haystack.includes(currentSongSearch);
+    });
+  }
+
+  if (currentSongSort === 'oldest') entries.sort((a,b) => (parseInt(a[1].year)||0) - (parseInt(b[1].year)||0));
+  else if (currentSongSort === 'az') entries.sort((a,b) => a[1].name.localeCompare(b[1].name));
+  else if (currentSongSort === 'za') entries.sort((a,b) => b[1].name.localeCompare(a[1].name));
+  else entries.sort((a,b) => (parseInt(b[1].year)||0) - (parseInt(a[1].year)||0)); // newest default
+
+  return entries;
+}
+
 function renderSongsGrid() {
   const grid = document.getElementById('songs-grid');
   if (!grid) return;
+
+  const entries = getFilteredSortedSongs();
+
+  const bar = document.getElementById('songResultsBar');
+  if (bar) {
+    bar.textContent = `${entries.length} song${entries.length===1?'':'s'}${currentSongSearch ? ` matching "${currentSongSearch}"` : ''}`;
+  }
+
+  if (entries.length === 0) {
+    grid.className = '';
+    grid.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)] col-span-full">No songs match your filters.</div>';
+    return;
+  }
+
+  if (currentSongView === 'list') {
+    grid.className = 'list-view';
+    grid.innerHTML = entries.map(([key, song]) => {
+      const genreChips = (song.genres||[]).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
+      return `
+      <div class="song-row glass" onclick="openSong('${key}')">
+        <div class="song-row-thumb">
+          ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" onerror="this.style.display='none'">` : (song.cover||'🎵')}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-white truncate">${song.name}</div>
+          <div class="text-sm text-[var(--text-secondary)] truncate">${song.year || ''} • ${song.artist}</div>
+        </div>
+        <div class="song-row-genres flex gap-1.5 flex-wrap">${genreChips}</div>
+        <button class="w-10 h-10 rounded-full bg-[#A596DA] hover:bg-[#8B78CB] flex items-center justify-center flex-shrink-0 transition" onclick="event.stopPropagation(); openSong('${key}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>`;
+    }).join('');
+    return;
+  }
+
   grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
-  grid.innerHTML = Object.keys(SONGS).map(key => {
-    const song = SONGS[key];
+  grid.innerHTML = entries.map(([key, song]) => {
     const badges = (song.badges || []).slice(0,3).map(b => {
       const label = badgeLabel(b), color = badgeColor(b);
       return color
         ? `<span class="text-[10px] px-2 py-0.5 rounded-full" style="background:${color};color:#fff">${label}</span>`
         : `<span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">${label}</span>`;
     }).join('');
+    const genreChips = (song.genres||[]).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
     return `
     <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('${key}')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
@@ -409,6 +528,7 @@ function renderSongsGrid() {
         <div class="p-4">
             <h3 class="font-semibold text-white truncate">${song.name}</h3>
             <p class="text-sm text-[var(--text-secondary)] mt-1">${song.artist}</p>
+            ${genreChips ? `<div class="flex gap-1.5 mt-2 flex-wrap">${genreChips}</div>` : ''}
             <div class="flex gap-1.5 mt-3 flex-wrap">${badges}</div>
         </div>
     </div>`;
