@@ -654,43 +654,49 @@ function renderPosts(){
   }).join('');
 }
 
-/* ---------- Navigation (one page — nav links are anchor jumps to sections) ---------- */
+/* ---------- Navigation (TABS - only one section visible) ---------- */
+const sectionIds = ['home', 'music', 'blog', 'rhythm', 'collabs', 'friends'];
 
-const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-if (mobileMenuBtn) {
-  mobileMenuBtn.addEventListener('click', () => {
-    document.getElementById('mobile-menu').classList.toggle('hidden');
+function showPage(id, updateHash=true){
+  sectionIds.forEach(sid=>{
+    const el=document.getElementById(sid);
+    if(el) el.classList.toggle('active', sid===id);
   });
+  document.querySelectorAll('.nav-link, .nav-link-mobile').forEach(link=>{
+    const match = link.dataset.page===id;
+    link.classList.toggle('active', match);
+    link.classList.toggle('text-white', match);
+    if(match) link.classList.remove('text-[var(--text-secondary)]');
+    else link.classList.add('text-[var(--text-secondary)]');
+  });
+  if(updateHash && history.replaceState) history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0, behavior:'instant'});
+  const mm=document.getElementById('mobile-menu'); if(mm) mm.classList.add('hidden');
 }
 
-// Close the mobile menu once a link is tapped (the browser handles the
-// actual scroll natively via the #anchor href — no JS needed for that part).
-document.querySelectorAll('.nav-link-mobile').forEach(link => {
-  link.addEventListener('click', () => {
-    const menu = document.getElementById('mobile-menu');
-    if (menu) menu.classList.add('hidden');
+document.querySelectorAll('[data-page]').forEach(link=>{
+  link.addEventListener('click', e=>{
+    const p = link.dataset.page || link.getAttribute('href')?.slice(1);
+    if(p && sectionIds.includes(p)){ e.preventDefault(); showPage(p); }
   });
 });
 
-// Highlight whichever section is currently in view in the nav bar, so it
-// still feels like "you're on the Music tab" etc. even though everything
-// lives on one scrollable page.
-const sectionIds = ['home', 'music', 'blog', 'rhythm', 'collabs', 'friends'];
-const navObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const id = entry.target.id;
-    document.querySelectorAll('.nav-link, .nav-link-mobile').forEach(link => {
-      const isMatch = link.getAttribute('data-page') === id;
-      link.classList.toggle('active', isMatch);
-      link.classList.toggle('text-white', isMatch);
-      link.classList.toggle('text-[var(--text-secondary)]', !isMatch);
-    });
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+if(mobileMenuBtn){
+  mobileMenuBtn.addEventListener('click', ()=>{
+    document.getElementById('mobile-menu')?.classList.toggle('hidden');
   });
-}, { rootMargin: '-40% 0px -55% 0px' });
-sectionIds.forEach(id => {
-  const el = document.getElementById(id);
-  if (el) navObserver.observe(el);
+}
+
+window.addEventListener('hashchange', ()=>{
+  const h = location.hash.slice(1);
+  if(sectionIds.includes(h)) showPage(h,false);
+});
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  let initial = location.hash.slice(1);
+  if(!sectionIds.includes(initial)) initial='home';
+  showPage(initial,false);
 });
 
 document.addEventListener('click', function(e) {

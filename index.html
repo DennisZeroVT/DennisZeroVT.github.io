@@ -718,10 +718,10 @@ body.optimized .glow-hover {
 }
 
 /* ---------------------------------------------------------------------------
-   Tab navigation - SEO SAFE:
+   TAB NAVIGATION - SEO SAFE
    - No JS: all sections visible (crawlers see everything)
-   - With JS: only .active section visible, others hidden via body.js-enabled
-   - Nav links switch active section instead of scrolling
+   - With JS: html.js hides all main>section, only .active shows
+   - Home contains hero + featured, other tabs show only their content
    --------------------------------------------------------------------------- */
 html {
   scroll-behavior: smooth;
@@ -732,16 +732,12 @@ section[id] {
 }
 
 </style>
-
 <style>
-/* ---- TAB SYSTEM (SEO SAFE) ---- */
-html.js section[id]{display:none}
-html.js section[id].active{display:block; animation: tabFade .35s ease}
-@keyframes tabFade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-/* keep rhythm sub-panels working */
-.rhythm-panel.hidden{display:none !important}
+/* TAB SYSTEM - only Home shows hero+featured */
+html.js main > section{display:none !important}
+html.js main > section.active{display:block !important;animation:fadeInUp .35s ease}
 </style>
-<noscript><style>section[id]{display:block !important}</style></noscript>
+<noscript><style>main > section{display:block !important}</style></noscript>
 <script>document.documentElement.classList.add('js')</script>
 
 </head>
@@ -768,7 +764,7 @@ html.js section[id].active{display:block; animation: tabFade .35s ease}
 </div>
 <div class="flex items-center gap-2">
   <button id="hq-toggle" class="px-3 py-1.5 rounded-lg glass text-xs font-semibold border border-[#A596DA]/30 hover:bg-[#A596DA]/20 transition" title="Toggle HQ mode">HQ</button>
-  <button class="text-2xl md:hidden" id="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+  <button class="text-2xl md:hidden" id="mobile-menu-btn" onclick="document.getElementById('mobile-menu')?.classList.toggle('hidden')" aria-label="Menu"><i class="fas fa-bars"></i></button>
 </div>
 </div>
 </div>
@@ -802,10 +798,10 @@ html.js section[id].active{display:block; animation: tabFade .35s ease}
                             Independent music producer and game developer 
                         </p>
 <div class="flex flex-wrap gap-4">
-<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="#music" data-page="music">
+<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="#music">
 <i class="fas fa-play mr-2"></i>Listen to My Music
                             </a>
-<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="#blog" data-page="blog">
+<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="#blog">
 <i class="fas fa-gamepad mr-2"></i>View Game Projects
                             </a>
 </div>
@@ -1554,76 +1550,6 @@ html.js section[id].active{display:block; animation: tabFade .35s ease}
 </div>
 </div>
 </footer>
-
-<script>
-(function(){
-  function initTabs(){
-    const sections = document.querySelectorAll('main > section[id], section[id]');
-    const navLinks = document.querySelectorAll('[data-page]');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    function showPage(page, push){
-      let found = false;
-      sections.forEach(s=>{
-        const on = s.id === page;
-        s.classList.toggle('active', on);
-        if(on) found = true;
-      });
-      if(!found) return;
-      navLinks.forEach(l=>{
-        const isActive = l.dataset.page === page;
-        l.classList.toggle('active', isActive);
-        l.setAttribute('aria-current', isActive ? 'page' : 'false');
-      });
-      window.scrollTo({top:0, behavior:'instant'});
-      if(push && history.replaceState) history.replaceState(null,'','#'+page);
-      if(mobileMenu) mobileMenu.classList.add('hidden');
-    }
-
-    // initial
-    let initial = (location.hash||'#home').replace('#','');
-    if(!document.getElementById(initial)) initial='home';
-    showPage(initial,false);
-
-    navLinks.forEach(a=>{
-      a.addEventListener('click', e=>{
-        const p = a.dataset.page;
-        if(!p) return;
-        if(document.getElementById(p)){
-          e.preventDefault();
-          showPage(p,true);
-        }
-      });
-    });
-
-    window.addEventListener('hashchange', ()=>{
-      const p = location.hash.replace('#','');
-      if(document.getElementById(p)) showPage(p,false);
-    });
-
-    // mobile toggle
-    const btn = document.getElementById('mobile-menu-btn');
-    if(btn && mobileMenu){
-      btn.addEventListener('click', ()=> mobileMenu.classList.toggle('hidden'));
-    }
-
-    // rhythm sub-tabs (keep working)
-    document.addEventListener('click', (e)=>{
-      const tab = e.target.closest('.rhythm-tab');
-      if(!tab) return;
-      document.querySelectorAll('.rhythm-tab').forEach(b=>{
-        b.classList.remove('active','bg-[#A596DA]/20','text-[#A596DA]','border-[#A596DA]/40');
-      });
-      tab.classList.add('active','bg-[#A596DA]/20','text-[#A596DA]');
-      document.querySelectorAll('.rhythm-panel').forEach(p=>p.classList.add('hidden'));
-      const target = document.getElementById('rhythm-'+tab.dataset.rhythm);
-      if(target) target.classList.remove('hidden');
-    });
-  }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', initTabs);
-  else initTabs();
-})();
-</script>
 
 <script src="app.js"></script>
 </body>
