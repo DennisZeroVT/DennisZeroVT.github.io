@@ -23,10 +23,10 @@
   font-family: "Optimistic Mono", ui-monospace, monospace;
 }
 </style>
-<script>document.documentElement.classList.add('js');</script>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>DennisZeroVT | Music Producer &amp; Game Developer</title>
+<meta name="description" content="Music producer and game developer. Original tracks, dev blog, rhythm game stats, friends & collaborators."/>
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -121,22 +121,8 @@
         color: var(--accent) !important;
     }
     
-    /* SEO FIX: Progressive enhancement - visible by default for crawlers, hidden by JS */
-    .page-section {
-        display: block;
-        margin-bottom: 2rem;
-    }
-    /* When JS is enabled, hide inactive sections instantly */
-    .js .page-section {
-        display: none;
-    }
-    .js .page-section.active {
-        display: block;
-        animation: fadeInUp 0.5s ease;
-    }
-    /* Fallback for old CSS that used clip */
-    .page-section.active {
-        display: block;
+    main {
+        animation: fadeInUp 0.4s ease;
     }
     
     @keyframes fadeInUp {
@@ -587,7 +573,6 @@ body::after {
 body{background-image:url('bk.png');background-position:center;background-size:cover;background-attachment:fixed;background-color:#0a0a0f}
 body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-index:-1;pointer-events:none}
 
-</style>
 <link href="/icons/favicon.ico" rel="icon" sizes="any"/>
 <link href="/icons/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"/>
 <link href="/icons/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"/>
@@ -610,7 +595,6 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
 
 
 
-<style>
 /* FINAL MOBILE FIX - overrides everything */
 @media (max-width: 768px) {
   /* 1. Song overlay - allow scroll */
@@ -659,7 +643,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
   }
   
   /* 4. Page content stretch */
-  .page-section, .content, main, section {
+  .content, main, section {
     width: 100% !important;
     max-width: 100vw !important;
     overflow-x: hidden !important;
@@ -678,10 +662,8 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
   /* 6. Bottom player safe area */
   #bottomPlayer { bottom: 0 !important; padding-bottom: env(safe-area-inset-bottom); }
 }
-</style>
 
 
-<style>
 /* SCROLL FIX for song cards */
 @media (max-width: 768px) {
   #songOverlay {
@@ -717,9 +699,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
     width: 100% !important;
   }
 }
-</style>
 
-<style>
 @media (max-width: 768px) {
   #home, #featured-projects {
     display: block;
@@ -734,7 +714,6 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
   }
 }
 html, body { overflow-x: hidden !important; max-width: 100vw !important; }
-</style>
 
 <style id="hq-styles">
 /* HQ toggle styles */
@@ -758,17 +737,33 @@ body.optimized .glow-hover {
   border-color: #A596DA !important;
   color: white !important;
 }
+
+/* ---------------------------------------------------------------------------
+   TAB NAVIGATION - SEO SAFE
+   - No JS: all sections visible (crawlers see everything)
+   - With JS: html.js hides all main>section, only .active shows
+   - Home contains hero + featured, other tabs show only their content
+   --------------------------------------------------------------------------- */
+html {
+  scroll-behavior: smooth;
+}
+
+section[id] {
+  scroll-margin-top: 80px;
+}
+
 </style>
 
-
-<script type="application/ld+json">
-{"@context":"https://schema.org","@type":"MusicGroup","name":"DennisZeroVT","url":"https://denniszerovt.github.io/","track":[{"@type":"MusicRecording","name":"Adrenaline"},{"@type":"MusicRecording","name":"Snowfall"},{"@type":"MusicRecording","name":"Stuck In Time"}]}
-</script>
+<script>document.documentElement.classList.add('js')</script>
+<style>
+/* TAB SYSTEM - SEO SAFE: no-JS = all visible, JS = only active visible */
+html.js main > section{display:none !important}
+html.js main > section.active{display:block !important;animation:fadeInUp .35s ease}
+</style>
+<noscript><style>main > section{display:block !important}</style></noscript>
 
 </head>
-
 <body class="antialiased">
-<!-- Navigation -->
 <nav class="fixed top-0 w-full z-50 glass">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-20">
@@ -778,11 +773,11 @@ body.optimized .glow-hover {
 </div>
 <div>
 <h1 class="text-xl font-bold gradient-text">DennisZeroVT</h1>
-<p class="text-xs text-[var(--text-secondary)]">Producer & Dev</p>
+<p class="text-xs text-[var(--text-secondary)]">Producer &amp; Dev</p>
 </div>
 </div>
 <div class="hidden md:flex items-center gap-8">
-<a href="#home" data-page="home" class="nav-link text-sm font-medium active text-white">Home</a>
+<a href="#home" data-page="home" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Home</a>
 <a href="#music" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">My Music</a>
 <a href="#blog" data-page="blog" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
 <a href="#rhythm" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
@@ -797,7 +792,7 @@ body.optimized .glow-hover {
 </div>
 <div class="hidden md:hidden glass border-t border-[#A596DA]/10" id="mobile-menu">
 <div class="px-4 py-6 space-y-4">
-<a href="#home" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-white">Home</a>
+<a href="#home" data-page="home" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Home</a>
 <a href="#music" data-page="music" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">My Music</a>
 <a href="#blog" data-page="blog" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Blog</a>
 <a href="#rhythm" data-page="rhythm" class="nav-link-mobile block w-full text-left px-4 py-2 text-sm text-[var(--text-secondary)]">Rhythm</a>
@@ -806,11 +801,11 @@ body.optimized .glow-hover {
 </div>
 </div>
 </nav>
-<!-- Main Content -->
 <main class="relative z-10 pt-20">
+<!-- ===== HOME SECTION ===== -->
 
 <!-- HOME PAGE -->
-<section class="page-section active" id="home">
+<section id="home" class="active">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="grid lg:grid-cols-2 gap-12 items-center">
 <div class="space-y-8">
@@ -825,12 +820,12 @@ body.optimized .glow-hover {
                             Independent music producer and game developer 
                         </p>
 <div class="flex flex-wrap gap-4">
-<button class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover" onclick="navigateTo('music')">
+<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="#music" data-page="music">
 <i class="fas fa-play mr-2"></i>Listen to My Music
-                            </button>
-<button class="px-8 py-4 rounded-lg glass font-semibold glow-hover" onclick="navigateTo('blog')">
+                            </a>
+<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="#blog" data-page="blog">
 <i class="fas fa-gamepad mr-2"></i>View Game Projects
-                            </button>
+                            </a>
 </div>
 </div>
 </div>
@@ -847,7 +842,7 @@ body.optimized .glow-hover {
 <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
 <i class="fas fa-snowflake text-2xl text-[#A596DA]"></i>
 </div>
-<span class="px-3 py-1 rounded-full text-xs bg-[#A596DA]/20 text-[#A596DA] font-medium">comming soon</span>
+<span class="px-3 py-1 rounded-full text-xs bg-[#A596DA]/20 text-[#A596DA] font-medium">coming soon</span>
 </div>
 <h3 class="text-2xl font-bold mb-3">Adrenaline</h3>
 <p class="text-[var(--text-secondary)] mb-6 leading-relaxed">
@@ -859,7 +854,9 @@ body.optimized .glow-hover {
 </section>
 
 <!-- MY MUSIC PAGE -->
-<section class="page-section" id="music">
+
+<!-- ===== MUSIC SECTION ===== -->
+<section id="music">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4">My <span class="gradient-text">Music</span></h1>
@@ -947,7 +944,9 @@ body.optimized .glow-hover {
 </section>
 
 <!-- GAME DEV BLOG PAGE -->
-<section class="page-section" id="blog">
+
+<!-- ===== BLOG SECTION ===== -->
+<section id="blog">
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4"><span class="gradient-text">Blog</span></h1>
@@ -966,7 +965,9 @@ body.optimized .glow-hover {
 </div>
 </section>
 
-<section class="page-section" id="rhythm">
+
+<!-- ===== RHYTHM SECTION ===== -->
+<section id="rhythm">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-12">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4">Rhythm <span class="gradient-text">Games</span></h1>
@@ -1275,7 +1276,9 @@ body.optimized .glow-hover {
 </div>
 </section>
 
-<section class="page-section" id="collabs">
+
+<!-- ===== COLLABS SECTION ===== -->
+<section id="collabs">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
 <div class="title-header">
@@ -1311,7 +1314,9 @@ body.optimized .glow-hover {
 </div>
 </section>
 
-<section class="page-section" id="friends">
+
+<!-- ===== FRIENDS SECTION ===== -->
+<section id="friends">
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
 <div class="title-header">
@@ -1382,6 +1387,7 @@ body.optimized .glow-hover {
 </div>
 </div>
 </section>
+
 
 </main>
 <!-- Person Overlay Modal (friends / collaborators) -->
@@ -1566,7 +1572,6 @@ body.optimized .glow-hover {
 </div>
 </div>
 </footer>
-
 <script>
 /* =========================================================
    DennisZeroVT site — consolidated app script
@@ -1955,20 +1960,13 @@ function renderAlbumsGrid() {
 function renderPeople(peopleList) {
   const collabsGrid = document.getElementById('collabs-grid');
   const friendsGrid = document.getElementById('friends-grid');
-  if (!collabsGrid || !friendsGrid) return;
-  collabsGrid.innerHTML = '';
-  friendsGrid.innerHTML = '';
+  if (!collabsGrid && !friendsGrid) return;
 
-  peopleList.forEach(p => {
-    const tags = (p.tags || []).map(t => t.toLowerCase());
-    const isCollab = tags.includes('collab');
-    const isFriend = tags.includes('friend') || (!isCollab && tags.length === 0);
-
+  function cardFor(p) {
     const avatarBase = (p.avatar || `Friends/${p.id}.jpg`).replace(/\.jpg$|\.png$/i, '');
     const tryJpg = avatarBase + '.jpg';
     const tryPng = avatarBase + '.png';
     const twitter = (p.links && p.links.twitter) || '';
-
     const credits = p.credits || [];
     const collabChips = credits.map(cr => {
       const roleLabel = cr.role || 'Collaborator';
@@ -1991,24 +1989,24 @@ function renderPeople(peopleList) {
         ${collabChips ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">${collabChips}</div>` : ''}
         ${twitter ? `<a href="${twitter}" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>` : ''}
       </div>`;
+    return card;
+  }
 
-    if (isCollab) collabsGrid.appendChild(card.cloneNode(true));
-    if (isFriend) friendsGrid.appendChild(card.cloneNode(true));
-  });
-
-  // Re-bind clicks (cloneNode drops JS-assigned handlers)
-  [collabsGrid, friendsGrid].forEach((grid, gi) => {
-    const list = peopleList.filter(p => {
-      const tags = (p.tags || []).map(t => t.toLowerCase());
-      const isCollab = tags.includes('collab');
-      const isFriend = tags.includes('friend') || (!isCollab && tags.length === 0);
-      return gi === 0 ? isCollab : isFriend;
-    });
-    Array.from(grid.children).forEach((card, i) => {
-      const person = list[i];
-      if (person) card.onclick = () => openPersonOverlay(person.id);
-    });
-  });
+  if (collabsGrid) {
+    collabsGrid.innerHTML = '';
+    peopleList
+      .filter(p => (p.tags || []).map(t => t.toLowerCase()).includes('collab'))
+      .forEach(p => collabsGrid.appendChild(cardFor(p)));
+  }
+  if (friendsGrid) {
+    friendsGrid.innerHTML = '';
+    peopleList
+      .filter(p => {
+        const tags = (p.tags || []).map(t => t.toLowerCase());
+        return tags.includes('friend') || (!tags.includes('collab') && tags.length === 0);
+      })
+      .forEach(p => friendsGrid.appendChild(cardFor(p)));
+  }
 }
 
 window.openPersonOverlay = function(personId) {
@@ -2231,73 +2229,50 @@ function renderPosts(){
   }).join('');
 }
 
-/* ---------- Navigation (single-page routing) ---------- */
+/* ---------- Navigation (TABS - only one section visible) ---------- */
+const sectionIds = ['home', 'music', 'blog', 'rhythm', 'collabs', 'friends'];
 
-
-function navigateTo(page) {
-  try {
-    const sections = document.querySelectorAll('.page-section');
-    sections.forEach(section => {
-      section.classList.remove('active');
-      section.setAttribute('aria-hidden', 'true');
-    });
-    const target = document.getElementById(page);
-    if (!target) {
-      console.warn('navigateTo: no section #' + page);
-      const home = document.getElementById('home');
-      if (home) { home.classList.add('active'); home.removeAttribute('aria-hidden'); }
-      return;
-    }
-    target.classList.add('active');
-    target.removeAttribute('aria-hidden');
-
-    document.querySelectorAll('.nav-link').forEach(link => {
-      const isActive = link.getAttribute('data-page') === page;
-      link.classList.toggle('active', isActive);
-      link.classList.toggle('text-white', isActive);
-      link.classList.toggle('text-[var(--text-secondary)]', !isActive);
-    });
-    document.querySelectorAll('.nav-link-mobile').forEach(link => {
-      const isActive = link.getAttribute('data-page') === page;
-      link.classList.toggle('text-white', isActive);
-      link.classList.toggle('text-[var(--text-secondary)]', !isActive);
-    });
-
-    const mobileMenu = document.getElementById('mobile-menu');
-    if (mobileMenu) mobileMenu.classList.add('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (history.replaceState) history.replaceState(null, '', '#' + page);
-  } catch(e){ console.error('navigateTo error', e); }
-}
-
-
-function initNav(){
-  document.querySelectorAll('[data-page]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      const page = link.getAttribute('data-page');
-      if(page) navigateTo(page);
-    });
+function showPage(id, updateHash=true){
+  sectionIds.forEach(sid=>{
+    const el=document.getElementById(sid);
+    if(el) el.classList.toggle('active', sid===id);
   });
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
-  if(btn && menu){
-    btn.addEventListener('click', () => {
-      menu.classList.toggle('hidden');
-    });
-  }
-  // On first load, if JS is enabled, hide all except active (home or hash)
-  const hash = window.location.hash.substring(1);
-  if(hash && document.getElementById(hash)){
-    navigateTo(hash);
-  } else {
-    // ensure only home is active on load for JS users
-    document.querySelectorAll('.page-section').forEach(s=>{ if(s.id!=='home'){ s.classList.remove('active'); s.setAttribute('aria-hidden','true'); } });
-    const home=document.getElementById('home'); if(home){ home.classList.add('active'); home.removeAttribute('aria-hidden'); }
-  }
+  document.querySelectorAll('.nav-link, .nav-link-mobile').forEach(link=>{
+    const match = link.dataset.page===id;
+    link.classList.toggle('active', match);
+    link.classList.toggle('text-white', match);
+    if(match) link.classList.remove('text-[var(--text-secondary)]');
+    else link.classList.add('text-[var(--text-secondary)]');
+  });
+  if(updateHash && history.replaceState) history.replaceState(null,'','#'+id);
+  window.scrollTo({top:0, behavior:'instant'});
+  const mm=document.getElementById('mobile-menu'); if(mm) mm.classList.add('hidden');
 }
-if(document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', initNav); } else { initNav(); }
 
+document.querySelectorAll('[data-page]').forEach(link=>{
+  link.addEventListener('click', e=>{
+    const p = link.dataset.page || link.getAttribute('href')?.slice(1);
+    if(p && sectionIds.includes(p)){ e.preventDefault(); showPage(p); }
+  });
+});
+
+const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+if(mobileMenuBtn){
+  mobileMenuBtn.addEventListener('click', ()=>{
+    document.getElementById('mobile-menu')?.classList.toggle('hidden');
+  });
+}
+
+window.addEventListener('hashchange', ()=>{
+  const h = location.hash.slice(1);
+  if(sectionIds.includes(h)) showPage(h,false);
+});
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  let initial = location.hash.slice(1);
+  if(!sectionIds.includes(initial)) initial='home';
+  showPage(initial,false);
+});
 
 document.addEventListener('click', function(e) {
   if (e.target.matches('.rhythm-tab')) {
@@ -2314,12 +2289,9 @@ document.addEventListener('click', function(e) {
   }
 });
 
-
-window.addEventListener('hashchange', () => {
-  const hash = window.location.hash.substring(1);
-  if (hash && document.getElementById(hash) && document.getElementById(hash).classList.contains('page-section')) {
-    navigateTo(hash);
-  }
+window.addEventListener('load', () => {
+  updateHardwareTablet();
+  fillRhythmData();
 });
 
 /* ---------- Song overlay / persistent bottom player ---------- */
@@ -2813,8 +2785,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
+
 </script>
-
-
-<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;var a=target.closest?target.closest("a[href]"):null;if(!a||!a.href||!/^https?:\/\//.test(a.href))return;if(a.href.replace(/#.*$/,"")===loc)return;var productId=extractProductId(target)||extractProductId(a);if(!productId)return;e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*")},true)})();</script></body>
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;var a=target.closest?target.closest("a[href]"):null;if(!a||!a.href||!/^https?:\/\//.test(a.href))return;if(a.href.replace(/#.*$/,"")===loc)return;var productId=extractProductId(target)||extractProductId(a);if(!productId)return;e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*")},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
 </html>
