@@ -732,9 +732,23 @@ function renderBlogEditor(post){
   `;
   $('#f_cat').onchange=e=>{ post.category=e.target.value; const s=$('#f_sub'); const found=(state.data.categories||FALLBACK_CATEGORIES).find(c=>c.name===post.category); s.innerHTML=[''].concat(found?.subs||[]).map(x=>`<option>${esc(x)}</option>`).join(''); };
   $('#f_color').oninput=e=>{ e.target.nextElementSibling.textContent=e.target.value };
-  body.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ post.blocks=post.blocks||[]; post.blocks.push(b.dataset.add==='text'?{type:'text',content:''}:b.dataset.add==='image'?{type:'image',src:'',caption:''}:b.dataset.add==='video'?{type:'video',src:'',url:'',caption:''}:{type:'divider'}); renderBlocks(post); });
+  initBlockEditor(post);
+}
 
-  function renderBlocks(p){
+// --- Shared content-block editor: used by both Blog posts and Song overlays. ---
+// Operates on item.blocks (array). Requires the current editor form to contain
+// buttons with [data-add="text|image|video|divider"] and a `<div id="blocks">` wrap.
+function newBlockOfType(type){
+  if(type==='text') return {type:'text', heading:'', content:''};
+  if(type==='image') return {type:'image', src:'', caption:''};
+  if(type==='video') return {type:'video', src:'', url:'', caption:''};
+  return {type:'divider'};
+}
+function initBlockEditor(item){
+  document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>{ item.blocks=item.blocks||[]; item.blocks.push(newBlockOfType(b.dataset.add)); renderBlockList(item); });
+  renderBlockList(item);
+}
+function renderBlockList(p){
     const wrap = $('#blocks'); wrap.innerHTML='';
     (p.blocks||[]).forEach((bl,i)=>{
       const d=document.createElement('div'); d.className='block';
@@ -742,12 +756,14 @@ function renderBlogEditor(post){
         <div class="icon" title="Up">↑</div><div class="icon" title="Down">↓</div><div class="icon" title="Delete">✕</div></div></div>
         <div class="block-body"></div>`;
       const [up,down,del]=d.querySelectorAll('.icon');
-      up.onclick=()=>{ if(i>0){ [p.blocks[i-1],p.blocks[i]]=[p.blocks[i],p.blocks[i-1]]; renderBlocks(p);} };
-      down.onclick=()=>{ if(i<p.blocks.length-1){ [p.blocks[i+1],p.blocks[i]]=[p.blocks[i],p.blocks[i+1]]; renderBlocks(p);} };
-      del.onclick=()=>{ p.blocks.splice(i,1); renderBlocks(p); };
+      up.onclick=()=>{ if(i>0){ [p.blocks[i-1],p.blocks[i]]=[p.blocks[i],p.blocks[i-1]]; renderBlockList(p);} };
+      down.onclick=()=>{ if(i<p.blocks.length-1){ [p.blocks[i+1],p.blocks[i]]=[p.blocks[i],p.blocks[i+1]]; renderBlockList(p);} };
+      del.onclick=()=>{ p.blocks.splice(i,1); renderBlockList(p); };
       const body=d.querySelector('.block-body');
       if(bl.type==='text'){
-        body.innerHTML=`<textarea data-k="content" placeholder="Write...">${esc(bl.content||'')}</textarea>`;
+        body.innerHTML=`
+          <input type="text" data-k="heading" placeholder="Section heading (optional — e.g. About, Thoughts, Behind the Scenes)" value="${esc(bl.heading||'')}" style="margin-bottom:8px">
+          <textarea data-k="content" placeholder="Write...">${esc(bl.content||'')}</textarea>`;
       }else if(bl.type==='image'){
         body.innerHTML=`
           <div class="upload"><label class="file-btn">Choose image<input type="file" accept="image/*"></label><span class="hint">${bl.src? 'Uploaded':'No file'}</span></div>
@@ -759,7 +775,7 @@ function renderBlogEditor(post){
         if(img) img.onclick=()=>showImg(bl.src);
         fileInp.onchange=async e=>{
           const f=e.target.files[0]; if(!f) return;
-          try{ setStatus('Uploading image…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); renderBlocks(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
+          try{ setStatus('Uploading image…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); renderBlockList(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
         };
       }else if(bl.type==='video'){
         body.innerHTML=`
@@ -801,7 +817,7 @@ function renderBlogEditor(post){
             const url = await uploadFile(fileToUpload, `${UPLOADS.posts}${Date.now()}-${fileToUpload.name||f.name.replace(/\s+/g,'-')}`);
             bl.src = url; bl.url = '';
             setStatus('Video uploaded','ok');
-            renderBlocks(p);
+            renderBlockList(p);
           } catch(err) { setStatus('Upload failed','err'); vhint.textContent = 'Error: '+err.message; }
         };
       }else{
@@ -810,8 +826,6 @@ function renderBlogEditor(post){
       body.querySelectorAll('[data-k]').forEach(inp=>{ inp.oninput=()=>{ bl[inp.dataset.k]=inp.value } });
       wrap.appendChild(d);
     });
-  }
-  renderBlocks(post);
 }
 async function saveBlog(){
   const p=getCurrentItem(); if(!p) return;
@@ -892,10 +906,24 @@ function renderSongEditor(s){
           ${['spotify','apple','tidal','youtube','amazon','deezer'].map(k=>`<div><label class="hint">${k}</label><input id="s_${k}" value="${esc(s.streaming?.[k]||'')}"></div>`).join('')}
         </div>
       </div>
-      <div class="field full"><label>About</label><textarea id="s_about">${esc(s.about||'')}</textarea></div>
-      <div class="field full"><label>Thoughts</label><textarea id="s_thoughts">${esc(s.thoughts||'')}</textarea></div>
-      <div class="field full"><label>Miscellaneous</label><textarea id="s_misc">${esc(s.miscellaneous||'')}</textarea></div>
-      <div class="field full"><label>Behind The Scenes</label><textarea id="s_bts">${esc(s.behindTheScenes||'')}</textarea></div>
+      <div class="field full">
+        <label>Content Blocks (shown in the song overlay)</label>
+        <div class="row">
+          <button class="btn small" data-add="text">+ Text</button>
+          <button class="btn small" data-add="image">+ Image</button>
+          <button class="btn small" data-add="video">+ Video</button>
+          <button class="btn small" data-add="divider">+ Divider</button>
+        </div>
+        <div class="blocks" id="blocks"></div>
+        <div class="hint">Build the song's overlay content freely: add a text block with heading "About", another with heading "Thoughts", drop in a YouTube video, a behind-the-scenes photo, whatever the song needs. Skip sections you don't have — no empty tabs. If left empty, the legacy fields below (if filled in) are used instead.</div>
+      </div>
+      <details class="field full">
+        <summary style="cursor:pointer;color:var(--text-secondary);font-size:12px;text-transform:uppercase;letter-spacing:.5px;font-weight:800;margin-bottom:8px">Legacy fields (fallback only — used if Content Blocks above is empty)</summary>
+        <div class="field full"><label>About</label><textarea id="s_about">${esc(s.about||'')}</textarea></div>
+        <div class="field full"><label>Thoughts</label><textarea id="s_thoughts">${esc(s.thoughts||'')}</textarea></div>
+        <div class="field full"><label>Miscellaneous</label><textarea id="s_misc">${esc(s.miscellaneous||'')}</textarea></div>
+        <div class="field full"><label>Behind The Scenes</label><textarea id="s_bts">${esc(s.behindTheScenes||'')}</textarea></div>
+      </details>
     </div>
   `;
   // --- Badge editor with color ---
@@ -950,6 +978,10 @@ function renderSongEditor(s){
   $('#add_genre').onclick=addGenre;
   $('#genre_input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addGenre(); } });
   renderGenres();
+
+  // --- Content blocks editor (About/Thoughts/Behind/media, freeform) ---
+  s.blocks = Array.isArray(s.blocks) ? s.blocks : [];
+  initBlockEditor(s);
 
   $('#s_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading cover…','work'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_cover').value=url; setStatus('Cover uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
   $('#s_audiofile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading audio…','work'); const url=await uploadFile(f, `${UPLOADS.songs}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_audio').value=url; setStatus('Audio uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
@@ -1295,7 +1327,7 @@ $('#tabs').onclick=e=>{
 $('#btnNew').onclick=()=>{
   const arr=getCurrentArray();
   if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:(state.data.categories[0]?.name||'Daily Life'),subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
-  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),status:'Pending',genres:[],coverEmoji:'🎵',badges:[],streaming:{},about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
+  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),status:'Pending',genres:[],coverEmoji:'🎵',badges:[],streaming:{},blocks:[],about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
   else if(state.tab==='people'){ const id='person-'+Date.now(); arr.unshift({id,name:'New Person',handle:'',role:'',avatar:'',bio:'',tags:['friend'],links:{},projects:[],color:'text-purple-400',icon:'👤',showOnHome:true}); state.currentId=id; }
   else if(state.tab==='categories'){ const id='cat-'+Date.now(); arr.unshift({id,name:'New Category',color:'#A596DA',subs:[]}); state.currentId=id; }
   else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'Dennis Zero VT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }

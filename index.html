@@ -1036,7 +1036,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
   #songOverlayGlass > div { width: 100% !important; }
   
   /* 2. Tab content must be visible */
-  #ovTabContent {
+  #ovBlocks {
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;
@@ -1044,7 +1044,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
     min-height: 80px !important;
     padding: 1rem 0 !important;
   }
-  #ovTabContent p {
+  #ovBlocks p {
     color: #d6ccf7 !important; /* light purple-white */
     font-size: 15px !important;
     line-height: 1.7 !important;
@@ -1115,7 +1115,7 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
     border: none !important;
   }
   /* Ensure content area has space */
-  #ovTabContent {
+  #ovBlocks {
     padding-bottom: 120px !important; /* space for bottom */
   }
   /* Prevent body lock from blocking */
@@ -1994,12 +1994,10 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 <!-- Right: Info -->
 <div class="flex-1 p-8 overflow-y-auto">
-<div class="flex gap-2 mb-6 border-b border-white/10">
-<button class="song-tab px-4 py-2 text-sm font-medium border-b-2 border-[#A596DA] text-white" data-tab="about">About</button>
-<button class="song-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-[var(--text-secondary)] hover:text-white" data-tab="thoughts">Thoughts</button>
-<button class="song-tab px-4 py-2 text-sm font-medium border-b-2 border-transparent text-[var(--text-secondary)] hover:text-white" data-tab="behind">Behind</button>
+<div class="flex items-center justify-between mb-6 pb-4 border-b border-white/10">
+<h4 class="text-xs uppercase tracking-wider text-[var(--text-secondary)] font-bold">Story</h4>
 </div>
-<div class="prose prose-invert max-w-none text-[15px] leading-relaxed" id="ovTabContent"></div>
+<div class="prose prose-invert max-w-none text-[15px] leading-relaxed" id="ovBlocks"></div>
 <div class="mt-8 pt-6 border-t border-white/10">
 <h4 class="text-xs uppercase tracking-wider text-[var(--text-secondary)] mb-3">Listen on</h4>
 <div class="flex flex-wrap gap-2" id="ovStreaming"></div>

@@ -267,6 +267,7 @@ function initSiteData() {
     year: s.year,
     genres: s.genres || [],
     status: s.status || (s.badges && s.badges[0] && badgeLabel(s.badges[0])) || '',
+    blocks: s.blocks || [],
     src: s.audio,
     cover: s.coverEmoji || '🎵',
     coverImg: s.cover,
@@ -753,6 +754,40 @@ window.closePersonOverlay = function(event) {
   document.body.style.overflow = '';
 };
 
+/* ---------- Shared content-block renderer (used by Blog posts and Song overlay) ---------- */
+function renderContentBlocks(blocks, accentColor){
+  const col = accentColor || '#A596DA';
+  if(!blocks || !Array.isArray(blocks) || blocks.length === 0) return null;
+  return blocks.map(b => {
+    if(b.type === 'image' && b.src){
+      const cap = b.caption ? `<div class="text-xs text-[var(--text-secondary)] mt-2">${(b.caption||'').replace(/</g,'&lt;')}</div>` : '';
+      return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')">${cap}</div>`;
+    }
+    if(b.type === 'text'){
+      const txt = (b.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const heading = b.heading ? `<h4 class="text-lg font-bold mb-2" style="color:${col}">${(b.heading||'').replace(/</g,'&lt;')}</h4>` : '';
+      return `<div class="mb-6 px-1">${heading}<p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">${txt}</p></div>`;
+    }
+    if(b.type === 'video'){
+      if (b.url) {
+        const embedUrl = toYouTubeEmbed(b.url);
+        if (embedUrl) {
+          return `<div class="mb-5"><div class="relative w-full rounded-xl overflow-hidden border border-white/10" style="aspect-ratio:16/9"><iframe src="${embedUrl}" title="Embedded video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" class="absolute inset-0 w-full h-full"></iframe></div><a href="${b.url}" target="_blank" class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] mt-2 inline-block">Open on YouTube ↗</a></div>`;
+        }
+        return `<div class="mb-5"><a href="${b.url}" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div>`;
+      }
+      if (b.src) {
+        return `<div class="mb-5"><video controls class="w-full rounded-xl border border-white/10" style="max-height:500px;background:#08050f" src="${b.src}"></video></div>`;
+      }
+      return '';
+    }
+    if(b.type === 'divider'){
+      return `<div class="my-8 w-full flex justify-center"><div class="h-[3px] w-full max-w-3xl rounded-full" style="background:${col};opacity:0.35"></div></div>`;
+    }
+    return '';
+  }).join('');
+}
+
 /* ---------- Blog: categories, search, sort, year, posts ---------- */
 
 let currentCat = 'All';
@@ -892,31 +927,7 @@ function renderPosts(){
     const cat = categories.find(x => x.name === post.category);
     const col = post.color || (cat && cat.color) || '#A596DA';
 
-    const renderBlocks = () => {
-      if(!post.blocks || !Array.isArray(post.blocks) || post.blocks.length === 0) return null;
-      return post.blocks.map(b => {
-        if(b.type === 'image' && b.src){
-          return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')"></div>`;
-        }
-        if(b.type === 'text'){
-          const txt = (b.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-          return `<div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">${txt}</p></div>`;
-        }
-        if(b.type === 'video' && b.url){
-          const embedUrl = toYouTubeEmbed(b.url);
-          if (embedUrl) {
-            return `<div class="mb-5"><div class="relative w-full rounded-xl overflow-hidden border border-white/10" style="aspect-ratio:16/9"><iframe src="${embedUrl}" title="Embedded video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" class="absolute inset-0 w-full h-full"></iframe></div><a href="${b.url}" target="_blank" class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] mt-2 inline-block">Open on YouTube ↗</a></div>`;
-          }
-          return `<div class="mb-5"><a href="${b.url}" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div>`;
-        }
-        if(b.type === 'divider'){
-          return `<div class="my-8 w-full flex justify-center"><div class="h-[3px] w-full max-w-3xl rounded-full" style="background:${col};opacity:0.35"></div></div>`;
-        }
-        return '';
-      }).join('');
-    };
-
-    const blocksHtml = renderBlocks();
+    const blocksHtml = renderContentBlocks(post.blocks, col);
     const imgs = post.images || [];
     const imgHtml = imgs.length === 1
       ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>`
@@ -1006,6 +1017,20 @@ window.addEventListener('load', () => {
 const songAudio = document.getElementById('songAudio');
 let currentSongKey = null;
 
+function getSongContentHtml(song){
+  if (song.blocks && song.blocks.length) {
+    return renderContentBlocks(song.blocks, '#A596DA') || '<p class="text-[var(--text-secondary)]">No story shared yet for this song.</p>';
+  }
+  // Legacy fallback: build blocks on the fly from the old about/thoughts/behindTheScenes fields
+  const legacyBlocks = [];
+  if (song.about) legacyBlocks.push({ type: 'text', heading: 'About', content: song.about });
+  if (song.thoughts) legacyBlocks.push({ type: 'text', heading: 'Thoughts', content: song.thoughts });
+  const behind = song.behindTheScenes || song.Miscellaneous;
+  if (behind) legacyBlocks.push({ type: 'text', heading: 'Behind the Scenes', content: behind });
+  if (!legacyBlocks.length) return '<p class="text-[var(--text-secondary)]">No story shared yet for this song.</p>';
+  return renderContentBlocks(legacyBlocks, '#A596DA');
+}
+
 function openSong(key) {
   const song = SONGS[key];
   if (!song) return;
@@ -1046,7 +1071,8 @@ function openSong(key) {
     bpEmoji.textContent = song.cover || '🎵';
   }
   showBottomPlayer();
-  showSongTab('about');
+  const blocksEl = document.getElementById('ovBlocks');
+  if (blocksEl) blocksEl.innerHTML = getSongContentHtml(song);
 
   const streamWrap = document.getElementById('ovStreaming');
   streamWrap.innerHTML = '';
@@ -1146,28 +1172,7 @@ document.addEventListener('DOMContentLoaded', () => {
     bpVol.value = songAudio.volume;
     bpVol.addEventListener('input', e => { songAudio.volume = e.target.value; if (vol) vol.value = e.target.value; });
   }
-  document.querySelectorAll('.song-tab').forEach(btn => btn.addEventListener('click', () => showSongTab(btn.dataset.tab)));
 });
-
-function showSongTab(tab) {
-  document.querySelectorAll('.song-tab').forEach(b => {
-    const active = b.dataset.tab === tab;
-    b.classList.toggle('border-[#A596DA]', active);
-    b.classList.toggle('text-white', active);
-    b.classList.toggle('border-transparent', !active);
-    b.classList.toggle('text-[var(--text-secondary)]', !active);
-  });
-
-  const song = SONGS[currentSongKey];
-  const content = document.getElementById('ovTabContent');
-  if (!song) return;
-
-  let html = '';
-  if (tab === 'about') html = `<p>${song.about || 'No description.'}</p>`;
-  else if (tab === 'thoughts') html = `<p>${song.thoughts || 'No thoughts shared yet.'}</p>`;
-  else if (tab === 'behind') html = `<p>${song.behindTheScenes || song.Miscellaneous || 'Behind the scenes coming soon.'}</p>`;
-  content.innerHTML = html;
-}
 
 function openAlbum(key) {
   const album = ALBUMS[key];
