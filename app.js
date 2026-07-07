@@ -269,6 +269,8 @@ function initSiteData() {
   personData = Object.fromEntries(SITE_PEOPLE.map(p => [p.id, {
     name: p.name,
     role: p.role,
+    handle: p.handle || '',
+    avatar: p.avatar || `Friends/${p.id}.jpg`,
     color: p.color || 'from-purple-500/30 to-purple-600/10',
     icon: p.icon || 'fas fa-user',
     bio: p.bio,
@@ -291,6 +293,60 @@ function initSiteData() {
   renderSongsGrid();
   renderAlbumsGrid();
   renderPeople(SITE_PEOPLE);
+  renderHome();
+}
+
+/* ---------- Home: stats + latest release/post ---------- */
+function renderHome(){
+  const statsEl = document.getElementById('home-stats');
+  if (statsEl) {
+    const friendCount = SITE_PEOPLE.filter(p => (p.tags||[]).includes('friend')).length;
+    const collabCount = SITE_PEOPLE.filter(p => (p.tags||[]).includes('collab')).length;
+    const stats = [
+      { num: SITE_SONGS.length, lbl: 'Songs' },
+      { num: SITE_POSTS.length, lbl: 'Blog Posts' },
+      { num: collabCount, lbl: 'Collaborators' },
+      { num: friendCount, lbl: 'Friends' }
+    ];
+    statsEl.innerHTML = stats.map(s => `<div class="home-stat"><div class="num">${s.num}</div><div class="lbl">${s.lbl}</div></div>`).join('');
+  }
+
+  const latestEl = document.getElementById('home-latest');
+  if (latestEl) {
+    const latestSong = [...SITE_SONGS].sort((a,b) => (parseInt(b.year)||0) - (parseInt(a.year)||0))[0];
+    const latestPost = [...SITE_POSTS].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
+
+    let html = '';
+    if (latestSong) {
+      html += `
+      <div class="glass rounded-2xl p-6 flex items-center gap-5 glow-hover cursor-pointer" onclick="document.querySelector('[data-page=music]').click(); setTimeout(()=>openSong('${latestSong.id}'), 250)">
+        <div class="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-[#2a2a2a] to-[#0f0f0f] flex-shrink-0 flex items-center justify-center text-3xl">
+          ${latestSong.cover ? `<img src="${latestSong.cover}" class="w-full h-full object-cover" onerror="this.style.display='none'">` : (latestSong.coverEmoji || '🎵')}
+        </div>
+        <div class="min-w-0">
+          <div class="text-xs uppercase tracking-wider text-[var(--accent)] font-semibold mb-1">Latest Release</div>
+          <div class="font-bold text-white text-lg truncate">${latestSong.title}</div>
+          <div class="text-sm text-[var(--text-secondary)]">${latestSong.year || ''}</div>
+        </div>
+        <i class="fas fa-play ml-auto text-[var(--accent)]"></i>
+      </div>`;
+    }
+    if (latestPost) {
+      html += `
+      <div class="glass rounded-2xl p-6 flex items-center gap-5 glow-hover cursor-pointer" onclick="document.querySelector('[data-page=blog]').click()">
+        <div class="w-20 h-20 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex-shrink-0 flex items-center justify-center text-3xl text-[var(--accent)]">
+          <i class="fas fa-book-open"></i>
+        </div>
+        <div class="min-w-0">
+          <div class="text-xs uppercase tracking-wider text-[var(--accent)] font-semibold mb-1">Latest Blog Post</div>
+          <div class="font-bold text-white text-lg truncate">${latestPost.title}</div>
+          <div class="text-sm text-[var(--text-secondary)]">${latestPost.category} • ${latestPost.date || ''}</div>
+        </div>
+        <i class="fas fa-arrow-right ml-auto text-[var(--accent)]"></i>
+      </div>`;
+    }
+    latestEl.innerHTML = html;
+  }
 }
 
 document.addEventListener('DOMContentLoaded', initSiteData);
@@ -341,17 +397,18 @@ function renderSongsGrid() {
     return `
     <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('${key}')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            ${song.year ? `<span class="song-year-badge">${song.year}</span>` : ''}
             ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">${song.cover || '🎵'}</div>
-            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg">
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
                 </div>
             </div>
         </div>
         <div class="p-4">
             <h3 class="font-semibold text-white truncate">${song.name}</h3>
-            <p class="text-sm text-[var(--text-secondary)] mt-1">${song.year || ''} • ${song.artist}</p>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">${song.artist}</p>
             <div class="flex gap-1.5 mt-3 flex-wrap">${badges}</div>
         </div>
     </div>`;
@@ -393,26 +450,36 @@ function renderPeople(peopleList) {
     const tryPng = avatarBase + '.png';
     const twitter = (p.links && p.links.twitter) || '';
     const credits = p.credits || [];
+    const tags = (p.tags || []).map(t => t.toLowerCase());
+    const roleLabel = tags.includes('collab') && tags.includes('friend')
+      ? 'Friend & Collaborator'
+      : tags.includes('collab') ? 'Collaborator' : 'Friend';
+
     const collabChips = credits.map(cr => {
-      const roleLabel = cr.role || 'Collaborator';
-      const songLabel = cr.song || '';
-      return `<span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">${roleLabel}${songLabel ? ` · <span style="opacity:.75;font-weight:400">${songLabel}</span>` : ''}</span>`;
+      const role = cr.role || 'Collaborator';
+      const song = cr.song || '';
+      return `<span class="person-chip">${role}${song ? ` · <span>${song}</span>` : ''}</span>`;
     }).join('');
 
     const card = document.createElement('div');
     card.className = 'person-card';
-    card.style.cssText = 'background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;';
     card.onclick = () => openPersonOverlay(p.id);
     card.innerHTML = `
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="${tryJpg}" alt="${p.name}" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='${tryPng}';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">${p.name}</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">${p.handle || ''}</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">${p.role || ''}</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">${(p.bio || '').substring(0,140)}</p>
-        ${collabChips ? `<div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;">${collabChips}</div>` : ''}
-        ${twitter ? `<a href="${twitter}" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>` : ''}
+      <div class="person-banner">
+        <div class="person-avatar-ring">
+          <img src="${tryJpg}" alt="${p.name}" onerror="this.onerror=null; this.src='${tryPng}';">
+        </div>
+      </div>
+      <div class="person-card-body">
+        <h3 class="person-card-name">${p.name}</h3>
+        <div class="person-card-handle">${p.handle || ''}</div>
+        <span class="person-role-pill">${roleLabel}</span>
+        <p class="person-card-bio">${(p.bio || '')}</p>
+        ${collabChips ? `<div class="person-card-chips">${collabChips}</div>` : ''}
+        <div class="person-card-footer">
+          ${twitter ? `<a href="${twitter}" target="_blank" onclick="event.stopPropagation()" class="person-social-btn"><i class="fab fa-x-twitter"></i> Twitter</a>` : ''}
+          <span class="person-social-btn" style="background:transparent;border:1px solid rgba(165,150,218,0.35);color:var(--accent);margin-left:auto;">View <i class="fas fa-arrow-right" style="font-size:10px"></i></span>
+        </div>
       </div>`;
     return card;
   }
@@ -442,9 +509,14 @@ window.openPersonOverlay = function(personId) {
   const header = document.getElementById('overlay-header');
   const body = document.getElementById('overlay-body');
 
+  const avatarBase = (person.avatar || `Friends/${personId}.jpg`).replace(/\.jpg$|\.png$/i, '');
+  const tryJpg = avatarBase + '.jpg';
+  const tryPng = avatarBase + '.png';
+
   header.innerHTML = `
-      <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color} flex items-center justify-center">
-          <i class="${person.icon} text-2xl"></i>
+      <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color} flex items-center justify-center overflow-hidden flex-shrink-0 relative">
+          <img src="${tryJpg}" alt="${person.name}" class="w-full h-full object-cover" onerror="this.onerror=function(){this.style.display='none'}; this.src='${tryPng}';">
+          <i class="${person.icon} text-2xl absolute" style="z-index:-1"></i>
       </div>
       <div>
           <h2 class="text-2xl font-bold">${person.name}</h2>
@@ -527,34 +599,49 @@ window.closePersonOverlay = function(event) {
   document.body.style.overflow = '';
 };
 
-/* ---------- Blog: categories, filters, posts ---------- */
+/* ---------- Blog: categories, search, sort, year, posts ---------- */
 
 let currentCat = 'All';
 let currentSub = 'All';
+let currentSearch = '';
+let currentSort = 'newest';
+let currentYear = 'All';
+
+function postYear(post){
+  const d = post.date ? new Date(post.date) : null;
+  return d && !isNaN(d) ? String(d.getFullYear()) : 'Unknown';
+}
 
 function renderCategories(){
   const wrap = document.getElementById('category-filters');
   if(!wrap) return;
   wrap.innerHTML = '';
 
+  const countFor = (name) => name === 'All'
+    ? allPosts.length
+    : allPosts.filter(p => p.category === name).length;
+
   const makeBtn = (name, isActive, color) => {
     const btn = document.createElement('button');
     btn.dataset.cat = name;
-    btn.className = 'cat-btn px-4 py-2 rounded-full glass text-sm font-medium border transition';
-    if(isActive){
-      btn.classList.add('bg-[#A596DA]/20','border-[#A596DA]','text-[#d6ccf7]');
-      btn.style.borderColor = color || '#A596DA';
-      btn.style.backgroundColor = (color ? color+'33' : 'rgba(165,150,218,0.2)');
-    } else {
-      btn.classList.add('border-white/10','hover:border-[#A596DA]/50','text-[var(--text-secondary)]');
-    }
-    btn.textContent = name;
+    btn.className = 'cat-list-btn' + (isActive ? ' active' : '');
+    if (isActive && color) { btn.style.borderColor = color; btn.style.color = '#fff'; }
+    btn.innerHTML = `<span>${name}</span><span class="count">${countFor(name)}</span>`;
     btn.onclick = () => selectCat(name);
     return btn;
   };
 
   wrap.appendChild(makeBtn('All', currentCat === 'All', '#A596DA'));
   categories.forEach(c => wrap.appendChild(makeBtn(c.name, currentCat === c.name, c.color)));
+
+  // Populate year dropdown dynamically from post data
+  const yearSelect = document.getElementById('blogYearSelect');
+  if (yearSelect) {
+    const years = Array.from(new Set(allPosts.map(postYear))).sort((a,b) => b.localeCompare(a));
+    const prev = yearSelect.value || currentYear;
+    yearSelect.innerHTML = '<option value="All">All years</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
+    yearSelect.value = years.includes(prev) ? prev : 'All';
+  }
 }
 
 function selectCat(name){
@@ -567,24 +654,40 @@ function selectCat(name){
 
 function renderSubs(){
   const sub = document.getElementById('subcategory-filters');
-  if(!sub) return;
+  const subWrap = document.getElementById('subcategory-filters-wrap');
+  if(!sub || !subWrap) return;
   const cat = categories.find(c => c.name === currentCat);
-  if(!cat || currentCat === 'All'){ sub.classList.add('hidden'); sub.innerHTML = ''; return; }
-  sub.classList.remove('hidden');
+  if(!cat || currentCat === 'All' || !(cat.subs||[]).length){ subWrap.classList.add('hidden'); sub.innerHTML = ''; return; }
+  subWrap.classList.remove('hidden');
   sub.innerHTML = '';
   const allBtn = document.createElement('button');
-  allBtn.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === 'All' ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10');
-  allBtn.textContent = `All ${currentCat}`;
+  allBtn.className = 'cat-list-btn' + (currentSub === 'All' ? ' active' : '');
+  allBtn.innerHTML = `<span>All ${currentCat}</span>`;
   allBtn.onclick = () => { currentSub = 'All'; renderSubs(); renderPosts(); };
   sub.appendChild(allBtn);
   (cat.subs || []).forEach(s => {
     const b = document.createElement('button');
-    b.className = 'subcat-btn px-3 py-1 rounded-full text-xs glass border ' + (currentSub === s ? 'bg-[#A596DA]/20 border-[#A596DA]/30' : 'border-white/10 hover:border-[#A596DA]/30');
-    b.textContent = s;
+    b.className = 'cat-list-btn' + (currentSub === s ? ' active' : '');
+    b.innerHTML = `<span>${s}</span>`;
     b.onclick = () => { currentSub = s; renderSubs(); renderPosts(); };
     sub.appendChild(b);
   });
 }
+
+window.onBlogSearch = function(value){
+  currentSearch = (value || '').trim().toLowerCase();
+  renderPosts();
+};
+
+window.onBlogSort = function(value){
+  currentSort = value;
+  renderPosts();
+};
+
+window.onBlogYear = function(value){
+  currentYear = value;
+  renderPosts();
+};
 
 function toYouTubeEmbed(url){
   try {
@@ -609,8 +712,26 @@ function renderPosts(){
   let p = [...allPosts];
   if(currentCat !== 'All') p = p.filter(x => x.category === currentCat);
   if(currentSub !== 'All') p = p.filter(x => x.subcategory === currentSub);
+  if(currentYear !== 'All') p = p.filter(x => postYear(x) === currentYear);
+  if(currentSearch){
+    p = p.filter(x => {
+      const haystack = [x.title, x.category, x.subcategory, ...(x.blocks||[]).map(b => b.content||'')].join(' ').toLowerCase();
+      return haystack.includes(currentSearch);
+    });
+  }
+
+  if(currentSort === 'oldest') p.sort((a,b) => new Date(a.date) - new Date(b.date));
+  else if(currentSort === 'az') p.sort((a,b) => a.title.localeCompare(b.title));
+  else if(currentSort === 'za') p.sort((a,b) => b.title.localeCompare(a.title));
+  else p.sort((a,b) => new Date(b.date) - new Date(a.date)); // newest (default)
+
+  const bar = document.getElementById('blogResultsBar');
+  if(bar){
+    bar.innerHTML = `<span>${p.length} post${p.length===1?'':'s'}${currentSearch ? ` matching "<span class="text-white">${currentSearch}</span>"`:''}</span>`;
+  }
+
   if(p.length === 0){
-    c.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)]">No posts yet in this category.</div>';
+    c.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)]">No posts match your filters.</div>';
     return;
   }
   c.innerHTML = p.map(post => {

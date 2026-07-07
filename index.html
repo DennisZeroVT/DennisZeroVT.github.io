@@ -429,6 +429,321 @@
         height: 20px;
     }
 
+    /* ================= REDESIGN: Person / Collab Cards ================= */
+    .people-grid .person-card {
+        position: relative;
+        cursor: pointer;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .people-grid .person-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(165,150,218,0.5);
+        box-shadow: 0 20px 50px -20px rgba(165,150,218,0.35), 0 0 0 1px rgba(165,150,218,0.15);
+    }
+
+    .person-banner {
+        height: 88px;
+        position: relative;
+        background: linear-gradient(135deg, rgba(165,150,218,0.35), rgba(139,120,203,0.12) 60%, transparent);
+        overflow: visible;
+    }
+
+    .person-banner::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15), transparent 40%);
+    }
+
+    .person-avatar-ring {
+        width: 84px;
+        height: 84px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid var(--bg-card);
+        background: linear-gradient(135deg,#A596DA,#8B78CB);
+        position: absolute;
+        left: 24px;
+        top: 46px;
+        box-shadow: 0 8px 24px -6px rgba(0,0,0,0.5);
+        flex-shrink: 0;
+    }
+
+    .person-avatar-ring img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .person-card-body {
+        padding: 44px 24px 22px;
+    }
+
+    .person-card-name {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 2px;
+    }
+
+    .person-card-handle {
+        color: var(--accent);
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 10px;
+    }
+
+    .person-role-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        background: rgba(165,150,218,0.15);
+        border: 1px solid rgba(165,150,218,0.35);
+        color: #C4B5FD;
+    }
+
+    .person-card-bio {
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        line-height: 1.55;
+        margin-bottom: 14px;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .person-card-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+
+    .person-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        background: rgba(165,150,218,0.12);
+        border: 1px solid rgba(165,150,218,0.28);
+        font-size: 0.7rem;
+        color: #A596DA;
+        font-weight: 600;
+    }
+
+    .person-chip span { opacity: .75; font-weight: 400; color: var(--text-secondary); }
+
+    .person-card-footer {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .person-social-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        border-radius: 999px;
+        background: linear-gradient(135deg, #A596DA, #C4B5FD);
+        color: #14101f;
+        text-decoration: none;
+        font-size: 0.78rem;
+        font-weight: 700;
+        transition: all 0.25s ease;
+    }
+
+    .person-social-btn:hover {
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+    }
+
+    /* ================= REDESIGN: Song Cards ================= */
+    #songs-grid .group, #albums-grid .group {
+        border-radius: 1.25rem;
+        background: rgba(20, 15, 32, 0.55);
+    }
+
+    #songs-grid .group .aspect-square, #albums-grid .group .aspect-square {
+        position: relative;
+    }
+
+    #songs-grid .group .aspect-square::after, #albums-grid .group .aspect-square::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(10,7,18,0.95) 0%, rgba(10,7,18,0.15) 55%, transparent 100%);
+        pointer-events: none;
+    }
+
+    #songs-grid .song-year-badge {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 2;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        background: rgba(10,7,18,0.65);
+        border: 1px solid rgba(165,150,218,0.4);
+        color: #C4B5FD;
+        backdrop-filter: blur(6px);
+    }
+
+    /* ================= Home: stats & latest strip ================= */
+    .home-stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: rgba(165,150,218,0.15);
+        border: 1px solid rgba(165,150,218,0.2);
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+
+    .home-stat {
+        background: rgba(16,12,28,0.55);
+        padding: 1.1rem 1rem;
+        text-align: center;
+    }
+
+    .home-stat .num {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 1.9rem;
+        font-weight: 700;
+        color: #fff;
+        line-height: 1;
+    }
+
+    .home-stat .lbl {
+        color: var(--text-secondary);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        margin-top: 4px;
+    }
+
+    /* ================= Blog: sidebar layout ================= */
+    .blog-layout {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 2.5rem;
+        align-items: start;
+    }
+
+    .blog-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    .blog-search {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+
+    .blog-search input {
+        width: 100%;
+        padding: 0.7rem 1rem 0.7rem 2.5rem;
+        border-radius: 0.75rem;
+        background: rgba(16,12,28,0.6);
+        border: 1px solid rgba(165,150,218,0.25);
+        color: #fff;
+        font-size: 0.875rem;
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    .blog-search input:focus {
+        border-color: var(--accent);
+    }
+
+    .blog-search i {
+        position: absolute;
+        left: 0.9rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+    }
+
+    .blog-sidebar-block {
+        margin-bottom: 1.75rem;
+    }
+
+    .blog-sidebar-title {
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-secondary);
+        font-weight: 700;
+        margin-bottom: 0.75rem;
+    }
+
+    .cat-list-btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        padding: 0.55rem 0.75rem;
+        border-radius: 0.6rem;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        background: transparent;
+        border: 1px solid transparent;
+        transition: all 0.2s ease;
+        margin-bottom: 3px;
+        cursor: pointer;
+        text-align: left;
+    }
+
+    .cat-list-btn:hover {
+        background: rgba(165,150,218,0.08);
+        color: #fff;
+    }
+
+    .cat-list-btn.active {
+        background: rgba(165,150,218,0.18);
+        border-color: rgba(165,150,218,0.4);
+        color: #fff;
+    }
+
+    .cat-list-btn .count {
+        font-size: 0.7rem;
+        padding: 1px 7px;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.08);
+    }
+
+    .blog-select {
+        width: 100%;
+        padding: 0.55rem 0.75rem;
+        border-radius: 0.6rem;
+        background: rgba(16,12,28,0.6);
+        border: 1px solid rgba(165,150,218,0.25);
+        color: #fff;
+        font-size: 0.82rem;
+        outline: none;
+    }
+
+    @media (max-width: 1024px) {
+        .blog-layout { grid-template-columns: 1fr; }
+        .blog-sidebar { position: static; }
+        .home-stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
     @media (max-width: 768px) {
         .title-header h1 {
             font-size: 2.5rem;
@@ -758,7 +1073,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </head>
 <body class="antialiased">
 <nav class="fixed top-0 w-full z-50 glass">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8">
 <div class="flex items-center justify-between h-20">
 <div class="flex items-center gap-3">
 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#A596DA] to-[#C4B5FD] flex items-center justify-center overflow-hidden">
@@ -816,7 +1131,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 
 <!-- HOME PAGE -->
 <section id="home" class="active">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="grid lg:grid-cols-2 gap-12 items-center">
 <div class="space-y-8">
 <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm">
@@ -837,11 +1152,18 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <i class="fas fa-gamepad mr-2"></i>View Game Projects
                             </a>
 </div>
+<div class="home-stats" id="home-stats"></div>
 </div>
 </div>
 </div>
+
+<!-- Latest release / latest post -->
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+<div class="grid md:grid-cols-2 gap-6" id="home-latest"></div>
+</div>
+
 <!-- Featured Projects -->
-<div id="featured-projects" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div id="featured-projects" class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
 <h2 class="text-4xl lg:text-5xl font-bold mb-4">Featured <span class="gradient-text">Projects</span></h2>
 <p class="text-[var(--text-secondary)] text-lg">Games &amp; music I'm currently working on</p>
@@ -867,7 +1189,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 
 <!-- ===== MUSIC SECTION ===== -->
 <section id="music">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-16">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4">My <span class="gradient-text">Music</span></h1>
 <p class="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
@@ -957,28 +1279,66 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 
 <!-- ===== BLOG SECTION ===== -->
 <section id="blog">
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-<div class="text-center mb-16">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="text-center mb-12">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4"><span class="gradient-text">Blog</span></h1>
-<p class="text-[var(--text-secondary)] text-lg">
+<p class="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
                         Dev logs, progress updates, and behind-the-scenes content from Snowfall and Stuck In Time.
                     </p>
-
-<div class="flex flex-wrap justify-center gap-3 mt-8 mb-4" id="category-filters"></div>
-<div id="subcategory-filters" class="flex flex-wrap justify-center gap-2 mb-8 hidden"></div>
-
 </div>
-<!-- Blog Posts -->
-<div id="blog-posts-container" class="space-y-8 mb-12">
-<article class="glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:#a596da20;color:#a596da;border:1px solid #a596da40">Gaming</span><span class="text-[var(--text-secondary)]">Osu</span><span class="ml-auto text-[var(--text-secondary)]">2026-06-14</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">my second 200pp play</h3><div class="mb-6 px-1"><p class="text-[var(--text-secondary)] text-[16px] leading-relaxed whitespace-pre-wrap">GG i got my second best play on osu 206 pp - my second 200 pp lets go<br><br>the bg gave me powers - bless mika</p></div><div class="mb-5"><a href="https://youtu.be/PfoJg2idmF8" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div></article>
+
+<div class="blog-layout">
+  <!-- Sidebar -->
+  <aside class="blog-sidebar">
+    <div class="glass rounded-2xl p-5">
+      <div class="blog-search">
+        <i class="fas fa-search"></i>
+        <input type="text" id="blogSearchInput" placeholder="Search posts..." oninput="onBlogSearch(this.value)"/>
+      </div>
+
+      <div class="blog-sidebar-block">
+        <div class="blog-sidebar-title">Sort by</div>
+        <select class="blog-select" id="blogSortSelect" onchange="onBlogSort(this.value)">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="az">Title A–Z</option>
+          <option value="za">Title Z–A</option>
+        </select>
+      </div>
+
+      <div class="blog-sidebar-block">
+        <div class="blog-sidebar-title">Year</div>
+        <select class="blog-select" id="blogYearSelect" onchange="onBlogYear(this.value)">
+          <option value="All">All years</option>
+        </select>
+      </div>
+
+      <div class="blog-sidebar-block">
+        <div class="blog-sidebar-title">Categories</div>
+        <div id="category-filters"></div>
+      </div>
+
+      <div class="blog-sidebar-block hidden" id="subcategory-filters-wrap">
+        <div class="blog-sidebar-title">Subcategories</div>
+        <div id="subcategory-filters"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Posts -->
+  <div>
+    <div class="flex items-center justify-between mb-5 text-sm text-[var(--text-secondary)]" id="blogResultsBar"></div>
+    <div id="blog-posts-container" class="space-y-8 mb-12"></div>
+  </div>
 </div>
+
 </div>
 </section>
 
 
 <!-- ===== RHYTHM SECTION ===== -->
 <section id="rhythm">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="text-center mb-12">
 <h1 class="text-5xl lg:text-6xl font-bold mb-4">Rhythm <span class="gradient-text">Games</span></h1>
 <p class="text-[var(--text-secondary)] text-lg max-w-2xl mx-auto">
@@ -1289,7 +1649,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 
 <!-- ===== COLLABS SECTION ===== -->
 <section id="collabs">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
 <div class="title-header">
 <h1>Collabs</h1>
@@ -1327,7 +1687,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 
 <!-- ===== FRIENDS SECTION ===== -->
 <section id="friends">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-20">
 <div class="content">
 <div class="title-header">
 <h1 class="gradient-text">Friends</h1>
@@ -1540,7 +1900,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 
 <!-- Footer -->
 <footer class="glass border-t border-[#A596DA]/10 mt-20">
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
 <!-- Info / Contact footer -->
 <div class="info-footer">
 <div class="info-footer-col">
