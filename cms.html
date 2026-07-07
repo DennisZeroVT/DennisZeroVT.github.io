@@ -845,6 +845,16 @@ function renderSongEditor(s){
       <div class="field"><label>Title</label><input id="s_title" value="${esc(s.title||'')}"></div>
       <div class="field"><label>Artist</label><input id="s_artist" value="${esc(s.artist||'Dennis Zero VT')}"></div>
       <div class="field"><label>Year</label><input id="s_year" type="number" value="${s.year||new Date().getFullYear()}"></div>
+      <div class="field"><label>Status</label>
+        <select id="s_status">
+          <option value="Released" ${((s.status||'Released')==='Released')?'selected':''}>Released</option>
+          <option value="Work in Progress" ${(s.status==='Work in Progress')?'selected':''}>Work in Progress</option>
+          <option value="Pending" ${(s.status==='Pending')?'selected':''}>Pending</option>
+          <option value="Announced" ${(s.status==='Announced')?'selected':''}>Announced</option>
+          <option value="Demo" ${(s.status==='Demo')?'selected':''}>Demo</option>
+        </select>
+        <div class="hint">Used for the status filter dropdown on the Music page.</div>
+      </div>
       <div class="field"><label>Cover Emoji</label><input id="s_emoji" value="${esc(s.coverEmoji||'🎵')}"></div>
       <div class="field full"><label>Genres</label>
         <div id="genre_editor" class="badge-editor"></div>
@@ -947,6 +957,7 @@ function renderSongEditor(s){
 async function saveSong(){
   const s=getCurrentItem(); if(!s) return;
   s.title=$('#s_title').value.trim(); s.artist=$('#s_artist').value.trim(); s.year=parseInt($('#s_year').value)||new Date().getFullYear();
+  s.status=$('#s_status').value;
   s.coverEmoji=$('#s_emoji').value.trim(); 
   s.genres = Array.isArray(s.genres) ? s.genres.filter(Boolean) : [];
   // badges are maintained as objects by the badge editor
@@ -1284,7 +1295,7 @@ $('#tabs').onclick=e=>{
 $('#btnNew').onclick=()=>{
   const arr=getCurrentArray();
   if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:(state.data.categories[0]?.name||'Daily Life'),subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
-  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),genres:[],coverEmoji:'🎵',badges:[],streaming:{},about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
+  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),status:'Pending',genres:[],coverEmoji:'🎵',badges:[],streaming:{},about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
   else if(state.tab==='people'){ const id='person-'+Date.now(); arr.unshift({id,name:'New Person',handle:'',role:'',avatar:'',bio:'',tags:['friend'],links:{},projects:[],color:'text-purple-400',icon:'👤',showOnHome:true}); state.currentId=id; }
   else if(state.tab==='categories'){ const id='cat-'+Date.now(); arr.unshift({id,name:'New Category',color:'#A596DA',subs:[]}); state.currentId=id; }
   else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'Dennis Zero VT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }

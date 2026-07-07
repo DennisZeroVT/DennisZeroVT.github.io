@@ -18,6 +18,8 @@ let categories = [];
 // SITE_SONGS — your tracks. Each needs a unique "id" (used in URLs like
 // openSong('this-id') and in ALBUMS tracklists below). "genres" is an array
 // of strings used for the genre filter chips and search on the Music page.
+// "status" (e.g. "Released" / "Work in Progress" / "Pending") powers the
+// status filter dropdown on the Music page.
 // ---------------------------------------------------------------------------
 const SITE_SONGS = [
   {
@@ -25,6 +27,7 @@ const SITE_SONGS = [
     title: "Adrenaline",
     artist: "Dennis van Wijngaarden",
     year: 2026,
+    status: "Pending",
     genres: ["Electronic", "Orchestral"],
     coverEmoji: "",
     badges: [
@@ -56,6 +59,7 @@ const SITE_SONGS = [
     title: "Snowfall",
     artist: "Dennis van Wijngaarden",
     year: "2025",
+    status: "Released",
     genres: ["Ambient", "Lo-fi"],
     audio: "SongData/Songs/snowfall.mp3",
     cover: "SongData/AlbumArt/snowfall.png",
@@ -87,6 +91,7 @@ const SITE_SONGS = [
     title: "Stuck In Time",
     artist: "Dennis van Wijngaarden",
     year: "2026",
+    status: "Released",
     genres: ["Rock", "Alternative"],
     audio: "SongData/Songs/stuckintime.mp3",
     cover: "SongData/AlbumArt/stuckintime.png",
@@ -261,6 +266,7 @@ function initSiteData() {
     artist: s.artist,
     year: s.year,
     genres: s.genres || [],
+    status: s.status || (s.badges && s.badges[0] && badgeLabel(s.badges[0])) || '',
     src: s.audio,
     cover: s.coverEmoji || '🎵',
     coverImg: s.cover,
@@ -393,7 +399,9 @@ let currentSongSearch = '';
 let currentSongSort = 'newest';
 let currentSongYear = 'All';
 let currentSongGenre = 'All';
+let currentSongStatus = 'All';
 let currentSongView = 'grid';
+let currentSongSize = 'md';
 
 function songYearOf(song){
   const y = parseInt(song.year, 10);
@@ -429,15 +437,33 @@ function renderGenreFilters(){
     yearSelect.innerHTML = '<option value="All">All years</option>' + years.map(y => `<option value="${y}">${y}</option>`).join('');
     yearSelect.value = years.includes(prev) ? prev : 'All';
   }
+
+  // Populate status dropdown dynamically (Released / Work in Progress / Pending / etc.)
+  const statusSelect = document.getElementById('songStatusSelect');
+  if (statusSelect) {
+    const statuses = Array.from(new Set(all.map(s => s.status).filter(Boolean)));
+    const prev = statusSelect.value || currentSongStatus;
+    statusSelect.innerHTML = '<option value="All">All statuses</option>' + statuses.map(st => `<option value="${st}">${st}</option>`).join('');
+    statusSelect.value = statuses.includes(prev) ? prev : 'All';
+  }
 }
 
 window.onSongSearch = function(value){ currentSongSearch = (value||'').trim().toLowerCase(); renderSongsGrid(); };
 window.onSongSort = function(value){ currentSongSort = value; renderSongsGrid(); };
 window.onSongYear = function(value){ currentSongYear = value; renderSongsGrid(); };
+window.onSongStatus = function(value){ currentSongStatus = value; renderSongsGrid(); };
 
 window.setSongView = function(view){
   currentSongView = view;
   document.querySelectorAll('#songViewToggle button').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  const sizeToggle = document.getElementById('songSizeToggle');
+  if (sizeToggle) sizeToggle.style.display = view === 'list' ? 'none' : 'flex';
+  renderSongsGrid();
+};
+
+window.setSongSize = function(size){
+  currentSongSize = size;
+  document.querySelectorAll('#songSizeToggle button').forEach(b => b.classList.toggle('active', b.dataset.size === size));
   renderSongsGrid();
 };
 
@@ -446,6 +472,9 @@ function getFilteredSortedSongs(){
 
   if (currentSongGenre !== 'All') {
     entries = entries.filter(([,s]) => (s.genres||[]).includes(currentSongGenre));
+  }
+  if (currentSongStatus !== 'All') {
+    entries = entries.filter(([,s]) => s.status === currentSongStatus);
   }
   if (currentSongYear !== 'All') {
     entries = entries.filter(([,s]) => songYearOf(s) === currentSongYear);
@@ -504,7 +533,12 @@ function renderSongsGrid() {
     return;
   }
 
-  grid.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6';
+  const sizeGridClasses = {
+    sm: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 size-sm',
+    md: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6',
+    lg: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 size-lg'
+  };
+  grid.className = sizeGridClasses[currentSongSize] || sizeGridClasses.md;
   grid.innerHTML = entries.map(([key, song]) => {
     const badges = (song.badges || []).slice(0,3).map(b => {
       const label = badgeLabel(b), color = badgeColor(b);

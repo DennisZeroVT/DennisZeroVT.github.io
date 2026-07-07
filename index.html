@@ -721,6 +721,19 @@
         .song-row .song-row-genres { display: none; }
     }
 
+    /* Song card size variants (grid view density) */
+    #songs-grid.size-sm .p-4 { padding: 0.65rem; }
+    #songs-grid.size-sm h3 { font-size: 0.78rem; }
+    #songs-grid.size-sm p { font-size: 0.68rem; }
+    #songs-grid.size-sm .song-genre-chip { font-size: 8px; padding: 1px 6px; }
+    #songs-grid.size-sm .song-year-badge { font-size: 0.58rem; padding: 2px 7px; top: 6px; left: 6px; }
+    #songs-grid.size-sm [class*="w-14"] { width: 2.25rem; height: 2.25rem; }
+    #songs-grid.size-sm .flex.gap-1\.5 { gap: 0.25rem; }
+
+    #songs-grid.size-lg h3 { font-size: 1.15rem; }
+    #songs-grid.size-lg p { font-size: 0.95rem; }
+    #songs-grid.size-lg .p-4 { padding: 1.5rem; }
+
     /* ================= Home: stats & latest strip ================= */
     .home-stats {
         display: grid;
@@ -1318,9 +1331,16 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="mb-16">
 <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
 <h2 class="text-3xl font-bold">Featured Singles</h2>
+<div class="flex items-center gap-2">
+<div class="view-toggle" id="songSizeToggle">
+  <button data-size="sm" onclick="setSongSize('sm')" title="Small cards"><i class="fas fa-table-cells"></i></button>
+  <button data-size="md" class="active" onclick="setSongSize('md')" title="Medium cards"><i class="fas fa-border-all"></i></button>
+  <button data-size="lg" onclick="setSongSize('lg')" title="Large cards"><i class="fas fa-square"></i></button>
+</div>
 <div class="view-toggle" id="songViewToggle">
   <button data-view="grid" class="active" onclick="setSongView('grid')" title="Grid view"><i class="fas fa-th-large"></i></button>
   <button data-view="list" onclick="setSongView('list')" title="List view"><i class="fas fa-list"></i></button>
+</div>
 </div>
 </div>
 
@@ -1335,6 +1355,9 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
       <option value="oldest">Oldest first</option>
       <option value="az">Title A–Z</option>
       <option value="za">Title Z–A</option>
+    </select>
+    <select class="blog-select" style="width:auto" id="songStatusSelect" onchange="onSongStatus(this.value)">
+      <option value="All">All statuses</option>
     </select>
     <select class="blog-select" style="width:auto" id="songYearSelect" onchange="onSongYear(this.value)">
       <option value="All">All years</option>
