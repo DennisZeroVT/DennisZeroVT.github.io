@@ -113,15 +113,15 @@ const SITE_SONGS = [
     "id": "snowfall",
     "title": "Snowfall",
     "artist": "Dennis van Wijngaarden",
-    "year": "2025",
+    "year": 2025,
     "status": "Released",
     "genres": [
       "Ambient",
-      "Lo-fi"
+      "Orchestral"
     ],
     "audio": "SongData/Songs/snowfall.mp3",
     "cover": "SongData/AlbumArt/snowfall.png",
-    "coverEmoji": "🌨️",
+    "coverEmoji": "",
     "badges": [
       {
         "label": "Released",
@@ -163,7 +163,8 @@ const SITE_SONGS = [
     "about": "Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track.",
     "thoughts": "This was the first time I ever wrote lyrics for a song. I didn't plan it that way — I just wanted to make something for Erik and the words came naturally. I remember sitting with the melody for a long time before anything clicked. When it finally did, it felt like the song wrote itself.",
     "miscellaneous": "The track is the first song I ever released. It was released on Spotify in 2025",
-    "behindTheScenes": "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic."
+    "behindTheScenes": "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic.",
+    "blocks": []
   },
   {
     "id": "stuck_in_time",
