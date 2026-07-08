@@ -400,6 +400,12 @@ const OWNER = 'denniszerovt';
 // for the rest of this file's naming; it just points somewhere else now.
 const INDEX_PATH = 'app.js';
 
+// index.html itself (the actual markup file) — used only to bump a cache-busting
+// query param on the <script src="app.js"> tag after every save, so GitHub Pages
+// visitors (and the browser's own cache) always pick up the freshly-saved data
+// instead of serving a stale cached copy of app.js.
+const SITE_HTML_PATH = 'index.html';
+
 const UPLOADS = {
   posts: 'images/posts/',
   songs: 'SongData/Songs/',
@@ -564,6 +570,34 @@ async function saveDataBlock(constName, value, message){
   const html = await getSiteHtml();
   const updated = replaceConst(html, constName, value);
   await putSiteHtml(updated, message);
+  await bustAppJsCache();
+}
+
+// Bumps a ?v=<timestamp> query param on the <script src="app.js"> tag in the
+// real index.html file. This forces browsers (and GitHub Pages' own CDN cache)
+// to fetch a fresh copy of app.js immediately after a save, instead of quietly
+// keeping the old cached version — which is why edits can otherwise look like
+// they "didn't take" even though the commit succeeded.
+async function bustAppJsCache(){
+  try{
+    const info = await ghFetch(SITE_HTML_PATH, {ref:BRANCH});
+    let html = b64dec(info.content);
+    const v = Date.now();
+    const re = /<script\s+src=["']app\.js(?:\?v=\d+)?["']\s*><\/script>/;
+    if(!re.test(html)){ console.warn('Cache-bust skipped: could not find <script src="app.js"> in index.html'); return; }
+    html = html.replace(re, `<script src="app.js?v=${v}"><\/script>`);
+    const content = b64enc(html);
+    const body = { message: `cms: bust app.js cache (v${v})`, content, branch: BRANCH, sha: info.sha };
+    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${SITE_HTML_PATH}`,{
+      method:'PUT',
+      headers:{ 'Authorization':`token ${state.token}`, 'Content-Type':'application/json' },
+      body:JSON.stringify(body)
+    });
+    if(!res.ok){ console.warn('Cache-bust commit failed:', res.status, res.statusText); }
+  }catch(err){
+    // Non-fatal — the actual content save above already succeeded either way.
+    console.warn('Cache-bust step skipped:', err.message);
+  }
 }
 async function uploadFile(file, dest){
   const buf = await file.arrayBuffer();
@@ -859,15 +893,9 @@ function renderSongEditor(s){
       <div class="field"><label>Title</label><input id="s_title" value="${esc(s.title||'')}"></div>
       <div class="field"><label>Artist</label><input id="s_artist" value="${esc(s.artist||'Dennis Zero VT')}"></div>
       <div class="field"><label>Year</label><input id="s_year" type="number" value="${s.year||new Date().getFullYear()}"></div>
-      <div class="field"><label>Status</label>
-        <select id="s_status">
-          <option value="Released" ${((s.status||'Released')==='Released')?'selected':''}>Released</option>
-          <option value="Work in Progress" ${(s.status==='Work in Progress')?'selected':''}>Work in Progress</option>
-          <option value="Pending" ${(s.status==='Pending')?'selected':''}>Pending</option>
-          <option value="Announced" ${(s.status==='Announced')?'selected':''}>Announced</option>
-          <option value="Demo" ${(s.status==='Demo')?'selected':''}>Demo</option>
-        </select>
-        <div class="hint">Used for the status filter dropdown on the Music page.</div>
+      <div class="field full"><label>Status</label>
+        <div id="status_pills" class="row" style="gap:8px;flex-wrap:wrap"></div>
+        <div class="hint">Click a status — it lights up and automatically adds/updates the matching badge below, so you never have to remember the badge color yourself.</div>
       </div>
       <div class="field"><label>Cover Emoji</label><input id="s_emoji" value="${esc(s.coverEmoji||'🎵')}"></div>
       <div class="field full"><label>Genres</label>
@@ -926,6 +954,36 @@ function renderSongEditor(s){
       </details>
     </div>
   `;
+  // --- Status pills (click to set status; auto-syncs the matching badge) ---
+  const STATUS_OPTIONS = [
+    { label: 'Released', color: '#10B981' },
+    { label: 'Work in Progress', color: '#F59E0B' },
+    { label: 'Pending', color: '#6B7280' },
+    { label: 'Announced', color: '#3B82F6' },
+    { label: 'Demo', color: '#8B5CF6' }
+  ];
+  s.status = s.status || 'Released';
+  function syncStatusBadge(){
+    const statusLabels = STATUS_OPTIONS.map(o => o.label.toLowerCase());
+    s.badges = (s.badges || []).filter(b => !statusLabels.includes((b.label || '').toLowerCase()));
+    const opt = STATUS_OPTIONS.find(o => o.label === s.status);
+    if (opt) s.badges.unshift({ label: opt.label, color: opt.color });
+  }
+  function renderStatusPills(){
+    const wrap = $('#status_pills'); wrap.innerHTML = '';
+    STATUS_OPTIONS.forEach(opt => {
+      const active = s.status === opt.label;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = opt.label;
+      btn.style.cssText = `padding:7px 14px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:2px solid ${opt.color};transition:all .15s;` +
+        (active ? `background:${opt.color};color:#0a0a0f;` : `background:transparent;color:${opt.color};`);
+      btn.onclick = () => { s.status = opt.label; syncStatusBadge(); renderStatusPills(); renderBadges(); };
+      wrap.appendChild(btn);
+    });
+  }
+  renderStatusPills();
+
   // --- Badge editor with color ---
   const defaultColors = { 'Released':'#10B981','pending':'#6B7280','Pending':'#6B7280','Spotify':'#1DB954','Apple Music':'#FA243C','Tidal':'#000000','Amazon':'#FF9900','YouTube Music':'#FF0000','Deezer':'#FEAA2D' };
   s.badges = (s.badges||[]).map(b => typeof b==='string' ? {label:b, color: defaultColors[b]||'#A596DA'} : {label:b.label||'', color:b.color||'#A596DA'});
@@ -989,7 +1047,6 @@ function renderSongEditor(s){
 async function saveSong(){
   const s=getCurrentItem(); if(!s) return;
   s.title=$('#s_title').value.trim(); s.artist=$('#s_artist').value.trim(); s.year=parseInt($('#s_year').value)||new Date().getFullYear();
-  s.status=$('#s_status').value;
   s.coverEmoji=$('#s_emoji').value.trim(); 
   s.genres = Array.isArray(s.genres) ? s.genres.filter(Boolean) : [];
   // badges are maintained as objects by the badge editor
