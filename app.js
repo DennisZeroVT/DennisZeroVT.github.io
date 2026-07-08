@@ -27,16 +27,15 @@ const SITE_SONGS = [
     "title": "Adrenaline",
     "artist": "Dennis van Wijngaarden",
     "year": 2026,
-    "status": "Pending",
+    "status": "Released",
     "genres": [
-      "Electronic",
-      "Orchestral"
+      "Electronic"
     ],
     "coverEmoji": "",
     "badges": [
       {
-        "label": "pending",
-        "color": "#6B7280"
+        "label": "Released",
+        "color": "#3e9363"
       },
       {
         "label": "Spotify",
@@ -71,12 +70,44 @@ const SITE_SONGS = [
       "amazon": "",
       "deezer": ""
     },
-    "about": "Adrenaline is the third remake of an old song I wrote 2 years ago with the same name.\nI wanted to make the final version to show that I have improved as a music producer.",
-    "thoughts": "The song uses a lot of FM instruments and Genesis SoundFonts for some elements. The trumpet has a harmony now, and there are a lot of key changes.",
-    "miscellaneous": "I brought back Kula for the drums. We actually had two drum takes — one was a draft and the last one was the final one. Again, he did a great job. I really love the energy of the descending harmony chorus.",
+    "about": "",
+    "thoughts": "",
+    "miscellaneous": "",
     "behindTheScenes": "",
     "cover": "https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png",
-    "audio": "https://denniszerovt.github.io/SongData/Songs/1781377044884-adrenaline-final-mix.mp3"
+    "audio": "https://denniszerovt.github.io/SongData/Songs/1781377044884-adrenaline-final-mix.mp3",
+    "blocks": [
+      {
+        "type": "text",
+        "heading": "About",
+        "content": "Adrenaline is the third remake of an old song I wrote 2 years ago with the same name.\nI wanted to make the final version to show that I have improved as a music producer."
+      },
+      {
+        "type": "text",
+        "heading": "Thoughts",
+        "content": "The song uses a lot of FM instruments and Genesis SoundFonts for some elements. The trumpet has a harmony now, and there are a lot of key changes."
+      },
+      {
+        "type": "text",
+        "heading": "Behind the Scenes",
+        "content": "I brought back Kula for the drums. We actually had two drum takes — one was a draft and the last one was the final one. Again, he did a great job. I really love the energy of the descending harmony chorus."
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "video",
+        "src": "",
+        "url": "https://www.youtube.com/watch?v=MBxLK-FmkI0",
+        "caption": "second version"
+      },
+      {
+        "type": "video",
+        "src": "",
+        "url": "https://www.youtube.com/watch?v=CEEKVptauro",
+        "caption": "original version "
+      }
+    ]
   },
   {
     "id": "snowfall",
