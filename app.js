@@ -31,7 +31,7 @@ const SITE_SONGS = [
     "genres": [
       "Electronic"
     ],
-    "coverEmoji": "",
+    "coverEmoji": "🎵",
     "badges": [
       {
         "label": "Released",
@@ -94,6 +94,11 @@ const SITE_SONGS = [
       },
       {
         "type": "divider"
+      },
+      {
+        "type": "text",
+        "heading": "version history",
+        "content": "under here can you see the two that came before this one it started as a FM normal sonic song to something quite unique"
       },
       {
         "type": "video",
