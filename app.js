@@ -23,100 +23,189 @@ let categories = [];
 // ---------------------------------------------------------------------------
 const SITE_SONGS = [
   {
-    id: "song-1781376702122",
-    title: "Adrenaline",
-    artist: "Dennis van Wijngaarden",
-    year: 2026,
-    status: "Pending",
-    genres: ["Electronic", "Orchestral"],
-    coverEmoji: "",
-    badges: [
-      { label: "pending", color: "#6B7280" },
-      { label: "Spotify", color: "#1DB954" },
-      { label: "Apple Music", color: "#FA243C" },
-      { label: "Tidal", color: "#000000" },
-      { label: "Amazon", color: "#FF9900" },
-      { label: "YouTube Music", color: "#FF0000" },
-      { label: "Deezer", color: "#FEAA2D" }
+    "id": "song-1781376702122",
+    "title": "Adrenaline",
+    "artist": "Dennis van Wijngaarden",
+    "year": 2026,
+    "status": "Pending",
+    "genres": [
+      "Electronic",
+      "Orchestral"
     ],
-    streaming: {
-      spotify: "",
-      apple: "",
-      tidal: "",
-      youtube: "",
-      amazon: "",
-      deezer: ""
+    "coverEmoji": "",
+    "badges": [
+      {
+        "label": "pending",
+        "color": "#6B7280"
+      },
+      {
+        "label": "Spotify",
+        "color": "#1DB954"
+      },
+      {
+        "label": "Apple Music",
+        "color": "#FA243C"
+      },
+      {
+        "label": "Tidal",
+        "color": "#000000"
+      },
+      {
+        "label": "Amazon",
+        "color": "#FF9900"
+      },
+      {
+        "label": "YouTube Music",
+        "color": "#FF0000"
+      },
+      {
+        "label": "Deezer",
+        "color": "#FEAA2D"
+      }
+    ],
+    "streaming": {
+      "spotify": "",
+      "apple": "",
+      "tidal": "",
+      "youtube": "",
+      "amazon": "",
+      "deezer": ""
     },
-    about: "Adrenaline is the third remake of an old song I wrote 2 years ago with the same name.\nI wanted to make the final version to show that I have improved as a music producer.",
-    thoughts: "The song uses a lot of FM instruments and Genesis SoundFonts for some elements. The trumpet has a harmony now, and there are a lot of key changes.",
-    miscellaneous: "I brought back Kula for the drums. We actually had two drum takes — one was a draft and the last one was the final one. Again, he did a great job. I really love the energy of the descending harmony chorus.",
-    behindTheScenes: "",
-    cover: "https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png",
-    audio: "https://denniszerovt.github.io/SongData/Songs/1781377044884-adrenaline-final-mix.mp3"
+    "about": "Adrenaline is the third remake of an old song I wrote 2 years ago with the same name.\nI wanted to make the final version to show that I have improved as a music producer.",
+    "thoughts": "The song uses a lot of FM instruments and Genesis SoundFonts for some elements. The trumpet has a harmony now, and there are a lot of key changes.",
+    "miscellaneous": "I brought back Kula for the drums. We actually had two drum takes — one was a draft and the last one was the final one. Again, he did a great job. I really love the energy of the descending harmony chorus.",
+    "behindTheScenes": "",
+    "cover": "https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png",
+    "audio": "https://denniszerovt.github.io/SongData/Songs/1781377044884-adrenaline-final-mix.mp3"
   },
   {
-    id: "snowfall",
-    title: "Snowfall",
-    artist: "Dennis van Wijngaarden",
-    year: "2025",
-    status: "Released",
-    genres: ["Ambient", "Lo-fi"],
-    audio: "SongData/Songs/snowfall.mp3",
-    cover: "SongData/AlbumArt/snowfall.png",
-    coverEmoji: "🌨️",
-    badges: [
-      { label: "Released", color: "#10B981" },
-      { label: "Spotify", color: "#1DB954" },
-      { label: "Apple Music", color: "#FA243C" },
-      { label: "Tidal", color: "#000000" },
-      { label: "Amazon", color: "#FF9900" },
-      { label: "YouTube Music", color: "#FF0000" },
-      { label: "Deezer", color: "#FEAA2D" }
+    "id": "snowfall",
+    "title": "Snowfall",
+    "artist": "Dennis van Wijngaarden",
+    "year": "2025",
+    "status": "Released",
+    "genres": [
+      "Ambient",
+      "Lo-fi"
     ],
-    streaming: {
-      spotify: "https://open.spotify.com/track/0TxrNlfNSlwuncbt0wpVH6?utm_source=generator",
-      apple: "https://music.apple.com/be/album/snowfall-single/1840250772?l=nl",
-      tidal: "https://tidal.com/album/460721208/track/460721209",
-      youtube: "https://music.youtube.com/watch?v=9dDbeq0VEbc&si=c9Cb4I4bC4nwWi7e",
-      amazon: "https://music.amazon.com/albums/B0FNKT4Z2X",
-      deezer: "https://link.deezer.com/s/337CFXi1lRmRShDNd2jGO"
+    "audio": "SongData/Songs/snowfall.mp3",
+    "cover": "SongData/AlbumArt/snowfall.png",
+    "coverEmoji": "🌨️",
+    "badges": [
+      {
+        "label": "Released",
+        "color": "#10B981"
+      },
+      {
+        "label": "Spotify",
+        "color": "#1DB954"
+      },
+      {
+        "label": "Apple Music",
+        "color": "#FA243C"
+      },
+      {
+        "label": "Tidal",
+        "color": "#000000"
+      },
+      {
+        "label": "Amazon",
+        "color": "#FF9900"
+      },
+      {
+        "label": "YouTube Music",
+        "color": "#FF0000"
+      },
+      {
+        "label": "Deezer",
+        "color": "#FEAA2D"
+      }
+    ],
+    "streaming": {
+      "spotify": "https://open.spotify.com/track/0TxrNlfNSlwuncbt0wpVH6?utm_source=generator",
+      "apple": "https://music.apple.com/be/album/snowfall-single/1840250772?l=nl",
+      "tidal": "https://tidal.com/album/460721208/track/460721209",
+      "youtube": "https://music.youtube.com/watch?v=9dDbeq0VEbc&si=c9Cb4I4bC4nwWi7e",
+      "amazon": "https://music.amazon.com/albums/B0FNKT4Z2X",
+      "deezer": "https://link.deezer.com/s/337CFXi1lRmRShDNd2jGO"
     },
-    about: "Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track.",
-    thoughts: "This was the first time I ever wrote lyrics for a song. I didn't plan it that way — I just wanted to make something for Erik and the words came naturally. I remember sitting with the melody for a long time before anything clicked. When it finally did, it felt like the song wrote itself.",
-    miscellaneous: "The track is the first song I ever released. It was released on Spotify in 2025",
-    behindTheScenes: "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic."
+    "about": "Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track.",
+    "thoughts": "This was the first time I ever wrote lyrics for a song. I didn't plan it that way — I just wanted to make something for Erik and the words came naturally. I remember sitting with the melody for a long time before anything clicked. When it finally did, it felt like the song wrote itself.",
+    "miscellaneous": "The track is the first song I ever released. It was released on Spotify in 2025",
+    "behindTheScenes": "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic."
   },
   {
-    id: "stuck_in_time",
-    title: "Stuck In Time",
-    artist: "Dennis van Wijngaarden",
-    year: "2026",
-    status: "Released",
-    genres: ["Rock", "Alternative"],
-    audio: "SongData/Songs/stuckintime.mp3",
-    cover: "SongData/AlbumArt/stuckintime.png",
-    coverEmoji: "🕒",
-    badges: [
-      { label: "Released", color: "#10B981" },
-      { label: "Spotify", color: "#1DB954" },
-      { label: "Apple Music", color: "#FA243C" },
-      { label: "Tidal", color: "#000000" },
-      { label: "Amazon", color: "#FF9900" },
-      { label: "YouTube Music", color: "#FF0000" },
-      { label: "Deezer", color: "#FEAA2D" }
+    "id": "stuck_in_time",
+    "title": "Stuck In Time",
+    "artist": "Dennis van Wijngaarden",
+    "year": 2026,
+    "status": "Released",
+    "genres": [
+      "Rock",
+      "Alternative"
     ],
-    streaming: {
-      spotify: "https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x?si=994999e942f14ba4",
-      apple: "https://music.apple.com/be/album/stuck-in-time-single/1893337152?l=nl",
-      tidal: "http://tidal.com/album/514925638/track/514925640",
-      youtube: "https://music.youtube.com/watch?v=pMVXcz9Ztpc&si=tf1PjhIUzJvQK1KT",
-      amazon: "https://music.amazon.com/tracks/B0GWS3FN2G?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_tyzyaI4xxzICjl1682gmmG0om",
-      deezer: "https://link.deezer.com/s/337CHhi5HVwqcozgsSI4d"
+    "audio": "SongData/Songs/stuckintime.mp3",
+    "cover": "SongData/AlbumArt/stuckintime.png",
+    "coverEmoji": "🕒",
+    "badges": [
+      {
+        "label": "Released",
+        "color": "#10B981"
+      },
+      {
+        "label": "Spotify",
+        "color": "#1DB954"
+      },
+      {
+        "label": "Apple Music",
+        "color": "#FA243C"
+      },
+      {
+        "label": "Tidal",
+        "color": "#000000"
+      },
+      {
+        "label": "Amazon",
+        "color": "#FF9900"
+      },
+      {
+        "label": "YouTube Music",
+        "color": "#FF0000"
+      },
+      {
+        "label": "Deezer",
+        "color": "#FEAA2D"
+      }
+    ],
+    "streaming": {
+      "spotify": "https://open.spotify.com/track/1UNqmaIFQVQia3Ogxtpu4x?si=994999e942f14ba4",
+      "apple": "https://music.apple.com/be/album/stuck-in-time-single/1893337152?l=nl",
+      "tidal": "http://tidal.com/album/514925638/track/514925640",
+      "youtube": "https://music.youtube.com/watch?v=pMVXcz9Ztpc&si=tf1PjhIUzJvQK1KT",
+      "amazon": "https://music.amazon.com/tracks/B0GWS3FN2G?marketplaceId=ATVPDKIKX0DER&musicTerritory=US&ref=dm_sh_tyzyaI4xxzICjl1682gmmG0om",
+      "deezer": "https://link.deezer.com/s/337CHhi5HVwqcozgsSI4d"
     },
-    about: "Stuck In Time is about the feeling of being trapped in a cycle — staying the same while everything else moves on. It's a reflection on change, growth, and the fear of being left behind.",
-    thoughts: "This song was inspired by a lot of personal experiences and conversations with friends. I wanted to capture that bittersweet feeling of nostalgia mixed with the anxiety of change. The lyrics came from a place of vulnerability, and I hope they resonate with anyone who's ever felt stuck in a moment they can't escape.",
-    miscellaneous: "the harmonies in the song is sang by me its actualy one of the first time i used my own voice in my song.",
-    behindTheScenes: "i went back in cubase for this one. The drums were recorded live by my friend Kula i met during an idol group project, which added a lot of energy to the track. I built the produced the song to finish and i send the mockup drums to kula and told him you can put your own spin to the drums and he killed it, like i put a half time section in it before the key change and he went insane on the half time section and his drums conbined with my guitars and the song just came alive, it was a really fun process and i hope to work with him again in the future."
+    "about": "",
+    "thoughts": "",
+    "miscellaneous": "",
+    "behindTheScenes": "",
+    "blocks": [
+      {
+        "type": "text",
+        "heading": "About",
+        "content": "Stuck In Time is about the feeling of being trapped in a cycle — staying the same while everything else moves on. It's a reflection on change, growth, and the fear of being left behind."
+      },
+      {
+        "type": "text",
+        "heading": "Thoughts",
+        "content": "This song was inspired by a lot of personal experiences and conversations with friends. I wanted to capture that bittersweet feeling of nostalgia mixed with the anxiety of change. The lyrics came from a place of vulnerability, and I hope they resonate with anyone who's ever felt stuck in a moment they can't escape.\n"
+      },
+      {
+        "type": "text",
+        "heading": "Behind the Scenes",
+        "content": "i went back in cubase for this one. The drums were recorded live by my friend Kula i met during an idol group project, which added a lot of energy to the track. I built the produced the song to finish and i send the mockup drums to kula and told him you can put your own spin to the drums and he killed it, like i put a half time section in it before the key change and he went insane on the half time section and his drums conbined with my guitars and the song just came alive, it was a really fun process and i hope to work with him again in the future."
+      }
+    ]
   }
 ];
 
