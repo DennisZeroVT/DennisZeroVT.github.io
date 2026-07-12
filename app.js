@@ -23,7 +23,7 @@ let categories = [];
 // ---------------------------------------------------------------------------
 const SITE_SONGS = [
   {
-    id: "song-1781376702122",
+    id: "adrenaline",
     title: "Adrenaline",
     artist: "Dennis van Wijngaarden",
     year: 2026,
@@ -181,7 +181,7 @@ const SITE_PEOPLE = [
     },
     credits: [
       { song: "Stuck In Time", songId: "stuck_in_time", role: "Drums", note: "" },
-      { song: "Adrenaline", songId: "song-1781376702122", role: "Drums", note: "" }
+      { song: "Adrenaline", songId: "adrenaline", role: "Drums", note: "" }
     ],
     color: "from-[#A596DA]/30 to-[#8B78CB]/10",
     icon: "fas fa-drum"
@@ -308,6 +308,46 @@ function initSiteData() {
   renderAlbumsGrid();
   renderPeople(SITE_PEOPLE);
   renderHome();
+  renderFeaturedProjects();
+}
+
+/* ---------- Home: "In The Works" panel, driven by song status ---------- */
+function renderFeaturedProjects(){
+  const wrap = document.getElementById('featured-projects-grid');
+  if (!wrap) return;
+
+  const inProgress = SITE_SONGS.filter(s => s.status && s.status !== 'Released');
+
+  if (!inProgress.length) {
+    wrap.innerHTML = `
+      <div class="glass rounded-2xl p-10 text-center" style="grid-column:1/-1">
+        <i class="fas fa-circle-check text-3xl text-[var(--accent)] mb-4"></i>
+        <h3 class="text-xl font-bold mb-2">Nothing cooking right now</h3>
+        <p class="text-[var(--text-secondary)] mb-6 max-w-md mx-auto">Everything made so far is already out. Check the full catalog for all released tracks.</p>
+        <a href="#music" data-page="music" class="px-6 py-2.5 rounded-lg glass font-semibold glow-hover inline-flex items-center gap-2">Browse Music <i class="fas fa-arrow-right text-xs"></i></a>
+      </div>`;
+    document.querySelectorAll('#featured-projects-grid [data-page]').forEach(a=>{
+      a.addEventListener('click', e=>{ e.preventDefault(); if(typeof showPage==='function') showPage('music'); });
+    });
+    return;
+  }
+
+  wrap.innerHTML = inProgress.map(s => {
+    const color = STATUS_META[s.status] || '#A596DA';
+    const genreChips = (s.genres || []).slice(0, 3).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
+    return `
+    <div class="glass rounded-2xl p-6 glow-hover gradient-border cursor-pointer transition-all duration-300 hover:-translate-y-1" onclick="document.querySelector('[data-page=music]').click(); setTimeout(()=>openSong('${s.id}'), 250)">
+      <div class="flex items-start justify-between mb-5">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
+          <i class="fas fa-compact-disc text-xl text-[#A596DA]"></i>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:${color}20;color:${color};border:1px solid ${color}55">${s.status}</span>
+      </div>
+      <h3 class="text-xl font-bold mb-1">${s.title}</h3>
+      <p class="text-sm text-[var(--text-secondary)] mb-4">${s.year || ''}</p>
+      ${genreChips ? `<div class="flex flex-wrap gap-1.5">${genreChips}</div>` : ''}
+    </div>`;
+  }).join('');
 }
 
 /* ---------- Home: stats + latest release/post ---------- */
@@ -369,10 +409,31 @@ document.addEventListener('DOMContentLoaded', initSiteData);
 const platformIcons = {
   spotify: '<i class="fab fa-spotify"></i>',
   apple: '<i class="fab fa-apple"></i>',
-  tidal: '<i class="fas fa-music"></i>',
+  tidal: '<i class="fas fa-water"></i>',
   youtube: '<i class="fab fa-youtube"></i>',
   amazon: '<i class="fab fa-amazon"></i>',
-  deezer: '<i class="fas fa-record-vinyl"></i>'
+  deezer: '<i class="fas fa-music"></i>'
+};
+
+// Status colors — kept in sync with the status pills in the CMS song editor,
+// so a song tagged "Work in Progress" there shows the same color everywhere.
+const STATUS_META = {
+  'Released': '#10B981',
+  'Work in Progress': '#F59E0B',
+  'Pending': '#6B7280',
+  'Announced': '#3B82F6',
+  'Demo': '#8B5CF6'
+};
+
+// Real brand colors for each streaming platform, used to color-code the
+// "Listen on" buttons in the song overlay instead of one flat gray pill.
+const STREAMING_META = {
+  spotify: { label: 'Spotify',      bg: '#1DB954', text: '#ffffff' },
+  apple:   { label: 'Apple Music',  bg: '#FA243C', text: '#ffffff' },
+  tidal:   { label: 'Tidal',        bg: '#000000', text: '#ffffff', border: 'rgba(255,255,255,0.25)' },
+  youtube: { label: 'YouTube',      bg: '#FF0000', text: '#ffffff' },
+  amazon:  { label: 'Amazon Music', bg: '#00A8E1', text: '#062430' },
+  deezer:  { label: 'Deezer',       bg: '#A238FF', text: '#ffffff' }
 };
 
 function badgeLabel(b){ return typeof b === 'string' ? b : ((b && b.label) || ''); }
@@ -1091,13 +1152,22 @@ function openSong(key) {
   streamWrap.innerHTML = '';
   if (song.streaming) {
     Object.entries(song.streaming).forEach(([platform, url]) => {
+      if (!url) return;
+      const meta = STREAMING_META[platform] || { label: platform, bg: 'var(--bg-card-hover)', text: 'var(--text-secondary)' };
+      const icon = platformIcons[platform] || '<i class="fas fa-play"></i>';
       const a = document.createElement('a');
       a.href = url;
       a.target = '_blank';
-      a.className = 'px-3 py-1.5 rounded-lg bg-white/5 hover:bg-white/10 text-xs capitalize transition';
-      a.textContent = platform;
+      a.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition inline-flex items-center gap-2 hover:brightness-110 hover:-translate-y-0.5';
+      a.style.background = meta.bg;
+      a.style.color = meta.text;
+      if (meta.border) a.style.border = `1px solid ${meta.border}`;
+      a.innerHTML = `${icon}<span>${meta.label}</span>`;
       streamWrap.appendChild(a);
     });
+    if (!streamWrap.children.length) {
+      streamWrap.innerHTML = '<span class="text-xs text-[var(--text-secondary)]">Not available on any platform yet.</span>';
+    }
   }
 
   document.getElementById('songOverlay').classList.remove('hidden');
