@@ -573,16 +573,57 @@ async function saveDataBlock(constName, value, message){
   await patchStaticIndexHtml({ bustCache: true, songs: constName === 'SITE_SONGS' ? value : null });
 }
 
+// Builds the exact same card markup app.js renders into #songs-grid, but as
+// a plain string committed straight into index.html — real static HTML, not
+// hidden metadata. Every song gets a stable id="song-<id>" anchor.
+function buildStaticSongCardsHtml(songs){
+  const list = (songs || []).filter(s => s && s.title);
+  if(!list.length){
+    return '<p style="color:var(--text-secondary,#9d94b8);padding:2rem;text-align:center;grid-column:1/-1">No songs yet.</p>';
+  }
+  return list.map(s => {
+    const badges = (s.badges || []).slice(0, 3).map(b => {
+      const label = typeof b === 'string' ? b : (b.label || '');
+      const color = (b && typeof b === 'object' && b.color) || null;
+      return color
+        ? `<span class="text-[10px] px-2 py-0.5 rounded-full" style="background:${color};color:#fff">${esc(label)}</span>`
+        : `<span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">${esc(label)}</span>`;
+    }).join('');
+    const genreChips = (s.genres || []).map(g => `<span class="song-genre-chip">${esc(g)}</span>`).join('');
+    const cover = s.cover || '';
+    const emoji = esc(s.coverEmoji || '🎵');
+    return `    <div id="song-${esc(s.id)}" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('${esc(s.id)}')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            ${s.year ? `<span class="song-year-badge">${esc(String(s.year))}</span>` : ''}
+            ${cover ? `<img src="${esc(cover)}" alt="${esc(s.title)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
+            <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">${emoji}</div>
+            <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
+            </div>
+        </div>
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">${esc(s.title)}</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">${esc(s.artist || '')}</p>
+            ${genreChips ? `<div class="flex gap-1.5 mt-2 flex-wrap">${genreChips}</div>` : ''}
+            <div class="flex gap-1.5 mt-3 flex-wrap">${badges}</div>
+        </div>
+    </div>`;
+  }).join('\n\n');
+}
+
 // Patches the real index.html (not app.js) in one combined commit:
 //  1. Bumps ?v=<timestamp> on the <script src="app.js"> tag so browsers/GitHub
 //     Pages never serve a stale cached copy after a save (this is why edits can
 //     otherwise look like they "didn't take" even though the commit succeeded).
-//  2. If songs are passed, regenerates the static JSON-LD block (id="songs-jsonld")
-//     in <head> from the current song list. That block is plain, crawlable text
-//     baked right into the HTML source — so search engines and any crawler that
-//     doesn't execute JS (which is most of them besides Google) can still see
-//     every song's title, artist, genre and year, even though the visible song
-//     cards on the page are rendered dynamically by app.js.
+//  2. If songs are passed, regenerates the REAL static song cards between the
+//     <!-- STATIC_SONGS_START/END --> markers inside #songs-grid. This is plain,
+//     visible HTML baked right into the page source — not a hidden metadata
+//     block — so any crawler, JS or not, sees the actual song titles, artists,
+//     genres, years and status badges immediately, with no JS required. Once
+//     app.js loads it re-renders the same grid dynamically for search/sort/
+//     filter, but this static version is what's there before that happens.
 async function patchStaticIndexHtml({ bustCache = true, songs = null } = {}){
   try{
     const info = await ghFetch(SITE_HTML_PATH, {ref:BRANCH});
@@ -597,28 +638,16 @@ async function patchStaticIndexHtml({ bustCache = true, songs = null } = {}){
     }
 
     if(songs){
-      const items = songs.filter(s => s && s.title).map((s, i) => ({
-        "@type": "ListItem",
-        "position": i + 1,
-        "item": {
-          "@type": "MusicRecording",
-          "name": s.title,
-          "byArtist": { "@type": "Person", "name": s.artist || "Dennis van Wijngaarden" },
-          ...(Array.isArray(s.genres) && s.genres.length ? { genre: s.genres } : {}),
-          "datePublished": String(s.year || ''),
-          "url": `https://${OWNER}.github.io/#song-${s.id}`
-        }
-      }));
-      const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@type": "ItemList", "itemListElement": items }, null, 2);
-      const ldRe = /(<script type="application\/ld\+json" id="songs-jsonld">)([\s\S]*?)(<\/script>)/;
-      if(ldRe.test(html)){ html = html.replace(ldRe, `$1\n${jsonLd}\n$3`); changed = true; }
-      else console.warn('songs-jsonld block not found in index.html; skipping structured-data sync');
+      const cardsHtml = buildStaticSongCardsHtml(songs);
+      const staticRe = /(<!-- STATIC_SONGS_START -->)([\s\S]*?)(<!-- STATIC_SONGS_END -->)/;
+      if(staticRe.test(html)){ html = html.replace(staticRe, `$1\n${cardsHtml}\n$3`); changed = true; }
+      else console.warn('STATIC_SONGS markers not found in index.html; skipping static song sync');
     }
 
     if(!changed) return;
 
     const content = b64enc(html);
-    const body = { message: songs ? 'cms: sync songs structured data + bust cache' : 'cms: bust app.js cache', content, branch: BRANCH, sha: info.sha };
+    const body = { message: songs ? 'cms: sync static song cards + bust cache' : 'cms: bust app.js cache', content, branch: BRANCH, sha: info.sha };
     const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${SITE_HTML_PATH}`,{
       method:'PUT',
       headers:{ 'Authorization':`token ${state.token}`, 'Content-Type':'application/json' },
