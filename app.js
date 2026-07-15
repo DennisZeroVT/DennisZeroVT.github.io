@@ -1,6 +1,24 @@
 /* =========================================================
    DennisZeroVT site — consolidated app script
    One data load, one render pass per section, one nav system.
+
+   TABLE OF CONTENTS
+   -----------------
+   1. Site content       (SITE_SONGS, SITE_ALBUMS, SITE_PEOPLE,
+                           SITE_CATEGORIES, SITE_POSTS)
+   2. Init                (initSiteData — maps raw data → render state)
+   3. Home                (stats strip, latest release/post, "In The Works")
+   4. Shared style maps    (STATUS_META, STREAMING_META, badge helpers)
+   5. Music                (song/album grids — search, sort, genre, view)
+   6. Friends & Collaborators
+   7. Content blocks       (shared renderer for blog posts + song overlay)
+   8. Blog                 (categories, search, sort, year, posts)
+   9. Navigation           (tabs, drawer, hash routing / deep links)
+   10. Song overlay        (modal + persistent bottom player)
+   11. Album overlay
+   12. Rhythm game stats   (RHYTHM_GAME_STATS + tab rendering)
+   13. Hardware tablet-area visualizer
+   14. HQ / performance toggle
    ========================================================= */
 
 let SONGS = {};
@@ -14,18 +32,18 @@ let categories = [];
    no build step. Save the file and reload the page — that's it.
    =========================================================================== */
 
-// ---------------------------------------------------------------------------
-// SITE_SONGS — your tracks. Each needs a unique "id" (used in URLs like
-// openSong('this-id') and in ALBUMS tracklists below). "genres" is an array
-// of strings used for the genre filter chips and search on the Music page.
-// "status" (e.g. "Released" / "Work in Progress" / "Pending") powers the
-// status filter dropdown on the Music page.
-// ---------------------------------------------------------------------------
+/* ============================================================
+   SITE_SONGS — your tracks. Each needs a unique "id" (used in URLs like
+   openSong('this-id') and in ALBUMS tracklists below). "genres" is an array
+   of strings used for the genre filter chips and search on the Music page.
+   "status" (e.g. "Released" / "Work in Progress" / "Pending") powers the
+   status filter dropdown on the Music page.
+   ============================================================ */
 const SITE_SONGS = [
   {
     "id": "adrenaline",
     "title": "Adrenaline",
-    "artist": "Dennis van Wijngaarden",
+    "artist": "DennisZeroVT",
     "year": 2026,
     "status": "Released",
     "genres": [
@@ -118,7 +136,7 @@ const SITE_SONGS = [
   {
     "id": "snowfall",
     "title": "Snowfall",
-    "artist": "Dennis van Wijngaarden",
+    "artist": "DennisZeroVT",
     "year": "2025",
     "status": "Released",
     "genres": [
@@ -174,7 +192,7 @@ const SITE_SONGS = [
   {
     "id": "stuck_in_time",
     "title": "Stuck In Time",
-    "artist": "Dennis van Wijngaarden",
+    "artist": "DennisZeroVT",
     "year": "2026",
     "status": "Released",
     "genres": [
@@ -229,15 +247,15 @@ const SITE_SONGS = [
   }
 ];
 
-// ---------------------------------------------------------------------------
-// SITE_ALBUMS — collections/EPs. "tracklist[].key" must match a SITE_SONGS id
-// to make a track clickable straight into the song overlay.
-// ---------------------------------------------------------------------------
+/* ============================================================
+   SITE_ALBUMS — collections/EPs. "tracklist[].key" must match a SITE_SONGS
+   id to make a track clickable straight into the song overlay.
+   ============================================================ */
 const SITE_ALBUMS = [
   {
     id: "album-1780532205221",
     name: "Solo EP 💿",
-    artist: "Dennis Zero VT",
+    artist: "DennisZeroVT",
     year: 2026,
     cover: "",
     status: "In Progress",
@@ -249,12 +267,12 @@ const SITE_ALBUMS = [
   }
 ];
 
-// ---------------------------------------------------------------------------
-// SITE_PEOPLE — friends & collaborators. "tags" controls where they show up:
-// include "friend" to appear on the Friends page, "collab" for Collaborators
-// (a person can have both). "credits[].songId" must match a SITE_SONGS id to
-// make it clickable into that song.
-// ---------------------------------------------------------------------------
+/* ============================================================
+   SITE_PEOPLE — friends & collaborators. "tags" controls where they show up:
+   include "friend" to appear on the Friends page, "collab" for Collaborators
+   (a person can have both). "credits[].songId" must match a SITE_SONGS id to
+   make it clickable into that song.
+   ============================================================ */
 const SITE_PEOPLE = [
   {
     id: "erik",
@@ -336,21 +354,22 @@ const SITE_PEOPLE = [
   }
 ];
 
-// ---------------------------------------------------------------------------
-// SITE_CATEGORIES — blog category filter pills + their color + subcategories.
-// "name" here must match "category" on posts in SITE_POSTS below.
-// ---------------------------------------------------------------------------
+/* ============================================================
+   SITE_CATEGORIES — blog category filter pills + their color +
+   subcategories. "name" here must match "category" on posts in SITE_POSTS
+   below.
+   ============================================================ */
 const SITE_CATEGORIES = [
   { id: "gaming", name: "Gaming", color: "#A596DA", subs: ["Osu", "speedrunning"] },
   { id: "game-dev", name: "Game Dev", color: "#A596DA", subs: ["Ohter projects"] },
   { id: "music-production", name: "Music Production", color: "#ec4899", subs: ["Snowfall", "Originals", "Remixes", "Soundtracks", "Behind the Beat"] }
 ];
 
-// ---------------------------------------------------------------------------
-// SITE_POSTS — blog posts. "blocks" render top-to-bottom: {type:'text'},
-// {type:'image', src}, {type:'video', url} (YouTube links auto-embed),
-// {type:'divider'}.
-// ---------------------------------------------------------------------------
+/* ============================================================
+   SITE_POSTS — blog posts. "blocks" render top-to-bottom: {type:'text'},
+   {type:'image', src}, {type:'video', url} (YouTube links auto-embed),
+   {type:'divider'}.
+   ============================================================ */
 const SITE_POSTS = [
   {
     id: "post-1781469379216",
@@ -420,7 +439,9 @@ function initSiteData() {
   renderFeaturedProjects();
 }
 
-/* ---------- Home: "In The Works" panel, driven by song status ---------- */
+/* ============================================================
+   Home: "In The Works" panel, driven by song status
+   ============================================================ */
 function renderFeaturedProjects(){
   const wrap = document.getElementById('featured-projects-grid');
   if (!wrap) return;
@@ -459,7 +480,9 @@ function renderFeaturedProjects(){
   }).join('');
 }
 
-/* ---------- Home: stats + latest release/post ---------- */
+/* ============================================================
+   Home: stats + latest release/post
+   ============================================================ */
 function renderHome(){
   const statsEl = document.getElementById('home-stats');
   if (statsEl) {
@@ -564,7 +587,9 @@ function getBadgeStyle(name) {
   return map[name] || {bg: 'var(--bg-card-hover)', color: 'var(--text-secondary)'};
 }
 
-/* ---------- Music: songs & albums grids ---------- */
+/* ============================================================
+   Music: songs & albums grids
+   ============================================================ */
 
 let currentSongSearch = '';
 let currentSongSort = 'newest';
@@ -762,7 +787,9 @@ function renderAlbumsGrid() {
   }).join('');
 }
 
-/* ---------- Friends & Collaborators ---------- */
+/* ============================================================
+   Friends & Collaborators
+   ============================================================ */
 
 function renderPeople(peopleList) {
   const collabsGrid = document.getElementById('collabs-grid');
@@ -924,7 +951,9 @@ window.closePersonOverlay = function(event) {
   document.body.style.overflow = '';
 };
 
-/* ---------- Shared content-block renderer (used by Blog posts and Song overlay) ---------- */
+/* ============================================================
+   Shared content-block renderer (used by Blog posts and Song overlay)
+   ============================================================ */
 function renderContentBlocks(blocks, accentColor){
   const col = accentColor || '#A596DA';
   if(!blocks || !Array.isArray(blocks) || blocks.length === 0) return null;
@@ -958,7 +987,9 @@ function renderContentBlocks(blocks, accentColor){
   }).join('');
 }
 
-/* ---------- Blog: categories, search, sort, year, posts ---------- */
+/* ============================================================
+   Blog: categories, search, sort, year, posts
+   ============================================================ */
 
 let currentCat = 'All';
 let currentSub = 'All';
@@ -1110,7 +1141,9 @@ function renderPosts(){
   }).join('');
 }
 
-/* ---------- Navigation (TABS + BLACK TRANSPARENT DRAWER) ---------- */
+/* ============================================================
+   Navigation (TABS + BLACK TRANSPARENT DRAWER)
+   ============================================================ */
 const sectionIds = ['home','music','blog','rhythm','collabs','friends'];
 const drawer = document.getElementById('mobile-menu');
 const overlay = document.getElementById('mobile-menu-overlay');
@@ -1195,7 +1228,9 @@ window.addEventListener('load', () => {
   fillRhythmData();
 });
 
-/* ---------- Song overlay / persistent bottom player ---------- */
+/* ============================================================
+   Song overlay / persistent bottom player
+   ============================================================ */
 
 const songAudio = document.getElementById('songAudio');
 let currentSongKey = null;
@@ -1391,7 +1426,9 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closePersonOverlay(); closeOverlay(); closeAlbum(); }
 });
 
-/* ---------- Rhythm game stats (from the hardcoded RHYTHM_GAME_STATS above) ---------- */
+/* ============================================================
+   Rhythm game stats (from the hardcoded RHYTHM_GAME_STATS above)
+   ============================================================ */
 
 function fmtNum(n){ return (n || 0).toLocaleString(); }
 function fmtHours(sec){
@@ -1619,7 +1656,9 @@ function fillRhythmData(){
   if (ffrTb) ffrTb.innerHTML = ffr.top10.map(ffrRow).join('');
 }
 
-/* ---------- Hardware tablet-area visualizer (rhythm page) ---------- */
+/* ============================================================
+   Hardware tablet-area visualizer (rhythm page)
+   ============================================================ */
 
 const TABLET_AREA = { width: 95, height: 65, x: 47.5, y: 32.5, rotation: 0, unit: 'mm' };
 const TABLET_BOUNDS = { xMin: 47.5, xMax: 104.5, yMin: 32.5, yMax: 62.5 };
@@ -1657,7 +1696,9 @@ function updateHardwareTablet() {
   }
 }
 
-/* ---------- HQ / performance toggle ---------- */
+/* ============================================================
+   HQ / performance toggle
+   ============================================================ */
 
 document.addEventListener('DOMContentLoaded', function() {
   const hqBtn = document.getElementById('hq-toggle');

@@ -423,7 +423,7 @@ const FALLBACK_POSTS = [
 ];
 const FALLBACK_SONGS = [
   {
-    id:"snowfall", title:"Snowfall", artist:"Dennis Zero VT", year:2025, coverEmoji:"❄️",
+    id:"snowfall", title:"Snowfall", artist:"DennisZeroVT", year:2025, coverEmoji:"❄️",
     cover:"https://denniszerovt.github.io/SongData/AlbumArt/snowfall.png",
     audio:"https://denniszerovt.github.io/SongData/Songs/snowfall.mp3",
     badges:["Lo-fi","Collab","Winter Vibes"],
@@ -434,7 +434,7 @@ const FALLBACK_SONGS = [
     behindTheScenes:"Erik recorded his takes in one night. We layered three harmonies to get that airy feel."
   },
   {
-    id:"stuck-in-time", title:"Stuck In Time", artist:"Dennis Zero VT", year:2026, coverEmoji:"⏳",
+    id:"stuck-in-time", title:"Stuck In Time", artist:"DennisZeroVT", year:2026, coverEmoji:"⏳",
     cover:"https://denniszerovt.github.io/SongData/AlbumArt/stuck-in-time.png",
     audio:"https://denniszerovt.github.io/SongData/Songs/stuck-in-time.mp3",
     badges:["Drum & Bass","Collab"],
@@ -453,7 +453,7 @@ const FALLBACK_PEOPLE = [
   { id:"nox",    name:"Nox",    handle:"@Nox_Daemon",    role:"Friend // @Nox_Daemon",       avatar:"https://denniszerovt.github.io/Friends/nox.jpg",    bio:"Nox is a friend I met through Vivid.",                tags:["friend"], links:{}, credits:[], color:"from-blue-500/30 to-blue-600/10",   icon:"fas fa-guitar",    showOnHome:true }
 ];
 const FALLBACK_ALBUMS = [
-  { id:"solo-ep", name:"Solo EP", artist:"Dennis Zero VT", year:2025, cover:"https://denniszerovt.github.io/SongData/AlbumArt/solo-ep.png", status:"Released", description:"My first solo collection.", tracklist:[{name:"Snowfall",duration:"3:24",status:"released",key:"snowfall"},{name:"Stuck In Time",duration:"4:11",status:"released",key:"stuck-in-time"},{name:"Midnight Drive",duration:"2:58",status:"planned",key:""}] }
+  { id:"solo-ep", name:"Solo EP", artist:"DennisZeroVT", year:2025, cover:"https://denniszerovt.github.io/SongData/AlbumArt/solo-ep.png", status:"Released", description:"My first solo collection.", tracklist:[{name:"Snowfall",duration:"3:24",status:"released",key:"snowfall"},{name:"Stuck In Time",duration:"4:11",status:"released",key:"stuck-in-time"},{name:"Midnight Drive",duration:"2:58",status:"planned",key:""}] }
 ];
 
 const state = {
@@ -951,7 +951,7 @@ function renderSongEditor(s){
   body.innerHTML=`
     <div class="form">
       <div class="field"><label>Title</label><input id="s_title" value="${esc(s.title||'')}"></div>
-      <div class="field"><label>Artist</label><input id="s_artist" value="${esc(s.artist||'Dennis Zero VT')}"></div>
+      <div class="field"><label>Artist</label><input id="s_artist" value="${esc(s.artist||'DennisZeroVT')}"></div>
       <div class="field"><label>Year</label><input id="s_year" type="number" value="${s.year||new Date().getFullYear()}"></div>
       <div class="field full"><label>Status</label>
         <div id="status_pills" class="row" style="gap:8px;flex-wrap:wrap"></div>
@@ -1325,7 +1325,7 @@ function renderAlbumEditor(a){
   body.innerHTML=`
     <div class="form">
       <div class="field"><label>Name</label><input id="a_name" value="${esc(a.name||'')}"></div>
-      <div class="field"><label>Artist</label><input id="a_artist" value="${esc(a.artist||'Dennis Zero VT')}"></div>
+      <div class="field"><label>Artist</label><input id="a_artist" value="${esc(a.artist||'DennisZeroVT')}"></div>
       <div class="field"><label>Year</label><input id="a_year" type="number" value="${a.year||new Date().getFullYear()}"></div>
       <div class="field"><label>Status</label><select id="a_status">${['In Progress','Released','Planned'].map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
       <div class="field full"><label>Cover</label>
@@ -1444,10 +1444,10 @@ $('#tabs').onclick=e=>{
 $('#btnNew').onclick=()=>{
   const arr=getCurrentArray();
   if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:(state.data.categories[0]?.name||'Daily Life'),subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
-  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'Dennis Zero VT',year:new Date().getFullYear(),status:'Pending',genres:[],coverEmoji:'🎵',badges:[],streaming:{},blocks:[],about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
+  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'DennisZeroVT',year:new Date().getFullYear(),status:'Pending',genres:[],coverEmoji:'🎵',badges:[],streaming:{},blocks:[],about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
   else if(state.tab==='people'){ const id='person-'+Date.now(); arr.unshift({id,name:'New Person',handle:'',role:'',avatar:'',bio:'',tags:['friend'],links:{},projects:[],color:'text-purple-400',icon:'👤',showOnHome:true}); state.currentId=id; }
   else if(state.tab==='categories'){ const id='cat-'+Date.now(); arr.unshift({id,name:'New Category',color:'#A596DA',subs:[]}); state.currentId=id; }
-  else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'Dennis Zero VT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }
+  else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'DennisZeroVT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }
   render();
 };
 $('#btnConnect').onclick=()=>{ state.token=$('#token').value.trim(); connect(); };
