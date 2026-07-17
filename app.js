@@ -131,6 +131,9 @@ const SITE_SONGS = [
         "url": "https://www.youtube.com/watch?v=CEEKVptauro",
         "caption": "original"
       }
+    ],
+    "credits": [
+      { "role": "Drums", "name": "Kula", "personId": "kula" }
     ]
   },
   {
@@ -187,7 +190,10 @@ const SITE_SONGS = [
     "about": "Snowfall was written for my friend Erik, also known as eri_k416. It's built around his character Viona — a quiet, wintry figure that inspired the whole mood of the track.",
     "thoughts": "This was the first time I ever wrote lyrics for a song. I didn't plan it that way — I just wanted to make something for Erik and the words came naturally. I remember sitting with the melody for a long time before anything clicked. When it finally did, it felt like the song wrote itself.",
     "miscellaneous": "The track is the first song I ever released. It was released on Spotify in 2025",
-    "behindTheScenes": "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic."
+    "behindTheScenes": "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic.",
+    "credits": [
+      { "role": "Inspiration", "name": "Erik", "personId": "erik" }
+    ]
   },
   {
     "id": "stuck_in_time",
@@ -243,7 +249,10 @@ const SITE_SONGS = [
     "about": "Stuck In Time is about the feeling of being trapped in a cycle — staying the same while everything else moves on. It's a reflection on change, growth, and the fear of being left behind.",
     "thoughts": "This song was inspired by a lot of personal experiences and conversations with friends. I wanted to capture that bittersweet feeling of nostalgia mixed with the anxiety of change. The lyrics came from a place of vulnerability, and I hope they resonate with anyone who's ever felt stuck in a moment they can't escape.",
     "miscellaneous": "the harmonies in the song is sang by me its actualy one of the first time i used my own voice in my song.",
-    "behindTheScenes": "i went back in cubase for this one. The drums were recorded live by my friend Kula i met during an idol group project, which added a lot of energy to the track. I built the produced the song to finish and i send the mockup drums to kula and told him you can put your own spin to the drums and he killed it, like i put a half time section in it before the key change and he went insane on the half time section and his drums conbined with my guitars and the song just came alive, it was a really fun process and i hope to work with him again in the future."
+    "behindTheScenes": "i went back in cubase for this one. The drums were recorded live by my friend Kula i met during an idol group project, which added a lot of energy to the track. I built the produced the song to finish and i send the mockup drums to kula and told him you can put your own spin to the drums and he killed it, like i put a half time section in it before the key change and he went insane on the half time section and his drums conbined with my guitars and the song just came alive, it was a really fun process and i hope to work with him again in the future.",
+    "credits": [
+      { "role": "Drums", "name": "Kula", "personId": "kula" }
+    ]
   }
 ];
 
@@ -396,6 +405,7 @@ function initSiteData() {
     genres: s.genres || [],
     status: s.status || (s.badges && s.badges[0] && badgeLabel(s.badges[0])) || '',
     blocks: s.blocks || [],
+    credits: s.credits || [],
     src: s.audio,
     cover: s.coverEmoji || '🎵',
     coverImg: s.cover,
@@ -1291,6 +1301,25 @@ function openSong(key) {
   showBottomPlayer();
   const blocksEl = document.getElementById('ovBlocks');
   if (blocksEl) blocksEl.innerHTML = getSongContentHtml(song);
+
+  const creditsWrap = document.getElementById('ovCreditsWrap');
+  const creditsEl = document.getElementById('ovCredits');
+  if (creditsEl && creditsWrap) {
+    const credits = song.credits || [];
+    if (credits.length) {
+      creditsWrap.classList.remove('hidden');
+      creditsEl.innerHTML = credits.map(c => {
+        const person = c.personId && personData[c.personId] ? personData[c.personId] : null;
+        const nameHtml = person
+          ? `<button type="button" onclick="closeOverlay(); setTimeout(function(){ openPersonOverlay('${c.personId}') }, 250)" class="text-[var(--accent)] font-semibold hover:underline inline-flex items-center gap-1">${person.name}<i class="fas fa-arrow-up-right-from-square text-[10px] opacity-70"></i></button>`
+          : `<span class="text-white font-semibold">${c.name || 'Unknown'}</span>`;
+        return `<div class="flex items-center justify-between text-sm py-1"><span class="text-[var(--text-secondary)]">${c.role || ''}</span>${nameHtml}</div>`;
+      }).join('');
+    } else {
+      creditsWrap.classList.add('hidden');
+      creditsEl.innerHTML = '';
+    }
+  }
 
   const streamWrap = document.getElementById('ovStreaming');
   streamWrap.innerHTML = '';

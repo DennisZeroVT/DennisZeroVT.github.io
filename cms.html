@@ -994,6 +994,19 @@ function renderSongEditor(s){
           ${['spotify','apple','tidal','youtube','amazon','deezer'].map(k=>`<div><label class="hint">${k}</label><input id="s_${k}" value="${esc(s.streaming?.[k]||'')}"></div>`).join('')}
         </div>
       </div>
+      <div class="field full"><label>Credits</label>
+        <div id="credits_editor"></div>
+        <button class="btn small" id="add_credit" type="button">+ Add Credit</button>
+        <datalist id="credit_role_options">
+          <option value="Drums"><option value="Guitar"><option value="Bass">
+          <option value="Piano / Keys"><option value="Vocals"><option value="Backing Vocals">
+          <option value="Lyrics"><option value="Melody"><option value="Mixing">
+          <option value="Mastering"><option value="Artwork"><option value="Inspiration">
+          <option value="Producer"><option value="Co-producer"><option value="Songwriter">
+          <option value="Featured Artist">
+        </datalist>
+        <div class="hint">Role + who did it (e.g. "Drums" — Kula). Pick a person from your Friends/Collaborators list to make their name clickable on the song page — it'll open their profile. Leave it as "Not linked" to just show a plain name (session musicians, etc. who aren't listed elsewhere).</div>
+      </div>
       <div class="field full">
         <label>Content Blocks (shown in the song overlay)</label>
         <div class="row">
@@ -1097,6 +1110,52 @@ function renderSongEditor(s){
   $('#genre_input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addGenre(); } });
   renderGenres();
 
+  // --- Credits editor: role + name, optionally linked to a real person ---
+  s.credits = Array.isArray(s.credits) ? s.credits.slice() : [];
+  const creditsWrap = $('#credits_editor');
+  const peopleList = state.data.people || [];
+  function renderCredits(){
+    creditsWrap.innerHTML = '';
+    s.credits.forEach((c, i) => {
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.style = 'gap:8px;margin-bottom:8px;align-items:center;flex-wrap:wrap';
+      const personOptions = peopleList.map(p =>
+        `<option value="${esc(p.id)}" ${c.personId===p.id?'selected':''}>${esc(p.name)}</option>`
+      ).join('');
+      row.innerHTML = `
+        <input data-i="${i}" data-k="role" list="credit_role_options" value="${esc(c.role||'')}" placeholder="Role (e.g. Drums, Mixing Engineer)" style="flex:1;min-width:160px">
+        <select data-i="${i}" data-k="personId" style="min-width:170px">
+          <option value="">— Not linked (plain text) —</option>
+          ${personOptions}
+        </select>
+        <input data-i="${i}" data-k="name" value="${esc(c.name||'')}" placeholder="Display name" style="flex:1;min-width:140px">
+        <button class="btn small danger" data-del="${i}" type="button">✕</button>
+      `;
+      creditsWrap.appendChild(row);
+    });
+    creditsWrap.querySelectorAll('[data-k="role"], [data-k="name"]').forEach(inp => {
+      inp.oninput = e => { s.credits[+e.target.dataset.i][e.target.dataset.k] = e.target.value; };
+    });
+    creditsWrap.querySelectorAll('[data-k="personId"]').forEach(sel => {
+      sel.onchange = e => {
+        const i = +e.target.dataset.i;
+        const pid = e.target.value;
+        s.credits[i].personId = pid || null;
+        if (pid) {
+          const person = peopleList.find(p => p.id === pid);
+          if (person) s.credits[i].name = person.name; // auto-fill display name, still editable
+        }
+        renderCredits();
+      };
+    });
+    creditsWrap.querySelectorAll('[data-del]').forEach(btn => {
+      btn.onclick = () => { s.credits.splice(+btn.dataset.del, 1); renderCredits(); };
+    });
+  }
+  $('#add_credit').onclick = () => { s.credits.push({ role: '', name: '', personId: null }); renderCredits(); };
+  renderCredits();
+
   // --- Content blocks editor (About/Thoughts/Behind/media, freeform) ---
   s.blocks = Array.isArray(s.blocks) ? s.blocks : [];
   initBlockEditor(s);
@@ -1114,6 +1173,7 @@ async function saveSong(){
   s.cover=$('#s_cover').value.trim(); s.audio=$('#s_audio').value.trim();
   s.streaming={ spotify:$('#s_spotify').value, apple:$('#s_apple').value, tidal:$('#s_tidal').value, youtube:$('#s_youtube').value, amazon:$('#s_amazon').value, deezer:$('#s_deezer').value };
   s.about=$('#s_about').value; s.thoughts=$('#s_thoughts').value; s.miscellaneous=$('#s_misc').value; s.behindTheScenes=$('#s_bts').value;
+  s.credits = (s.credits||[]).map(c=>({ role:(c.role||'').trim(), name:(c.name||'').trim(), personId:c.personId||null })).filter(c=>c.role || c.name);
   s.id = s.id || slugify(s.title);
   try{ setStatus('Saving song…','work'); const arr=state.data.songs; const i=arr.findIndex(x=>x.id===s.id); if(i>=0) arr[i]=s; else arr.push(s); await saveDataBlock('SITE_SONGS', arr, `song: ${s.title}`); setStatus('Song saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
 }
@@ -1444,7 +1504,7 @@ $('#tabs').onclick=e=>{
 $('#btnNew').onclick=()=>{
   const arr=getCurrentArray();
   if(state.tab==='blog'){ const id='post-'+Date.now(); arr.unshift({id,title:'New Post',category:(state.data.categories[0]?.name||'Daily Life'),subcategory:'',date:today(),color:'#A596DA',blocks:[{type:'text',content:''}]}); state.currentId=id; }
-  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'DennisZeroVT',year:new Date().getFullYear(),status:'Pending',genres:[],coverEmoji:'🎵',badges:[],streaming:{},blocks:[],about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
+  else if(state.tab==='songs'){ const id='song-'+Date.now(); arr.unshift({id,title:'New Song',artist:'DennisZeroVT',year:new Date().getFullYear(),status:'Pending',genres:[],coverEmoji:'🎵',badges:[],streaming:{},blocks:[],credits:[],about:'',thoughts:'',miscellaneous:'',behindTheScenes:''}); state.currentId=id; }
   else if(state.tab==='people'){ const id='person-'+Date.now(); arr.unshift({id,name:'New Person',handle:'',role:'',avatar:'',bio:'',tags:['friend'],links:{},projects:[],color:'text-purple-400',icon:'👤',showOnHome:true}); state.currentId=id; }
   else if(state.tab==='categories'){ const id='cat-'+Date.now(); arr.unshift({id,name:'New Category',color:'#A596DA',subs:[]}); state.currentId=id; }
   else { const id='album-'+Date.now(); arr.unshift({id,name:'New Album',artist:'DennisZeroVT',year:new Date().getFullYear(),cover:'',status:'In Progress',description:'',tracklist:[]}); state.currentId=id; }
