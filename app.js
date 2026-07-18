@@ -1310,10 +1310,27 @@ function openSong(key) {
       creditsWrap.classList.remove('hidden');
       creditsEl.innerHTML = credits.map(c => {
         const person = c.personId && personData[c.personId] ? personData[c.personId] : null;
+        const displayName = (person ? person.name : c.name) || 'Unknown';
+
+        const avatarHtml = person
+          ? (() => {
+              const base = (person.avatar || `Friends/${c.personId}.jpg`).replace(/\.jpg$|\.png$/i, '');
+              return `<img src="${base}.jpg" alt="${displayName}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${base}.png';">`;
+            })()
+          : `<div class="w-full h-full flex items-center justify-center bg-white/10"><i class="fas fa-user text-xs text-white/40"></i></div>`;
+
         const nameHtml = person
-          ? `<button type="button" onclick="closeOverlay(); setTimeout(function(){ openPersonOverlay('${c.personId}') }, 250)" class="text-[var(--accent)] font-semibold hover:underline inline-flex items-center gap-1">${person.name}<i class="fas fa-arrow-up-right-from-square text-[10px] opacity-70"></i></button>`
-          : `<span class="text-white font-semibold">${c.name || 'Unknown'}</span>`;
-        return `<div class="flex items-center justify-between text-sm py-1"><span class="text-[var(--text-secondary)]">${c.role || ''}</span>${nameHtml}</div>`;
+          ? `<button type="button" onclick="closeOverlay(); setTimeout(function(){ openPersonOverlay('${c.personId}') }, 250)" class="text-sm font-semibold text-white hover:text-[var(--accent)] transition-colors inline-flex items-center gap-1 truncate">${displayName}<i class="fas fa-arrow-up-right-from-square text-[9px] opacity-60"></i></button>`
+          : `<span class="text-sm font-semibold text-white truncate">${displayName}</span>`;
+
+        return `
+        <div class="flex items-center gap-3 w-full py-1.5 px-2 rounded-xl hover:bg-white/5 transition-colors">
+          <div class="w-9 h-9 rounded-full overflow-hidden flex-shrink-0 ring-1 ring-white/10 bg-gradient-to-br from-[#A596DA]/30 to-[#6B5C9B]/15">${avatarHtml}</div>
+          <div class="flex-1 min-w-0 text-left">
+            ${nameHtml}
+            <div class="text-[10px] text-[var(--text-secondary)] uppercase tracking-wide">${c.role || ''}</div>
+          </div>
+        </div>`;
       }).join('');
     } else {
       creditsWrap.classList.add('hidden');
