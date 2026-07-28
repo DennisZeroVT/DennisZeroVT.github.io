@@ -46,7 +46,9 @@
         --border: rgba(165, 150, 218, 0.15);
     }
     
-    html { scroll-behavior: smooth; }
+    * {
+        scroll-behavior: smooth;
+    }
     
     body {
         background-color: var(--bg-main);
@@ -2113,5 +2115,30 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </footer>
 
 <script src="app.js" defer></script>
+<script>
+(function(){
+  const btn=document.getElementById('mobile-menu-btn');
+  const menu=document.getElementById('mobile-menu');
+  const overlay=document.getElementById('mobile-menu-overlay');
+  if(!btn||!menu) return;
+  function closeDrawer(){
+    menu.classList.remove('translate-x-0','is-open');
+    menu.classList.add('translate-x-full');
+    overlay&&overlay.classList.add('hidden');
+    btn.classList.remove('is-open');
+    btn.setAttribute('aria-expanded','false');
+  }
+  function openDrawer(){
+    menu.classList.remove('translate-x-full');
+    menu.classList.add('translate-x-0','is-open');
+    overlay&&overlay.classList.remove('hidden');
+    btn.classList.add('is-open');
+    btn.setAttribute('aria-expanded','true');
+  }
+  btn.addEventListener('click', (e)=>{ e.stopPropagation(); if(menu.classList.contains('is-open')) closeDrawer(); else openDrawer(); });
+  overlay&&overlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
+})();
+</script>
 </body>
 </html>

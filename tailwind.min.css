@@ -1,10 +1,11 @@
-/* Full Tailwind production build */
+/* Full Tailwind production build - generated */
 *,::before,::after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb} html{line-height:1.5} body{margin:0}
+button,[type='button'],[type='reset'],[type='submit']{-webkit-appearance:button;background-color:transparent;background-image:none;border:0}
 :root{--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-gradient-from-position: ;--tw-gradient-to-position: ;--tw-gradient-stops: }
-.-translate-x-1\/2 { --tw-translate-x:1/2 }
+.-translate-x-1\/2 { --tw-translate-x:-50% }
 .-translate-y-1\/2 { --tw-translate-y:-1/2 }
 .absolute { position:absolute }
-.antialiased { -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale }
+.antialiased { -webkit-font-smoothing:antialiased }
 .backdrop-blur { backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px) }
 .backdrop-blur-2xl { backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px) }
 .backdrop-blur-sm { backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px) }
@@ -107,7 +108,6 @@
 .inline-flex { display:inline-flex }
 .inset-0 { inset:0px }
 .items-center { align-items:center }
-.items-start { align-items:flex-start }
 .justify-between { justify-content:space-between }
 .justify-center { justify-content:center }
 .last\:border-0:last-child { border-width:0px }
@@ -227,7 +227,7 @@
 .transition { transition-property:all;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms }
 .transition-all { transition-property:all;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms }
 .transition-transform { transition-property:all;transition-timing-function:cubic-bezier(0.4,0,0.2,1);transition-duration:150ms }
-.translate-x-full { --tw-translate-x:full }
+.translate-x-full { --tw-translate-x:100% }
 .translate-y-full { --tw-translate-y:full }
 .truncate { overflow:hidden;text-overflow:ellipsis;white-space:nowrap }
 .uppercase { text-transform:uppercase }
@@ -270,7 +270,24 @@
   .lg\:text-5xl { font-size:3rem }
   .lg\:text-6xl { font-size:3.75rem }
 }
+
 .transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
-.hover\:scale-105:hover{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
-.group:hover .group-hover\:scale-105{--tw-scale-x:1.05;--tw-scale-y:1.05;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
+.translate-x-full{transform:translateX(100%)!important}
+.translate-x-0{transform:translateX(0)!important}
+.-translate-x-full{transform:translateX(-100%)!important}
+.translate-y-full{transform:translateY(100%)!important}
+.translate-y-0{transform:translateY(0)!important}
+.-translate-y-full{transform:translateY(-100%)!important}
 .aspect-square{aspect-ratio:1/1}
+.backdrop-blur-sm{backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+.backdrop-blur{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.backdrop-blur-md{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.backdrop-blur-xl{backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px)}
+.backdrop-blur-2xl{backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px)}
+/* Hotfix for stuck menu */
+#mobile-menu{transform:translateX(100%)}
+#mobile-menu.is-open,#mobile-menu.translate-x-0{transform:translateX(0)!important}
+#mobile-menu-overlay.hidden{display:none!important;opacity:0}
+#mobile-menu-overlay:not(.hidden){display:block!important;opacity:1}
+#ovCredits button{background:transparent!important}
+input[type="range"]{-webkit-appearance:none;appearance:none;background:transparent}

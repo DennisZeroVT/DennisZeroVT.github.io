@@ -1,6 +1,4 @@
 /* OPTIMIZED */
-/* OPTIMIZATION PATCH */
-const debounce=(fn,ms=200)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms)}};
 /* =========================================================
    DennisZeroVT site — consolidated app script
    One data load, one render pass per section, one nav system.
