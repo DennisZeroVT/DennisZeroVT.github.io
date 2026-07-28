@@ -29,8 +29,8 @@
 <meta name="twitter:image" content="https://denniszerovt.github.io/icons/pfp.png"/>
 
 <!-- Third-party assets -->
-<link href="./tailwind.min.css" rel="stylesheet"/>
-<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/><noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/></noscript>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
@@ -1209,7 +1209,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="flex items-center justify-between h-20">
 <div class="flex items-center gap-3">
 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#A596DA] to-[#C4B5FD] flex items-center justify-center overflow-hidden">
-<img loading="lazy" decoding="async" alt="Dennis" src="/icons/pfp.png" class="w-full h-full object-cover" onerror="this.style.display='none';this.parentNode.textContent='D'"/>
+<img alt="Dennis" src="/icons/pfp.png" class="w-full h-full object-cover" width="40" height="40" onerror="this.style.display='none';this.parentNode.textContent='D'" loading="lazy"/>
 </div>
 <div>
 <h1 class="text-xl font-bold gradient-text">DennisZeroVT</h1>
@@ -1365,7 +1365,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
     <div id="song-adrenaline" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('adrenaline')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             <span class="song-year-badge">2026</span>
-            <img loading="lazy" decoding="async" src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" alt="Adrenaline" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <img src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" alt="Adrenaline" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'" loading="lazy">
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🎵</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
                 <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
@@ -1384,7 +1384,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
     <div id="song-snowfall" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('snowfall')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             <span class="song-year-badge">2025</span>
-            <img loading="lazy" decoding="async" src="SongData/AlbumArt/snowfall.png" alt="Snowfall" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <img src="SongData/AlbumArt/snowfall.png" alt="Snowfall" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'" loading="lazy">
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🌨️</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
                 <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
@@ -1403,7 +1403,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
     <div id="song-stuck_in_time" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('stuck_in_time')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             <span class="song-year-badge">2026</span>
-            <img loading="lazy" decoding="async" src="SongData/AlbumArt/stuckintime.png" alt="Stuck In Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <img src="SongData/AlbumArt/stuckintime.png" alt="Stuck In Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'" loading="lazy">
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🕒</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
                 <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
@@ -1823,31 +1823,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <h1>Collabs</h1>
 <p>// People I've made things with</p>
 </div>
-<div class="people-grid" id="collabs-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img loading="lazy" decoding="async" src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry at</p>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Inspiration · <span style="opacity:.75;font-weight:400">Snowfall</span></span></div>
-        <a href="https://x.com/eri_k416?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
-      </div>
-    </div>
-<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img loading="lazy" decoding="async" src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music</p>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Stuck In Time</span></span><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Adrenaline</span></span></div>
-        <a href="https://x.com/mee_yawwwwww?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
-      </div>
-    </div>
-</div>
+<div class="people-grid" id="collabs-grid"></div>
 </div>
 </div>
 </section>
@@ -1861,67 +1837,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <h1 class="gradient-text">Friends</h1>
 <p>// The people who made the journey worth it</p>
 </div>
-<div class="people-grid" id="friends-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img loading="lazy" decoding="async" src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Erik was the subject and inspiration for my debut release, Snowfall. His character Viona shaped the entire mood of the track — the wintry at</p>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Inspiration · <span style="opacity:.75;font-weight:400">Snowfall</span></span></div>
-        <a href="https://x.com/eri_k416?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
-      </div>
-    </div>
-<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img loading="lazy" decoding="async" src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Kula is a musician and drummer I met during an idol group project. Even though the project eventually fell apart, we connected through music</p>
-        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;"><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Stuck In Time</span></span><span style="display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;background:rgba(165,150,218,.15);border:1px solid rgba(165,150,218,.3);font-size:0.75em;color:#A596DA;font-weight:600;">Drums · <span style="opacity:.75;font-weight:400">Adrenaline</span></span></div>
-        <a href="https://x.com/mee_yawwwwww?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
-      </div>
-    </div>
-<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('vivid')">
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img loading="lazy" decoding="async" src="Friends/vivid.jpg" alt="Vivid" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/vivid.png';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Vivid</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@vivid_exile</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">best Friend, // @vivid_exile</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">An ex-military veteran I met in my very first Discord server. Despite a troubled past he showed incredible strength and kindness. we became </p>
-        
-        <a href="https://x.com/vivid_exile?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
-      </div>
-    </div>
-<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('skylar')">
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img loading="lazy" decoding="async" src="Friends/skylar.jpg" alt="Skylar" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/skylar.png';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Skylar</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@skylar_corgi</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @skylar_corgi</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Skylar is a best friend i met trough vivid on vivid first stream she and vivid are great support</p>
-        
-        <a href="https://x.com/skylar_corgi?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
-      </div>
-    </div>
-<div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('nox')">
-      <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
-      <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img loading="lazy" decoding="async" src="Friends/nox.jpg" alt="Nox" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/nox.png';">
-        <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Nox</h3>
-        <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@Nox_Daemon</div>
-        <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @Nox_Daemon</div>
-        <p style="color:#ccc;font-size:0.85em;line-height:1.4;margin:8px 0;">Nox is a friend i met trough vivid again lol, i saw vivid inetracting with nox a lot and weeks later she became on of my friends aswell,</p>
-        
-        <a href="https://x.com/Nox_Daemon?s=20" target="_blank" onclick="event.stopPropagation()" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#A596DA;color:#000;text-decoration:none;border-radius:20px;font-size:0.85em;font-weight:600;">Twitter</a>
-      </div>
-    </div>
-</div>
+<div class="people-grid" id="friends-grid"></div>
 </div>
 </div>
 </section>
@@ -1936,7 +1852,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="flex items-center gap-4" id="overlay-header">
 <!-- Dynamic content -->
 </div>
-<button class="w-10 h-10 rounded-lg glass flex items-center justify-center hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0" onclick="closePersonOverlay()">
+<button class="w-10 h-10 rounded-lg glass flex items-center justify-center hover:bg-[var(--bg-card-hover)] transition-colors flex-shrink-0" onclick="closePersonOverlay()" aria-label="Close">
 <i class="fas fa-times text-xl"></i>
 </button>
 </div>
@@ -1954,11 +1870,11 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="glass rounded-[2rem] w-full max-w-6xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row" id="songOverlayGlass">
 <!-- Left: Player -->
 <div class="md:w-[380px] p-8 flex flex-col items-center border-b md:border-b-0 md:border-r border-white/10">
-<button class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition" onclick="closeOverlay()">
+<button class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition" onclick="closeOverlay()" aria-label="Close">
 <svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><path d="M18 6L6 18M6 6l12 12"></path></svg>
 </button>
 <div class="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl mb-6 relative bg-gradient-to-br from-[#2a2a2a] to-[#0f0f0f]">
-<img loading="lazy" decoding="async" alt="" class="w-full h-full object-cover hidden" id="ovCoverImg"/>
+<img alt="" class="w-full h-full object-cover hidden" id="ovCoverImg" loading="lazy"/>
 <div class="w-full h-full flex items-center justify-center text-7xl opacity-30" id="ovCoverEmoji"></div>
 </div>
 <h2 class="text-2xl font-bold text-center" id="ovTitle"></h2>
@@ -1976,20 +1892,20 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 <!-- Controls -->
 <div class="flex items-center gap-6 mt-6">
-<button class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition" onclick="seekAudio(-10)">
+<button class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition" onclick="seekAudio(-10)" aria-label="Rewind 10 seconds">
 <svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20"><path d="M11 18V6l-8.5 6 8.5 6zm.5-6l8.5 6V6l-8.5 6z"></path></svg>
 </button>
-<button class="w-14 h-14 rounded-full bg-[#A596DA] hover:bg-[#8B78CB] text-black flex items-center justify-center shadow-lg transition-transform hover:scale-105" id="ovPlayBtn" onclick="toggleSongPlay()">
+<button class="w-14 h-14 rounded-full bg-[#A596DA] hover:bg-[#8B78CB] text-black flex items-center justify-center shadow-lg transition-transform hover:scale-105" id="ovPlayBtn" onclick="toggleSongPlay()" aria-label="Play/Pause">
 <svg fill="currentColor" height="24" id="ovPlayIcon" viewbox="0 0 24 24" width="24"><path d="M8 5v14l11-7z"></path></svg>
 </button>
-<button class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition" onclick="seekAudio(10)">
+<button class="w-10 h-10 rounded-full hover:bg-white/10 flex items-center justify-center transition" onclick="seekAudio(10)" aria-label="Forward 10 seconds">
 <svg fill="currentColor" height="20" viewbox="0 0 24 24" width="20"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"></path></svg>
 </button>
 </div>
 <!-- Volume -->
 <div class="flex items-center gap-3 w-full mt-6">
 <svg class="text-[var(--text-secondary)]" fill="currentColor" height="18" viewbox="0 0 24 24" width="18"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"></path></svg>
-<input class="flex-1 accent-[#A596DA]" id="ovVolume" max="1" min="0" step="0.01" type="range" value="0.8"/>
+<input class="flex-1 accent-[#A596DA]" id="ovVolume" max="1" min="0" step="0.01" type="range" value="0.8" aria-label="Volume"/>
 </div>
 <!-- Credits -->
 <div class="w-full mt-7 pt-6 border-t border-white/10 hidden" id="ovCreditsWrap">
@@ -2021,7 +1937,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 <div class="flex items-center gap-4 p-3">
 <div class="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a2a2a] to-[#0f0f0f] flex-shrink-0 cursor-pointer" onclick="reopenOverlay()">
-<img loading="lazy" decoding="async" alt="" class="w-full h-full object-cover hidden" id="bpCover"/>
+<img alt="" class="w-full h-full object-cover hidden" id="bpCover" loading="lazy"/>
 <div class="w-full h-full flex items-center justify-center text-xl opacity-50" id="bpEmoji"></div>
 </div>
 <div class="flex-1 min-w-0 cursor-pointer" onclick="reopenOverlay()">
@@ -2031,13 +1947,13 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="flex items-center gap-2">
 <div class="hidden md:flex items-center gap-2 mr-1">
 <svg class="text-[var(--text-secondary)]" fill="currentColor" height="14" viewbox="0 0 24 24" width="14"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"></path></svg>
-<input class="w-16 accent-[#A596DA]" id="bpVolume" max="1" min="0" step="0.01" type="range" value="0.8"/>
+<input class="w-16 accent-[#A596DA]" id="bpVolume" max="1" min="0" step="0.01" type="range" value="0.8" aria-label="Volume"/>
 </div>
 <span class="text-[11px] font-mono text-[var(--text-secondary)] w-10 text-right" id="bpTime">0:00</span>
-<button class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition" onclick="toggleSongPlay()">
+<button class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition" onclick="toggleSongPlay()" aria-label="Play/Pause">
 <svg fill="currentColor" height="16" id="bpPlayIcon" viewbox="0 0 24 24" width="16"><path d="M8 5v14l11-7z"></path></svg>
 </button>
-<button class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition text-[var(--text-secondary)]" onclick="stopPlayback()">
+<button class="w-8 h-8 rounded-full hover:bg-white/10 flex items-center justify-center transition text-[var(--text-secondary)]" onclick="stopPlayback()" aria-label="Close player">
 <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16"><path d="M18 6L6 18M6 6l12 12"></path></svg>
 </button>
 </div>
@@ -2051,11 +1967,11 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
   <div class="relative h-full flex items-center justify-center p-4 md:p-8">
     <div class="glass rounded-[2rem] w-full max-w-5xl max-h-[90vh] overflow-hidden flex flex-col md:flex-row">
       <div class="md:w-[340px] p-8 flex flex-col items-center border-b md:border-b-0 md:border-r border-white/10">
-        <button onclick="closeAlbum()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition">
+        <button onclick="closeAlbum()" class="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition" aria-label="Close">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
         <div class="w-60 h-60 rounded-2xl overflow-hidden shadow-2xl mb-6">
-          <img loading="lazy" decoding="async" id="alCover" class="w-full h-full object-cover" alt="">
+          <img id="alCover" class="w-full h-full object-cover" alt="" loading="lazy">
         </div>
         <h2 id="alTitle" class="text-2xl font-bold text-center"></h2>
         <p id="alArtist" class="text-[var(--text-secondary)] mt-1"></p>
@@ -2087,7 +2003,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div>
 <div class="info-footer-label">🎵 Music Platforms</div>
 <div class="social-links-row" style="margin-top:8px;">
-<a class="social-btn sb-spotify" href="https://open.spotify.com/artist/1sDYqTh1SQNJksxNAXbxyS" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"></path></svg>Spotify</a>
+<a class="social-btn sb-spotify" href="https://open.spotify.com/artist/1sDYqTh1SQNJksxNAXbxyS" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779.179-.899.539-.12.421.18.78.54.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"></path></svg>Spotify</a>
 <a class="social-btn sb-amazon" href="https://music.amazon.com/artists/B0FNKV8PTN/denniszerovt" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.699-3.182v.685zm3.186 7.705c-.209.189-.512.201-.745.074-1.052-.872-1.238-1.276-1.814-2.106-1.734 1.767-2.962 2.297-5.209 2.297-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.095v-.41c0-.753.06-1.642-.384-2.294-.385-.578-1.124-.817-1.775-.817-1.206 0-2.277.618-2.54 1.897-.054.285-.261.567-.549.582l-3.061-.333c-.259-.056-.545-.267-.472-.666C5.744 1.896 8.558 1 11.07 1c1.284 0 2.962.342 3.976 1.307C16.309 3.539 16.2 5.176 16.2 6.958v4.738c0 1.423.591 2.048 1.147 2.819.195.274.239.601-.01.806l-2.193 1.474zm3.559 1.688c-2.748 1.472-5.735 2.181-8.453 2.181-4.027 0-7.927-1.393-11.081-3.706-.277-.202-.481.154-.251.416C3.9 21.568 8.324 24 13.217 24c3.767 0 8.128-1.376 11.013-3.963.531-.475-.047-1.203-.527-.554z"></path></svg>Amazon Music</a>
 <a class="social-btn sb-deezer" href="https://www.deezer.com/en/artist/342624221" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M18.81 4.16v1.83H24V4.16h-5.19zm0 3.65v1.83H24V7.81h-5.19zM0 15.11v1.83h5.19v-1.83H0zm6.09 0v1.83h5.19v-1.83H6.09zm6.1 0v1.83H17.4v-1.83h-5.21zm6.1 0v1.83H24v-1.83h-5.19zM0 18.77v1.83h5.19v-1.83H0zm6.09 0v1.83h5.19v-1.83H6.09zm6.1 0v1.83H17.4v-1.83h-5.21zm6.1 0v1.83H24v-1.83h-5.19zM12.19 7.81v1.83h5.19V7.81h-5.19zm6.62 0v1.83H24V7.81h-5.19zm-6.62 3.65v1.83h5.19v-1.83h-5.19zm6.62 0v1.83H24v-1.83h-5.19z"></path></svg>Deezer</a>
 <a class="social-btn sb-apple" href="https://music.apple.com/nl/artist/denniszerovt/1840250778" rel="noopener" target="_blank"><svg viewbox="0 0 24 24"><path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701z"></path></svg>Apple Music</a>
@@ -2114,31 +2030,6 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 </footer>
 
-<script src="app.js" defer></script>
-<script>
-(function(){
-  const btn=document.getElementById('mobile-menu-btn');
-  const menu=document.getElementById('mobile-menu');
-  const overlay=document.getElementById('mobile-menu-overlay');
-  if(!btn||!menu) return;
-  function closeDrawer(){
-    menu.classList.remove('translate-x-0','is-open');
-    menu.classList.add('translate-x-full');
-    overlay&&overlay.classList.add('hidden');
-    btn.classList.remove('is-open');
-    btn.setAttribute('aria-expanded','false');
-  }
-  function openDrawer(){
-    menu.classList.remove('translate-x-full');
-    menu.classList.add('translate-x-0','is-open');
-    overlay&&overlay.classList.remove('hidden');
-    btn.classList.add('is-open');
-    btn.setAttribute('aria-expanded','true');
-  }
-  btn.addEventListener('click', (e)=>{ e.stopPropagation(); if(menu.classList.contains('is-open')) closeDrawer(); else openDrawer(); });
-  overlay&&overlay.addEventListener('click', closeDrawer);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDrawer(); });
-})();
-</script>
+<script src="app.js"></script>
 </body>
 </html>
