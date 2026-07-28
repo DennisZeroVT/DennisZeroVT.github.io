@@ -345,44 +345,9 @@ input[type="color"]{width:44px;height:38px;padding:0;border-radius:8px;border:1p
 ::-webkit-scrollbar{width:9px;height:9px}
 ::-webkit-scrollbar-thumb{background:rgba(165,150,218,.25);border-radius:9px;border:2px solid transparent;background-clip:padding-box}
 ::-webkit-scrollbar-thumb:hover{background:rgba(165,150,218,.4);background-clip:padding-box}
-
-/* Toast container */
-#toast-container {
-  position:fixed;
-  top:20px;
-  right:20px;
-  z-index:9999;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-  max-width:400px;
-  width:100%;
-  pointer-events:none;
-}
-.toast {
-  background:rgba(14,14,20,.92);
-  backdrop-filter:blur(12px);
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:12px 16px;
-  font-size:14px;
-  color:var(--text);
-  box-shadow:0 12px 40px rgba(0,0,0,.5);
-  animation:slideIn .3s ease;
-  pointer-events:auto;
-  transition:opacity .3s ease;
-}
-.toast.success { border-color:var(--green); color:#a7f3d0; }
-.toast.error { border-color:var(--red); color:#fca5a5; }
-.toast.info { border-color:var(--accent); color:var(--text); }
-@keyframes slideIn {
-  from { opacity:0; transform:translateX(30px); }
-  to { opacity:1; transform:translateX(0); }
-}
 </style>
 </head>
 <body>
-<div id="toast-container"></div>
 <div class="app">
   <header class="topbar glass">
     <div class="brand"><div class="logo">DZ</div><span>DENNIS CMS</span></div>
@@ -425,24 +390,20 @@ input[type="color"]{width:44px;height:38px;padding:0;border-radius:8px;border:1p
 <div id="modal" class="modal" onclick="this.classList.remove('show')"><img id="modalImg" alt=""></div>
 
 <script>
-// ===== TOAST SYSTEM =====
-function showToast(message, type = 'info') {
-  const container = document.getElementById('toast-container');
-  const toast = document.createElement('div');
-  toast.className = 'toast ' + type;
-  toast.textContent = message;
-  container.appendChild(toast);
-  setTimeout(() => {
-    toast.style.opacity = '0';
-    setTimeout(() => toast.remove(), 300);
-  }, 4000);
-}
-
-// ===== CONSTANTS =====
 const REPO = 'denniszerovt/denniszerovt.github.io';
 const BRANCH = 'main';
 const OWNER = 'denniszerovt';
+
+// Content constants (SITE_SONGS, SITE_PEOPLE, etc.) now live in app.js, not
+// index.html — index.html/music.html/blog.html/etc. are just markup that
+// includes <script src="app.js">. The variable's still called INDEX_PATH
+// for the rest of this file's naming; it just points somewhere else now.
 const INDEX_PATH = 'app.js';
+
+// index.html itself (the actual markup file) — used only to bump a cache-busting
+// query param on the <script src="app.js"> tag after every save, so GitHub Pages
+// visitors (and the browser's own cache) always pick up the freshly-saved data
+// instead of serving a stale cached copy of app.js.
 const SITE_HTML_PATH = 'index.html';
 
 const UPLOADS = {
@@ -531,8 +492,38 @@ async function ghFetch(path, opts={}){
   if(!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   return res.json();
 }
+/* ---------------------------------------------------------------------------
+   index.html-backed storage. There's no more data/*.json — everything
+   (SITE_SONGS, SITE_PEOPLE, SITE_ALBUMS, SITE_CATEGORIES, SITE_POSTS) lives
+   as hardcoded JS constants inside index.html's <script>. These helpers
+   read the whole file, pull out one constant's literal value by scanning
+   for its balanced [...] / {...}, and splice an edited value back in as
+   JSON (which is also valid JS, so it stays a working constant).
+   --------------------------------------------------------------------------- */
 
-// ===== CONSTANT PARSER (improved) =====
+async function getSiteHtml(){
+  const data = await ghFetch(INDEX_PATH, {ref:BRANCH});
+  state.shas[INDEX_PATH] = data.sha;
+  return b64dec(data.content);
+}
+
+async function putSiteHtml(html, message){
+  const content = b64enc(html);
+  const body = { message, content, branch:BRANCH, sha:state.shas[INDEX_PATH] };
+  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${INDEX_PATH}`,{
+    method:'PUT',
+    headers:{ 'Authorization':`token ${state.token}`, 'Content-Type':'application/json' },
+    body:JSON.stringify(body)
+  });
+  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||res.statusText) }
+  const data = await res.json();
+  state.shas[INDEX_PATH] = data.content.sha;
+  return data;
+}
+
+// Finds `const NAME = <literal>;` in html and returns the parsed value plus
+// the exact [start,end) character range of just the literal (so callers can
+// splice a replacement in without touching anything else in the file).
 function locateConst(html, name){
   const marker = `const ${name} = `;
   const markerStart = html.indexOf(marker);
@@ -572,26 +563,9 @@ function replaceConst(html, name, newValue){
   return html.slice(0, start) + serialized + html.slice(end);
 }
 
-async function getSiteHtml(){
-  const data = await ghFetch(INDEX_PATH, {ref:BRANCH});
-  state.shas[INDEX_PATH] = data.sha;
-  return b64dec(data.content);
-}
-
-async function putSiteHtml(html, message){
-  const content = b64enc(html);
-  const body = { message, content, branch:BRANCH, sha:state.shas[INDEX_PATH] };
-  const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${INDEX_PATH}`,{
-    method:'PUT',
-    headers:{ 'Authorization':`token ${state.token}`, 'Content-Type':'application/json' },
-    body:JSON.stringify(body)
-  });
-  if(!res.ok){ const e=await res.json().catch(()=>({})); throw new Error(e.message||res.statusText) }
-  const data = await res.json();
-  state.shas[INDEX_PATH] = data.content.sha;
-  return data;
-}
-
+// Save one constant's array/object back into index.html on GitHub.
+// Always re-fetches the file fresh right before writing so saving several
+// sections back-to-back in one session never hits a stale-sha conflict.
 async function saveDataBlock(constName, value, message){
   const html = await getSiteHtml();
   const updated = replaceConst(html, constName, value);
@@ -599,39 +573,9 @@ async function saveDataBlock(constName, value, message){
   await patchStaticIndexHtml({ bustCache: true, songs: constName === 'SITE_SONGS' ? value : null });
 }
 
-async function patchStaticIndexHtml({ bustCache = true, songs = null } = {}){
-  try{
-    const info = await ghFetch(SITE_HTML_PATH, {ref:BRANCH});
-    let html = b64dec(info.content);
-    let changed = false;
-
-    if(bustCache){
-      const v = Date.now();
-      const scriptRe = /<script\s+src=["']app\.js(?:\?v=\d+)?["']\s*><\/script>/;
-      if(scriptRe.test(html)){ html = html.replace(scriptRe, `<script src="app.js?v=${v}"><\/script>`); changed = true; }
-    }
-
-    if(songs){
-      const cardsHtml = buildStaticSongCardsHtml(songs);
-      const staticRe = /(<!-- STATIC_SONGS_START -->)([\s\S]*?)(<!-- STATIC_SONGS_END -->)/;
-      if(staticRe.test(html)){ html = html.replace(staticRe, `$1\n${cardsHtml}\n$3`); changed = true; }
-    }
-
-    if(!changed) return;
-
-    const content = b64enc(html);
-    const body = { message: songs ? 'cms: sync static song cards + bust cache' : 'cms: bust app.js cache', content, branch: BRANCH, sha: info.sha };
-    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${SITE_HTML_PATH}`,{
-      method:'PUT',
-      headers:{ 'Authorization':`token ${state.token}`, 'Content-Type':'application/json' },
-      body:JSON.stringify(body)
-    });
-    if(!res.ok){ console.warn('index.html patch commit failed:', res.status, res.statusText); }
-  }catch(err){
-    console.warn('index.html patch skipped:', err.message);
-  }
-}
-
+// Builds the exact same card markup app.js renders into #songs-grid, but as
+// a plain string committed straight into index.html — real static HTML, not
+// hidden metadata. Every song gets a stable id="song-<id>" anchor.
 function buildStaticSongCardsHtml(songs){
   const list = (songs || []).filter(s => s && s.title);
   if(!list.length){
@@ -651,7 +595,7 @@ function buildStaticSongCardsHtml(songs){
     return `    <div id="song-${esc(s.id)}" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('${esc(s.id)}')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             ${s.year ? `<span class="song-year-badge">${esc(String(s.year))}</span>` : ''}
-            ${cover ? `<img src="${esc(cover)}" alt="${esc(s.title)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'" loading="lazy">` : ''}
+            ${cover ? `<img src="${esc(cover)}" alt="${esc(s.title)}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">${emoji}</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
                 <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
@@ -669,6 +613,52 @@ function buildStaticSongCardsHtml(songs){
   }).join('\n\n');
 }
 
+// Patches the real index.html (not app.js) in one combined commit:
+//  1. Bumps ?v=<timestamp> on the <script src="app.js"> tag so browsers/GitHub
+//     Pages never serve a stale cached copy after a save (this is why edits can
+//     otherwise look like they "didn't take" even though the commit succeeded).
+//  2. If songs are passed, regenerates the REAL static song cards between the
+//     <!-- STATIC_SONGS_START/END --> markers inside #songs-grid. This is plain,
+//     visible HTML baked right into the page source — not a hidden metadata
+//     block — so any crawler, JS or not, sees the actual song titles, artists,
+//     genres, years and status badges immediately, with no JS required. Once
+//     app.js loads it re-renders the same grid dynamically for search/sort/
+//     filter, but this static version is what's there before that happens.
+async function patchStaticIndexHtml({ bustCache = true, songs = null } = {}){
+  try{
+    const info = await ghFetch(SITE_HTML_PATH, {ref:BRANCH});
+    let html = b64dec(info.content);
+    let changed = false;
+
+    if(bustCache){
+      const v = Date.now();
+      const scriptRe = /<script\s+src=["']app\.js(?:\?v=\d+)?["']\s*><\/script>/;
+      if(scriptRe.test(html)){ html = html.replace(scriptRe, `<script src="app.js?v=${v}"><\/script>`); changed = true; }
+      else console.warn('Cache-bust skipped: could not find <script src="app.js"> in index.html');
+    }
+
+    if(songs){
+      const cardsHtml = buildStaticSongCardsHtml(songs);
+      const staticRe = /(<!-- STATIC_SONGS_START -->)([\s\S]*?)(<!-- STATIC_SONGS_END -->)/;
+      if(staticRe.test(html)){ html = html.replace(staticRe, `$1\n${cardsHtml}\n$3`); changed = true; }
+      else console.warn('STATIC_SONGS markers not found in index.html; skipping static song sync');
+    }
+
+    if(!changed) return;
+
+    const content = b64enc(html);
+    const body = { message: songs ? 'cms: sync static song cards + bust cache' : 'cms: bust app.js cache', content, branch: BRANCH, sha: info.sha };
+    const res = await fetch(`https://api.github.com/repos/${REPO}/contents/${SITE_HTML_PATH}`,{
+      method:'PUT',
+      headers:{ 'Authorization':`token ${state.token}`, 'Content-Type':'application/json' },
+      body:JSON.stringify(body)
+    });
+    if(!res.ok){ console.warn('index.html patch commit failed:', res.status, res.statusText); }
+  }catch(err){
+    // Non-fatal — the actual content save above already succeeded either way.
+    console.warn('index.html patch skipped:', err.message);
+  }
+}
 async function uploadFile(file, dest){
   const buf = await file.arrayBuffer();
   let binary=''; const bytes=new Uint8Array(buf); for(let i=0;i<bytes.byteLength;i++) binary+=String.fromCharCode(bytes[i]);
@@ -694,7 +684,7 @@ function migratePosts(posts){
 }
 
 async function connect(){
-  if(!state.token){ showToast('Enter GitHub token', 'error'); return; }
+  if(!state.token){ alert('Enter GitHub token'); return }
   localStorage.setItem('dzcms_token', state.token);
   setStatus('Connecting to GitHub…','work');
   try{
@@ -711,12 +701,11 @@ async function connect(){
     state.data.categories = categories;
     state.connected = true;
     setStatus('Connected • Synced','ok');
-    showToast('Connected successfully', 'success');
     render();
   }catch(e){
     console.error(e);
     setStatus('Connection failed: '+e.message,'err');
-    showToast('Connection failed: ' + e.message, 'error');
+    // still load fallbacks for offline editing
     state.data.posts = FALLBACK_POSTS;
     state.data.songs = FALLBACK_SONGS;
     state.data.people = FALLBACK_PEOPLE;
@@ -745,7 +734,6 @@ function renderList(){
     if(state.tab==='songs' || state.tab==='albums') return (b.year||0)-(a.year||0);
     return (a.name||'').localeCompare(b.name||'');
   });
-  const fragment = document.createDocumentFragment();
   items.forEach(it=>{
     const div=document.createElement('div');
     div.className='item'+(it.id===state.currentId?' active':'');
@@ -753,15 +741,15 @@ function renderList(){
     const thumb = document.createElement('div'); thumb.className='thumb';
     if(state.tab==='blog'){
       const firstImg = (it.blocks||[]).find(b=>b.type==='image')?.src;
-      if(firstImg){ const img=document.createElement('img'); img.src=firstImg; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; img.loading='lazy'; thumb.appendChild(img); } else thumb.textContent='📝';
+      if(firstImg){ const img=document.createElement('img'); img.src=firstImg; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img); } else thumb.textContent='📝';
     } else if(state.tab==='songs'){
-      if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; img.loading='lazy'; thumb.appendChild(img);} else thumb.textContent=it.coverEmoji||'🎵';
+      if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent=it.coverEmoji||'🎵';
     } else if(state.tab==='people'){
-      if(it.avatar){ const img=document.createElement('img'); img.src=it.avatar; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; img.loading='lazy'; thumb.appendChild(img);} else thumb.textContent=it.icon||'👤';
+      if(it.avatar){ const img=document.createElement('img'); img.src=it.avatar; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent=it.icon||'👤';
     } else if(state.tab==='categories'){
       thumb.style.background = it.color+'20'; thumb.style.borderColor = it.color+'40'; thumb.style.color = it.color; thumb.textContent = it.name.charAt(0); thumb.style.fontWeight='700';
     } else {
-      if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; img.loading='lazy'; thumb.appendChild(img);} else thumb.textContent='💿';
+      if(it.cover){ const img=document.createElement('img'); img.src=it.cover; img.style.width='100%'; img.style.height='100%'; img.style.objectFit='cover'; thumb.appendChild(img);} else thumb.textContent='💿';
     }
     const meta=document.createElement('div'); meta.className='meta';
     const t=document.createElement('div'); t.className='t'; t.textContent= state.tab==='blog'?it.title:it.name||it.title;
@@ -773,9 +761,8 @@ function renderList(){
     else s.innerHTML=`<span>${it.status||''}</span> • <span>${it.year||''}</span>`;
     meta.appendChild(t); meta.appendChild(s);
     div.appendChild(thumb); div.appendChild(meta);
-    fragment.appendChild(div);
+    listEl.appendChild(div);
   });
-  listEl.appendChild(fragment);
 }
 function getCurrentArray(){
   return state.tab==='blog'?state.data.posts:state.tab==='songs'?state.data.songs:state.tab==='people'?state.data.people:state.tab==='categories'?state.data.categories:state.data.albums;
@@ -813,7 +800,6 @@ function editorShell(title, saveFn, delFn){
   return $('#edBody');
 }
 
-// ===== BLOG EDITOR =====
 function renderBlogEditor(post){
   const body = editorShell('Edit Blog Post', saveBlog, deleteBlog);
   const catsArr = (state.data.categories||FALLBACK_CATEGORIES);
@@ -843,7 +829,9 @@ function renderBlogEditor(post){
   initBlockEditor(post);
 }
 
-// ===== BLOCK EDITOR =====
+// --- Shared content-block editor: used by both Blog posts and Song overlays. ---
+// Operates on item.blocks (array). Requires the current editor form to contain
+// buttons with [data-add="text|image|video|divider"] and a `<div id="blocks">` wrap.
 function newBlockOfType(type){
   if(type==='text') return {type:'text', heading:'', content:''};
   if(type==='image') return {type:'image', src:'', caption:''};
@@ -873,7 +861,7 @@ function renderBlockList(p){
       }else if(bl.type==='image'){
         body.innerHTML=`
           <div class="upload"><label class="file-btn">Choose image<input type="file" accept="image/*"></label><span class="hint">${bl.src? 'Uploaded':'No file'}</span></div>
-          ${bl.src?`<img class="img-prev" src="${bl.src}" alt="" loading="lazy">`:''}
+          ${bl.src?`<img class="img-prev" src="${bl.src}" alt="">`:''}
           <div style="margin-top:8px"><input type="text" data-k="caption" placeholder="Caption (optional)" value="${esc(bl.caption||'')}"></div>
         `;
         const fileInp=body.querySelector('input[type=file]');
@@ -881,7 +869,7 @@ function renderBlockList(p){
         if(img) img.onclick=()=>showImg(bl.src);
         fileInp.onchange=async e=>{
           const f=e.target.files[0]; if(!f) return;
-          try{ setStatus('Uploading image…','work'); showToast('Uploading image...', 'info'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); showToast('Image uploaded', 'success'); renderBlockList(p);}catch(err){ setStatus('Upload failed','err'); showToast('Upload failed: '+err.message, 'error'); }
+          try{ setStatus('Uploading image…','work'); const url=await uploadFile(f, `${UPLOADS.posts}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); bl.src=url; setStatus('Image uploaded','ok'); renderBlockList(p);}catch(err){ setStatus('Upload failed','err'); alert(err.message) }
         };
       }else if(bl.type==='video'){
         body.innerHTML=`
@@ -915,7 +903,6 @@ function renderBlockList(p){
           const quality = qualSel.value;
           try {
             setStatus('Processing video…','work');
-            showToast('Processing video...', 'info');
             vhint.textContent = quality === 'original' ? 'Uploading…' : 'Compressing video (this may take a moment)…';
             let fileToUpload = f;
             if(quality !== 'original'){
@@ -924,9 +911,8 @@ function renderBlockList(p){
             const url = await uploadFile(fileToUpload, `${UPLOADS.posts}${Date.now()}-${fileToUpload.name||f.name.replace(/\s+/g,'-')}`);
             bl.src = url; bl.url = '';
             setStatus('Video uploaded','ok');
-            showToast('Video uploaded', 'success');
             renderBlockList(p);
-          } catch(err) { setStatus('Upload failed','err'); showToast('Upload failed: '+err.message, 'error'); vhint.textContent = 'Error: '+err.message; }
+          } catch(err) { setStatus('Upload failed','err'); vhint.textContent = 'Error: '+err.message; }
         };
       }else{
         body.innerHTML=`<div class="divider-prev"></div><span class="hint">Visual separator</span>`;
@@ -935,7 +921,6 @@ function renderBlockList(p){
       wrap.appendChild(d);
     });
 }
-
 async function saveBlog(){
   const p=getCurrentItem(); if(!p) return;
   p.title=$('#f_title').value.trim()||'Untitled';
@@ -946,14 +931,10 @@ async function saveBlog(){
   p.id = p.id || slugify(p.title+'-'+p.date);
   try{
     setStatus('Saving post…','work');
-    const btn = $('#btnSave'); btn.disabled = true; btn.innerHTML = '⏳ Saving...';
     const arr=state.data.posts; const idx=arr.findIndex(x=>x.id===p.id); if(idx>=0) arr[idx]=p; else arr.push(p);
     await saveDataBlock('SITE_POSTS', arr, `blog: ${p.title}`);
-    setStatus('Post saved','ok');
-    showToast('Post saved successfully', 'success');
-    renderList();
-  }catch(e){ setStatus('Save failed','err'); showToast('Save failed: '+e.message, 'error'); }
-  finally { const btn = $('#btnSave'); btn.disabled = false; btn.innerHTML = 'Save to GitHub'; }
+    setStatus('Post saved','ok'); renderList();
+  }catch(e){ setStatus('Save failed','err'); alert(e.message) }
 }
 async function deleteBlog(){
   const p=getCurrentItem(); if(!p) return; if(!confirm('Delete this post?')) return;
@@ -961,11 +942,10 @@ async function deleteBlog(){
     setStatus('Deleting…','work');
     state.data.posts = state.data.posts.filter(x=>x.id!==p.id);
     await saveDataBlock('SITE_POSTS', state.data.posts, `delete post: ${p.title}`);
-    state.currentId=null; setStatus('Deleted','ok'); showToast('Post deleted', 'success'); render();
-  }catch(e){ setStatus('Delete failed','err'); showToast('Delete failed: '+e.message, 'error'); }
+    state.currentId=null; setStatus('Deleted','ok'); render();
+  }catch(e){ setStatus('Delete failed','err'); alert(e.message) }
 }
 
-// ===== SONG EDITOR =====
 function renderSongEditor(s){
   const body = editorShell('Edit Song', saveSong, deleteSong);
   body.innerHTML=`
@@ -1001,7 +981,7 @@ function renderSongEditor(s){
       </div>
       <div class="field"><label>Cover Image</label>
         <div class="upload"><label class="file-btn">Upload cover<input type="file" accept="image/*" id="s_coverfile"></label><span class="hint">${s.cover?'Uploaded':''}</span></div>
-        ${s.cover?`<img class="img-prev" src="${s.cover}" onclick="showImg('${s.cover}')" loading="lazy">`:''}
+        ${s.cover?`<img class="img-prev" src="${s.cover}" onclick="showImg('${s.cover}')">`:''}
         <input id="s_cover" type="text" placeholder="Cover URL" value="${esc(s.cover||'')}" style="margin-top:8px">
       </div>
       <div class="field"><label>Audio</label>
@@ -1047,7 +1027,7 @@ function renderSongEditor(s){
       </details>
     </div>
   `;
-  // --- Status pills ---
+  // --- Status pills (click to set status; auto-syncs the matching badge) ---
   const STATUS_OPTIONS = [
     { label: 'Released', color: '#10B981' },
     { label: 'Work in Progress', color: '#F59E0B' },
@@ -1077,7 +1057,7 @@ function renderSongEditor(s){
   }
   renderStatusPills();
 
-  // Badge editor
+  // --- Badge editor with color ---
   const defaultColors = { 'Released':'#10B981','pending':'#6B7280','Pending':'#6B7280','Spotify':'#1DB954','Apple Music':'#FA243C','Tidal':'#000000','Amazon':'#FF9900','YouTube Music':'#FF0000','Deezer':'#FEAA2D' };
   s.badges = (s.badges||[]).map(b => typeof b==='string' ? {label:b, color: defaultColors[b]||'#A596DA'} : {label:b.label||'', color:b.color||'#A596DA'});
   const badgeWrap = $('#badge_editor');
@@ -1106,7 +1086,7 @@ function renderSongEditor(s){
   $('#add_badge').onclick=()=>{ s.badges.push({label:'New', color:'#A596DA'}); renderBadges(); };
   renderBadges();
 
-  // Genre tag editor
+  // --- Genre tag editor ---
   s.genres = Array.isArray(s.genres) ? s.genres.slice() : [];
   const genreWrap = $('#genre_editor');
   function renderGenres(){
@@ -1130,7 +1110,7 @@ function renderSongEditor(s){
   $('#genre_input').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addGenre(); } });
   renderGenres();
 
-  // Credits editor
+  // --- Credits editor: role + name, optionally linked to a real person ---
   s.credits = Array.isArray(s.credits) ? s.credits.slice() : [];
   const creditsWrap = $('#credits_editor');
   const peopleList = state.data.people || [];
@@ -1164,7 +1144,7 @@ function renderSongEditor(s){
         s.credits[i].personId = pid || null;
         if (pid) {
           const person = peopleList.find(p => p.id === pid);
-          if (person) s.credits[i].name = person.name;
+          if (person) s.credits[i].name = person.name; // auto-fill display name, still editable
         }
         renderCredits();
       };
@@ -1176,39 +1156,30 @@ function renderSongEditor(s){
   $('#add_credit').onclick = () => { s.credits.push({ role: '', name: '', personId: null }); renderCredits(); };
   renderCredits();
 
-  // Content blocks
+  // --- Content blocks editor (About/Thoughts/Behind/media, freeform) ---
   s.blocks = Array.isArray(s.blocks) ? s.blocks : [];
   initBlockEditor(s);
 
-  $('#s_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading cover…','work'); showToast('Uploading cover...','info'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_cover').value=url; setStatus('Cover uploaded','ok'); showToast('Cover uploaded','success'); }catch(err){ setStatus('Upload failed','err'); showToast('Upload failed: '+err.message,'error'); } };
-  $('#s_audiofile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading audio…','work'); showToast('Uploading audio...','info'); const url=await uploadFile(f, `${UPLOADS.songs}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_audio').value=url; setStatus('Audio uploaded','ok'); showToast('Audio uploaded','success'); }catch(err){ setStatus('Upload failed','err'); showToast('Upload failed: '+err.message,'error'); } };
+  $('#s_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading cover…','work'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_cover').value=url; setStatus('Cover uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
+  $('#s_audiofile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading audio…','work'); const url=await uploadFile(f, `${UPLOADS.songs}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#s_audio').value=url; setStatus('Audio uploaded','ok'); }catch(err){ setStatus('Upload failed','err') } };
 }
-
 async function saveSong(){
   const s=getCurrentItem(); if(!s) return;
   s.title=$('#s_title').value.trim(); s.artist=$('#s_artist').value.trim(); s.year=parseInt($('#s_year').value)||new Date().getFullYear();
   s.coverEmoji=$('#s_emoji').value.trim(); 
   s.genres = Array.isArray(s.genres) ? s.genres.filter(Boolean) : [];
+  // badges are maintained as objects by the badge editor
   s.badges=(s.badges||[]).map(b=>({label:(b.label||'').trim(), color:b.color||'#A596DA'})).filter(b=>b.label);
   s.cover=$('#s_cover').value.trim(); s.audio=$('#s_audio').value.trim();
   s.streaming={ spotify:$('#s_spotify').value, apple:$('#s_apple').value, tidal:$('#s_tidal').value, youtube:$('#s_youtube').value, amazon:$('#s_amazon').value, deezer:$('#s_deezer').value };
   s.about=$('#s_about').value; s.thoughts=$('#s_thoughts').value; s.miscellaneous=$('#s_misc').value; s.behindTheScenes=$('#s_bts').value;
   s.credits = (s.credits||[]).map(c=>({ role:(c.role||'').trim(), name:(c.name||'').trim(), personId:c.personId||null })).filter(c=>c.role || c.name);
   s.id = s.id || slugify(s.title);
-  try{
-    setStatus('Saving song…','work');
-    const btn = $('#btnSave'); btn.disabled = true; btn.innerHTML = '⏳ Saving...';
-    const arr=state.data.songs; const i=arr.findIndex(x=>x.id===s.id); if(i>=0) arr[i]=s; else arr.push(s);
-    await saveDataBlock('SITE_SONGS', arr, `song: ${s.title}`);
-    setStatus('Song saved','ok');
-    showToast('Song saved successfully','success');
-    renderList();
-  }catch(e){ setStatus('Save failed','err'); showToast('Save failed: '+e.message,'error'); }
-  finally { const btn = $('#btnSave'); btn.disabled = false; btn.innerHTML = 'Save to GitHub'; }
+  try{ setStatus('Saving song…','work'); const arr=state.data.songs; const i=arr.findIndex(x=>x.id===s.id); if(i>=0) arr[i]=s; else arr.push(s); await saveDataBlock('SITE_SONGS', arr, `song: ${s.title}`); setStatus('Song saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
 }
-async function deleteSong(){ const s=getCurrentItem(); if(!s||!confirm('Delete song?')) return; try{ setStatus('Deleting…','work'); state.data.songs=state.data.songs.filter(x=>x.id!==s.id); await saveDataBlock('SITE_SONGS', state.data.songs, `delete song: ${s.title}`); state.currentId=null; setStatus('Deleted','ok'); showToast('Song deleted','success'); render(); }catch(e){ setStatus('Delete failed','err'); showToast('Delete failed: '+e.message,'error'); } }
+async function deleteSong(){ const s=getCurrentItem(); if(!s||!confirm('Delete song?')) return; try{ setStatus('Deleting…','work'); state.data.songs=state.data.songs.filter(x=>x.id!==s.id); await saveDataBlock('SITE_SONGS', state.data.songs, `delete song: ${s.title}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
-// ===== PEOPLE EDITOR =====
+// CREDIT ROLE OPTIONS — add more as needed
 const CREDIT_ROLES = [
   'Drums', 'Guitar', 'Bass', 'Piano / Keys', 'Vocals', 'Backing Vocals',
   'Lyrics', 'Melody', 'Mixing', 'Mastering', 'Artwork', 'Inspiration',
@@ -1217,6 +1188,8 @@ const CREDIT_ROLES = [
 
 function renderPeopleEditor(p){
   const body = editorShell('Edit Person', savePerson, deletePerson);
+
+  // Normalise: support legacy "projects" array (strings) → credits objects
   if (!p.credits && p.projects) {
     p.credits = (p.projects || []).map(title => ({ song: title, songId: '', role: 'Collaborator', note: '' }));
   }
@@ -1231,7 +1204,7 @@ function renderPeopleEditor(p){
       <div class="field"><label>Icon (Font Awesome class or emoji)</label><input id="p_icon" value="${esc(p.icon||'👤')}"></div>
       <div class="field full"><label>Avatar</label>
         <div class="upload"><label class="file-btn">Upload avatar<input type="file" accept="image/*" id="p_avfile"></label><span class="hint">${p.avatar?'Uploaded':''}</span></div>
-        ${p.avatar ? `<img class="img-prev" src="${p.avatar}" style="max-height:120px" onclick="showImg('${p.avatar}')" loading="lazy">` : ''}
+        ${p.avatar ? `<img class="img-prev" src="${p.avatar}" style="max-height:120px" onclick="showImg('${p.avatar}')">` : ''}
         <input id="p_avatar" type="text" value="${esc(p.avatar||'')}" placeholder="Avatar URL" style="margin-top:8px">
       </div>
       <div class="field full"><label>Bio</label><textarea id="p_bio">${esc(p.bio||'')}</textarea></div>
@@ -1245,6 +1218,7 @@ function renderPeopleEditor(p){
       <div class="field"><label>Show on Home</label><label class="switch"><input type="checkbox" id="p_home" ${p.showOnHome?'checked':''}><span>Visible</span></label></div>
       <div class="field"><label>Color class</label><input id="p_color" value="${esc(p.color||'from-purple-500/30 to-purple-600/10')}" placeholder="from-purple-500/30 to-purple-600/10"></div>
 
+      <!-- ── CREDITS ── -->
       <div class="field full">
         <label>Credits (what they did on each song)</label>
         <div id="p_credits_wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:6px"></div>
@@ -1252,6 +1226,7 @@ function renderPeopleEditor(p){
         <div class="hint" style="margin-top:6px">Each credit links this person to a specific song with their exact contribution.</div>
       </div>
 
+      <!-- ── LINKS ── -->
       <div class="field full"><label>Links</label>
         <div class="links-grid">
           ${['twitter','spotify','instagram','website'].map(k=>`<div><label class="hint">${k}</label><input id="p_${k}" value="${esc(p.links?.[k]||'')}"></div>`).join('')}
@@ -1260,12 +1235,14 @@ function renderPeopleEditor(p){
     </div>
   `;
 
+  // Avatar upload
   $('#p_avfile').onchange = async e => {
     const f = e.target.files[0]; if (!f) return;
-    try { setStatus('Uploading avatar…','work'); showToast('Uploading avatar...','info'); const url = await uploadFile(f, `${UPLOADS.people}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#p_avatar').value = url; setStatus('Avatar uploaded','ok'); showToast('Avatar uploaded','success'); }
-    catch(err) { setStatus('Upload failed','err'); showToast('Upload failed: '+err.message,'error'); }
+    try { setStatus('Uploading avatar…','work'); const url = await uploadFile(f, `${UPLOADS.people}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#p_avatar').value = url; setStatus('Avatar uploaded','ok'); }
+    catch { setStatus('Upload failed','err'); }
   };
 
+  // ── Credit row renderer ──
   function renderCreditRows() {
     const wrap = $('#p_credits_wrap');
     wrap.innerHTML = '';
@@ -1299,6 +1276,7 @@ function renderPeopleEditor(p){
         <div class="icon" title="Remove" style="margin-top:20px">✕</div>
       `;
 
+      // Sync song dropdown → title
       const songSel  = row.querySelector('.cr_song');
       const songTitle = row.querySelector('.cr_song_title');
       const roleSel  = row.querySelector('.cr_role');
@@ -1339,7 +1317,9 @@ async function savePerson(){
   if ($('#p_friend').checked) p.tags.push('friend');
   if ($('#p_collab').checked) p.tags.push('collab');
   p.showOnHome = $('#p_home').checked;
+  // credits are mutated live; just ensure the field exists
   p.credits = p.credits || [];
+  // keep legacy projects field in sync for any old code that reads it
   p.projects = p.credits.map(c => c.song).filter(Boolean);
   p.links = {
     twitter:   $('#p_twitter').value,
@@ -1350,20 +1330,16 @@ async function savePerson(){
   p.id = p.id || slugify(p.name);
   try {
     setStatus('Saving person…','work');
-    const btn = $('#btnSave'); btn.disabled = true; btn.innerHTML = '⏳ Saving...';
     const arr = state.data.people;
     const i = arr.findIndex(x => x.id === p.id);
     if (i >= 0) arr[i] = p; else arr.push(p);
     await saveDataBlock('SITE_PEOPLE', arr, `person: ${p.name}`);
     setStatus('Person saved','ok');
-    showToast('Person saved','success');
     renderList();
-  } catch(e) { setStatus('Save failed','err'); showToast('Save failed: '+e.message,'error'); }
-  finally { const btn = $('#btnSave'); btn.disabled = false; btn.innerHTML = 'Save to GitHub'; }
+  } catch(e) { setStatus('Save failed','err'); alert(e.message); }
 }
-async function deletePerson(){ const p=getCurrentItem(); if(!p||!confirm('Delete person?')) return; try{ setStatus('Deleting…','work'); state.data.people=state.data.people.filter(x=>x.id!==p.id); await saveDataBlock('SITE_PEOPLE', state.data.people, `delete person: ${p.name}`); state.currentId=null; setStatus('Deleted','ok'); showToast('Person deleted','success'); render(); }catch(e){ setStatus('Delete failed','err'); showToast('Delete failed: '+e.message,'error'); } }
+async function deletePerson(){ const p=getCurrentItem(); if(!p||!confirm('Delete person?')) return; try{ setStatus('Deleting…','work'); state.data.people=state.data.people.filter(x=>x.id!==p.id); await saveDataBlock('SITE_PEOPLE', state.data.people, `delete person: ${p.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
-// ===== CATEGORY EDITOR =====
 function renderCategoryEditor(item){
   editorShell('Edit Category', saveCategories, deleteCategoryItem);
   const body = document.querySelector('.ed-body');
@@ -1401,10 +1377,9 @@ function renderSubs(){
 }
 function addCategorySub(){ const item=getCurrentItem(); const inp=document.getElementById('newSub'); const v=inp.value.trim(); if(!v||!item) return; item.subs=item.subs||[]; item.subs.push(v); inp.value=''; state.dirty=true; renderSubs(); renderList(); }
 function removeCategorySub(i){ const item=getCurrentItem(); if(!item) return; item.subs.splice(i,1); state.dirty=true; renderSubs(); renderList(); }
-async function saveCategories(){ try{ setStatus('Saving categories…','work'); const btn = $('#btnSave'); btn.disabled = true; btn.innerHTML = '⏳ Saving...'; await saveDataBlock('SITE_CATEGORIES', state.data.categories, 'cms: update categories'); setStatus('Categories saved ✓','ok'); showToast('Categories saved','success'); state.dirty=false; }catch(e){ setStatus('Save failed: '+e.message,'err'); showToast('Save failed: '+e.message,'error'); } finally { const btn = $('#btnSave'); btn.disabled = false; btn.innerHTML = 'Save to GitHub'; } }
-async function deleteCategoryItem(){ const item=getCurrentItem(); if(!item||!confirm('Delete category "'+item.name+'"?')) return; try{ setStatus('Deleting…','work'); state.data.categories=state.data.categories.filter(x=>x.id!==item.id); await saveDataBlock('SITE_CATEGORIES', state.data.categories, `delete category: ${item.name}`); state.currentId=null; setStatus('Deleted','ok'); showToast('Category deleted','success'); render(); }catch(e){ setStatus('Delete failed','err'); showToast('Delete failed: '+e.message,'error'); } }
+async function saveCategories(){ try{ setStatus('Saving categories.json…','work'); await saveDataBlock('SITE_CATEGORIES', state.data.categories, 'cms: update categories'); setStatus('Categories saved ✓','ok'); state.dirty=false; }catch(e){ setStatus('Save failed: '+e.message,'err'); } }
+async function deleteCategoryItem(){ const item=getCurrentItem(); if(!item||!confirm('Delete category "'+item.name+'"?')) return; try{ setStatus('Deleting…','work'); state.data.categories=state.data.categories.filter(x=>x.id!==item.id); await saveDataBlock('SITE_CATEGORIES', state.data.categories, `delete category: ${item.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
-// ===== ALBUM EDITOR =====
 function renderAlbumEditor(a){
   const body = editorShell('Edit Album', saveAlbum, deleteAlbum);
   body.innerHTML=`
@@ -1415,7 +1390,7 @@ function renderAlbumEditor(a){
       <div class="field"><label>Status</label><select id="a_status">${['In Progress','Released','Planned'].map(s=>`<option ${a.status===s?'selected':''}>${s}</option>`).join('')}</select></div>
       <div class="field full"><label>Cover</label>
         <div class="upload"><label class="file-btn">Upload cover<input type="file" accept="image/*" id="a_coverfile"></label></div>
-        ${a.cover?`<img class="img-prev" src="${a.cover}" onclick="showImg('${a.cover}')" loading="lazy">`:''}
+        ${a.cover?`<img class="img-prev" src="${a.cover}" onclick="showImg('${a.cover}')">`:''}
         <input id="a_cover" type="text" value="${esc(a.cover||'')}" placeholder="Cover URL" style="margin-top:8px">
       </div>
       <div class="field full"><label>Description</label><textarea id="a_desc">${esc(a.description||'')}</textarea></div>
@@ -1426,7 +1401,7 @@ function renderAlbumEditor(a){
       </div>
     </div>
   `;
-  $('#a_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading…','work'); showToast('Uploading cover...','info'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#a_cover').value=url; setStatus('Uploaded','ok'); showToast('Cover uploaded','success'); }catch(err){ setStatus('Upload failed','err'); showToast('Upload failed: '+err.message,'error'); } };
+  $('#a_coverfile').onchange=async e=>{ const f=e.target.files[0]; if(!f) return; try{ setStatus('Uploading…','work'); const url=await uploadFile(f, `${UPLOADS.covers}${Date.now()}-${f.name.replace(/\s+/g,'-')}`); $('#a_cover').value=url; setStatus('Uploaded','ok'); }catch{ setStatus('Upload failed','err') } };
   const tracksWrap=$('#tracks');
   function renderTracks(){
     tracksWrap.innerHTML='';
@@ -1453,20 +1428,12 @@ async function saveAlbum(){
   a.name=$('#a_name').value.trim(); a.artist=$('#a_artist').value.trim(); a.year=parseInt($('#a_year').value)||new Date().getFullYear();
   a.status=$('#a_status').value; a.cover=$('#a_cover').value.trim(); a.description=$('#a_desc').value;
   a.id = a.id || slugify(a.name);
-  try{
-    setStatus('Saving album…','work');
-    const btn = $('#btnSave'); btn.disabled = true; btn.innerHTML = '⏳ Saving...';
-    const arr=state.data.albums; const i=arr.findIndex(x=>x.id===a.id); if(i>=0) arr[i]=a; else arr.push(a);
-    await saveDataBlock('SITE_ALBUMS', arr, `album: ${a.name}`);
-    setStatus('Album saved','ok');
-    showToast('Album saved','success');
-    renderList();
-  }catch(e){ setStatus('Save failed','err'); showToast('Save failed: '+e.message,'error'); }
-  finally { const btn = $('#btnSave'); btn.disabled = false; btn.innerHTML = 'Save to GitHub'; }
+  try{ setStatus('Saving album…','work'); const arr=state.data.albums; const i=arr.findIndex(x=>x.id===a.id); if(i>=0) arr[i]=a; else arr.push(a); await saveDataBlock('SITE_ALBUMS', arr, `album: ${a.name}`); setStatus('Album saved','ok'); renderList(); }catch(e){ setStatus('Save failed','err'); alert(e.message) }
 }
-async function deleteAlbum(){ const a=getCurrentItem(); if(!a||!confirm('Delete album?')) return; try{ setStatus('Deleting…','work'); state.data.albums=state.data.albums.filter(x=>x.id!==a.id); await saveDataBlock('SITE_ALBUMS', state.data.albums, `delete album: ${a.name}`); state.currentId=null; setStatus('Deleted','ok'); showToast('Album deleted','success'); render(); }catch(e){ setStatus('Delete failed','err'); showToast('Delete failed: '+e.message,'error'); } }
+async function deleteAlbum(){ const a=getCurrentItem(); if(!a||!confirm('Delete album?')) return; try{ setStatus('Deleting…','work'); state.data.albums=state.data.albums.filter(x=>x.id!==a.id); await saveDataBlock('SITE_ALBUMS', state.data.albums, `delete album: ${a.name}`); state.currentId=null; setStatus('Deleted','ok'); render(); }catch(e){ setStatus('Delete failed','err'); } }
 
-// ===== VIDEO COMPRESSION =====
+// ── Video compression using MediaRecorder + Canvas ──────────────────────────
+// Quality presets: cap resolution + set bitrate. Browser transcodes client-side.
 async function compressVideo(file, quality){
   const presets = {
     high:   { maxH: 1080, videoBps: 4_000_000, audioBps: 128_000 },
@@ -1475,30 +1442,34 @@ async function compressVideo(file, quality){
   };
   const p = presets[quality] || presets.medium;
 
+  // Load video into a hidden element
   const vid = document.createElement('video');
   vid.muted = true;
   vid.src = URL.createObjectURL(file);
   await new Promise((res,rej)=>{ vid.onloadedmetadata=res; vid.onerror=rej; });
 
+  // Compute scaled dimensions
   const scale = Math.min(1, p.maxH / vid.videoHeight);
-  const w = Math.round(vid.videoWidth  * scale / 2) * 2;
+  const w = Math.round(vid.videoWidth  * scale / 2) * 2; // must be even
   const h = Math.round(vid.videoHeight * scale / 2) * 2;
 
   const canvas = document.createElement('canvas');
   canvas.width = w; canvas.height = h;
   const ctx = canvas.getContext('2d');
 
+  // Pick best supported codec
   const mimeTypes = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
   const mimeType = mimeTypes.find(m=>MediaRecorder.isTypeSupported(m)) || 'video/webm';
 
   const stream = canvas.captureStream(30);
+  // Add audio if source has it
   try {
     const audioCtx = new AudioContext();
     const src = audioCtx.createMediaElementSource(vid);
     const dest = audioCtx.createMediaStreamDestination();
     src.connect(dest);
     dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
-  } catch(e){ /* no audio */ }
+  } catch(e){ /* no audio track, fine */ }
 
   const recorder = new MediaRecorder(stream, {
     mimeType,
@@ -1508,6 +1479,7 @@ async function compressVideo(file, quality){
   const chunks = [];
   recorder.ondataavailable = e=>{ if(e.data.size>0) chunks.push(e.data); };
 
+  // Play + draw frames
   recorder.start(100);
   vid.play();
   await new Promise(res=>{
@@ -1525,7 +1497,6 @@ async function compressVideo(file, quality){
 function esc(s){ return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) }
 function showImg(src){ $('#modalImg').src=src; $('#modal').classList.add('show') }
 
-// ===== EVENT BINDING =====
 $('#tabs').onclick=e=>{
   const btn=e.target.closest('.tab'); if(!btn) return;
   state.tab=btn.dataset.tab; state.currentId=null; render();
@@ -1544,6 +1515,7 @@ $('#btnConnect').onclick=()=>{ state.token=$('#token').value.trim(); connect(); 
 (function init(){
   $('#token').value = state.token;
   setStatus('Ready — enter token to connect');
+  // load fallbacks for UI preview
   state.data.posts = migratePosts(FALLBACK_POSTS);
   state.data.songs = FALLBACK_SONGS;
   state.data.people = FALLBACK_PEOPLE;

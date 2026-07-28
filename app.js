@@ -4,36 +4,33 @@
 
    TABLE OF CONTENTS
    -----------------
-   1. Utility (debounce, etc.)
-   2. Site content       (SITE_SONGS, SITE_ALBUMS, SITE_PEOPLE,
+   1. Site content       (SITE_SONGS, SITE_ALBUMS, SITE_PEOPLE,
                            SITE_CATEGORIES, SITE_POSTS)
-   3. Init                (initSiteData — maps raw data → render state)
-   4. Home                (stats strip, latest release/post, "In The Works")
-   5. Shared style maps    (STATUS_META, STREAMING_META, badge helpers)
-   6. Music                (song/album grids — search, sort, genre, view)
-   7. Friends & Collaborators
-   8. Content blocks       (shared renderer for blog posts + song overlay)
-   9. Blog                 (categories, search, sort, year, posts)
-   10. Navigation           (tabs, drawer, hash routing / deep links)
-   11. Song overlay        (modal + persistent bottom player)
-   12. Album overlay
-   13. Rhythm game stats   (RHYTHM_GAME_STATS + tab rendering)
-   14. Hardware tablet-area visualizer
-   15. HQ / performance toggle
+   2. Init                (initSiteData — maps raw data → render state)
+   3. Home                (stats strip, latest release/post, "In The Works")
+   4. Shared style maps    (STATUS_META, STREAMING_META, badge helpers)
+   5. Music                (song/album grids — search, sort, genre, view)
+   6. Friends & Collaborators
+   7. Content blocks       (shared renderer for blog posts + song overlay)
+   8. Blog                 (categories, search, sort, year, posts)
+   9. Navigation           (tabs, drawer, hash routing / deep links)
+   10. Song overlay        (modal + persistent bottom player)
+   11. Album overlay
+   12. Rhythm game stats   (RHYTHM_GAME_STATS + tab rendering)
+   13. Hardware tablet-area visualizer
+   14. HQ / performance toggle
    ========================================================= */
 
-// ===== 1. UTILITY =====
-function debounce(fn, ms = 200) {
-  let timer;
-  return (...args) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), ms);
-  };
-}
+let SONGS = {};
+let ALBUMS = {};
+let personData = {};
+let allPosts = [];
+let categories = [];
 
-// ===== 2. SITE CONTENT — edit everything below directly. No JSON files, no fetch,
-//   no build step. Save the file and reload the page — that's it.
-//   =========================================================================== */
+/* ===========================================================================
+   SITE CONTENT — edit everything below directly. No JSON files, no fetch,
+   no build step. Save the file and reload the page — that's it.
+   =========================================================================== */
 
 /* ============================================================
    SITE_SONGS — your tracks. Each needs a unique "id" (used in URLs like
@@ -397,12 +394,7 @@ const SITE_POSTS = [
   }
 ];
 
-// ===== 3. INIT =====
-let SONGS = {};
-let ALBUMS = {};
-let personData = {};
-let allPosts = [];
-let categories = [];
+/* =========================== END OF SITE CONTENT =========================== */
 
 function initSiteData() {
   SONGS = Object.fromEntries(SITE_SONGS.map(s => [s.id, {
@@ -457,51 +449,50 @@ function initSiteData() {
   renderFeaturedProjects();
 }
 
-// ===== 4. HOME =====
+/* ============================================================
+   Home: "In The Works" panel, driven by song status
+   ============================================================ */
 function renderFeaturedProjects(){
   const wrap = document.getElementById('featured-projects-grid');
   if (!wrap) return;
 
   const inProgress = SITE_SONGS.filter(s => s.status && s.status !== 'Released');
 
-  const fragment = document.createDocumentFragment();
-
   if (!inProgress.length) {
-    const div = document.createElement('div');
-    div.className = 'glass rounded-2xl p-10 text-center';
-    div.style.gridColumn = '1/-1';
-    div.innerHTML = `
-      <i class="fas fa-circle-check text-3xl text-[var(--accent)] mb-4"></i>
-      <h3 class="text-xl font-bold mb-2">Nothing cooking right now</h3>
-      <p class="text-[var(--text-secondary)] mb-6 max-w-md mx-auto">Everything made so far is already out. Check the full catalog for all released tracks.</p>
-      <a href="#music" data-page="music" class="px-6 py-2.5 rounded-lg glass font-semibold glow-hover inline-flex items-center gap-2">Browse Music <i class="fas fa-arrow-right text-xs"></i></a>
-    `;
-    fragment.appendChild(div);
-  } else {
-    inProgress.forEach(s => {
-      const color = STATUS_META[s.status] || '#A596DA';
-      const genreChips = (s.genres || []).slice(0, 3).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
-      const card = document.createElement('div');
-      card.className = 'glass rounded-2xl p-6 glow-hover gradient-border cursor-pointer transition-all duration-300 hover:-translate-y-1';
-      card.setAttribute('onclick', `document.querySelector('[data-page=music]').click(); setTimeout(()=>openSong('${s.id}'), 250)`);
-      card.innerHTML = `
-        <div class="flex items-start justify-between mb-5">
-          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
-            <i class="fas fa-compact-disc text-xl text-[#A596DA]"></i>
-          </div>
-          <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:${color}20;color:${color};border:1px solid ${color}55">${s.status}</span>
-        </div>
-        <h3 class="text-xl font-bold mb-1">${s.title}</h3>
-        <p class="text-sm text-[var(--text-secondary)] mb-4">${s.year || ''}</p>
-        ${genreChips ? `<div class="flex flex-wrap gap-1.5">${genreChips}</div>` : ''}
-      `;
-      fragment.appendChild(card);
+    wrap.innerHTML = `
+      <div class="glass rounded-2xl p-10 text-center" style="grid-column:1/-1">
+        <i class="fas fa-circle-check text-3xl text-[var(--accent)] mb-4"></i>
+        <h3 class="text-xl font-bold mb-2">Nothing cooking right now</h3>
+        <p class="text-[var(--text-secondary)] mb-6 max-w-md mx-auto">Everything made so far is already out. Check the full catalog for all released tracks.</p>
+        <a href="#music" data-page="music" class="px-6 py-2.5 rounded-lg glass font-semibold glow-hover inline-flex items-center gap-2">Browse Music <i class="fas fa-arrow-right text-xs"></i></a>
+      </div>`;
+    document.querySelectorAll('#featured-projects-grid [data-page]').forEach(a=>{
+      a.addEventListener('click', e=>{ e.preventDefault(); if(typeof showPage==='function') showPage('music'); });
     });
+    return;
   }
-  wrap.innerHTML = '';
-  wrap.appendChild(fragment);
+
+  wrap.innerHTML = inProgress.map(s => {
+    const color = STATUS_META[s.status] || '#A596DA';
+    const genreChips = (s.genres || []).slice(0, 3).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
+    return `
+    <div class="glass rounded-2xl p-6 glow-hover gradient-border cursor-pointer transition-all duration-300 hover:-translate-y-1" onclick="document.querySelector('[data-page=music]').click(); setTimeout(()=>openSong('${s.id}'), 250)">
+      <div class="flex items-start justify-between mb-5">
+        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex items-center justify-center">
+          <i class="fas fa-compact-disc text-xl text-[#A596DA]"></i>
+        </div>
+        <span class="px-3 py-1 rounded-full text-xs font-bold" style="background:${color}20;color:${color};border:1px solid ${color}55">${s.status}</span>
+      </div>
+      <h3 class="text-xl font-bold mb-1">${s.title}</h3>
+      <p class="text-sm text-[var(--text-secondary)] mb-4">${s.year || ''}</p>
+      ${genreChips ? `<div class="flex flex-wrap gap-1.5">${genreChips}</div>` : ''}
+    </div>`;
+  }).join('');
 }
 
+/* ============================================================
+   Home: stats + latest release/post
+   ============================================================ */
 function renderHome(){
   const statsEl = document.getElementById('home-stats');
   if (statsEl) {
@@ -513,15 +504,7 @@ function renderHome(){
       { num: collabCount, lbl: 'Collaborators' },
       { num: friendCount, lbl: 'Friends' }
     ];
-    const frag = document.createDocumentFragment();
-    stats.forEach(s => {
-      const div = document.createElement('div');
-      div.className = 'home-stat';
-      div.innerHTML = `<div class="num">${s.num}</div><div class="lbl">${s.lbl}</div>`;
-      frag.appendChild(div);
-    });
-    statsEl.innerHTML = '';
-    statsEl.appendChild(frag);
+    statsEl.innerHTML = stats.map(s => `<div class="home-stat"><div class="num">${s.num}</div><div class="lbl">${s.lbl}</div></div>`).join('');
   }
 
   const latestEl = document.getElementById('home-latest');
@@ -529,14 +512,12 @@ function renderHome(){
     const latestSong = [...SITE_SONGS].sort((a,b) => (parseInt(b.year)||0) - (parseInt(a.year)||0))[0];
     const latestPost = [...SITE_POSTS].sort((a,b) => new Date(b.date) - new Date(a.date))[0];
 
-    const frag = document.createDocumentFragment();
+    let html = '';
     if (latestSong) {
-      const div = document.createElement('div');
-      div.className = 'glass rounded-2xl p-6 flex items-center gap-5 glow-hover cursor-pointer';
-      div.setAttribute('onclick', `document.querySelector('[data-page=music]').click(); setTimeout(()=>openSong('${latestSong.id}'), 250)`);
-      div.innerHTML = `
+      html += `
+      <div class="glass rounded-2xl p-6 flex items-center gap-5 glow-hover cursor-pointer" onclick="document.querySelector('[data-page=music]').click(); setTimeout(()=>openSong('${latestSong.id}'), 250)">
         <div class="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-[#2a2a2a] to-[#0f0f0f] flex-shrink-0 flex items-center justify-center text-3xl">
-          ${latestSong.cover ? `<img src="${latestSong.cover}" class="w-full h-full object-cover" onerror="this.style.display='none'" loading="lazy">` : (latestSong.coverEmoji || '🎵')}
+          ${latestSong.cover ? `<img src="${latestSong.cover}" class="w-full h-full object-cover" onerror="this.style.display='none'">` : (latestSong.coverEmoji || '🎵')}
         </div>
         <div class="min-w-0">
           <div class="text-xs uppercase tracking-wider text-[var(--accent)] font-semibold mb-1">Latest Release</div>
@@ -544,14 +525,11 @@ function renderHome(){
           <div class="text-sm text-[var(--text-secondary)]">${latestSong.year || ''}</div>
         </div>
         <i class="fas fa-play ml-auto text-[var(--accent)]"></i>
-      `;
-      frag.appendChild(div);
+      </div>`;
     }
     if (latestPost) {
-      const div = document.createElement('div');
-      div.className = 'glass rounded-2xl p-6 flex items-center gap-5 glow-hover cursor-pointer';
-      div.setAttribute('onclick', `document.querySelector('[data-page=blog]').click()`);
-      div.innerHTML = `
+      html += `
+      <div class="glass rounded-2xl p-6 flex items-center gap-5 glow-hover cursor-pointer" onclick="document.querySelector('[data-page=blog]').click()">
         <div class="w-20 h-20 rounded-xl bg-gradient-to-br from-[#A596DA]/25 to-[#6B5C9B]/15 flex-shrink-0 flex items-center justify-center text-3xl text-[var(--accent)]">
           <i class="fas fa-book-open"></i>
         </div>
@@ -561,15 +539,15 @@ function renderHome(){
           <div class="text-sm text-[var(--text-secondary)]">${latestPost.category} • ${latestPost.date || ''}</div>
         </div>
         <i class="fas fa-arrow-right ml-auto text-[var(--accent)]"></i>
-      `;
-      frag.appendChild(div);
+      </div>`;
     }
-    latestEl.innerHTML = '';
-    latestEl.appendChild(frag);
+    latestEl.innerHTML = html;
   }
 }
 
-// ===== 5. SHARED STYLE MAPS =====
+document.addEventListener('DOMContentLoaded', initSiteData);
+
+
 const platformIcons = {
   spotify: '<i class="fab fa-spotify"></i>',
   apple: '<i class="fab fa-apple"></i>',
@@ -579,6 +557,8 @@ const platformIcons = {
   deezer: '<i class="fas fa-music"></i>'
 };
 
+// Status colors — kept in sync with the status pills in the CMS song editor,
+// so a song tagged "Work in Progress" there shows the same color everywhere.
 const STATUS_META = {
   'Released': '#10B981',
   'Work in Progress': '#F59E0B',
@@ -587,6 +567,8 @@ const STATUS_META = {
   'Demo': '#8B5CF6'
 };
 
+// Real brand colors for each streaming platform, used to color-code the
+// "Listen on" buttons in the song overlay instead of one flat gray pill.
 const STREAMING_META = {
   spotify: { label: 'Spotify',      bg: '#1DB954', text: '#ffffff' },
   apple:   { label: 'Apple Music',  bg: '#FA243C', text: '#ffffff' },
@@ -615,7 +597,10 @@ function getBadgeStyle(name) {
   return map[name] || {bg: 'var(--bg-card-hover)', color: 'var(--text-secondary)'};
 }
 
-// ===== 6. MUSIC =====
+/* ============================================================
+   Music: songs & albums grids
+   ============================================================ */
+
 let currentSongSearch = '';
 let currentSongSort = 'newest';
 let currentSongYear = 'All';
@@ -624,42 +609,31 @@ let currentSongStatus = 'All';
 let currentSongView = 'grid';
 let currentSongSize = 'md';
 
-// Cached DOM refs
-const songsGridEl = document.getElementById('songs-grid');
-const albumsGridEl = document.getElementById('albums-grid');
-const genreFiltersWrapEl = document.getElementById('genre-filters');
-const songResultsBarEl = document.getElementById('songResultsBar');
-
 function songYearOf(song){
   const y = parseInt(song.year, 10);
   return isNaN(y) ? 'Unknown' : String(y);
 }
 
 function renderGenreFilters(){
-  if (!genreFiltersWrapEl) return;
+  const wrap = document.getElementById('genre-filters');
+  if (!wrap) return;
   const all = Object.values(SONGS);
   const counts = {};
   all.forEach(s => (s.genres || []).forEach(g => { counts[g] = (counts[g]||0) + 1; }));
   const genreNames = Object.keys(counts).sort();
 
-  const fragment = document.createDocumentFragment();
-
-  const allBtn = document.createElement('button');
-  allBtn.className = `genre-pill-btn${currentSongGenre === 'All' ? ' active' : ''}`;
-  allBtn.innerHTML = `<span>All Genres</span><span class="count">${all.length}</span>`;
-  allBtn.onclick = () => { currentSongGenre = 'All'; renderGenreFilters(); renderSongsGrid(); };
-  fragment.appendChild(allBtn);
-
-  genreNames.forEach(g => {
+  const makeBtn = (name, count, isActive) => {
     const btn = document.createElement('button');
-    btn.className = `genre-pill-btn${currentSongGenre === g ? ' active' : ''}`;
-    btn.innerHTML = `<span>${g}</span><span class="count">${counts[g]}</span>`;
-    btn.onclick = () => { currentSongGenre = g; renderGenreFilters(); renderSongsGrid(); };
-    fragment.appendChild(btn);
-  });
+    btn.className = 'genre-pill-btn' + (isActive ? ' active' : '');
+    btn.innerHTML = `<span>${name}</span><span class="count">${count}</span>`;
+    btn.onclick = () => { currentSongGenre = name; renderGenreFilters(); renderSongsGrid(); };
+    return btn;
+  };
 
-  genreFiltersWrapEl.innerHTML = '';
-  genreFiltersWrapEl.appendChild(fragment);
+  wrap.innerHTML = '';
+  wrap.appendChild(makeBtn('All Genres', all.length, currentSongGenre === 'All'));
+  wrap.lastChild.onclick = () => { currentSongGenre = 'All'; renderGenreFilters(); renderSongsGrid(); };
+  genreNames.forEach(g => wrap.appendChild(makeBtn(g, counts[g], currentSongGenre === g)));
 
   // Populate year dropdown dynamically
   const yearSelect = document.getElementById('songYearSelect');
@@ -670,7 +644,7 @@ function renderGenreFilters(){
     yearSelect.value = years.includes(prev) ? prev : 'All';
   }
 
-  // Populate status dropdown dynamically
+  // Populate status dropdown dynamically (Released / Work in Progress / Pending / etc.)
   const statusSelect = document.getElementById('songStatusSelect');
   if (statusSelect) {
     const statuses = Array.from(new Set(all.map(s => s.status).filter(Boolean)));
@@ -680,12 +654,7 @@ function renderGenreFilters(){
   }
 }
 
-// Debounced search
-window.onSongSearch = debounce((value) => {
-  currentSongSearch = (value || '').trim().toLowerCase();
-  renderSongsGrid();
-});
-
+window.onSongSearch = function(value){ currentSongSearch = (value||'').trim().toLowerCase(); renderSongsGrid(); };
 window.onSongSort = function(value){ currentSongSort = value; renderSongsGrid(); };
 window.onSongYear = function(value){ currentSongYear = value; renderSongsGrid(); };
 window.onSongStatus = function(value){ currentSongStatus = value; renderSongsGrid(); };
@@ -732,131 +701,112 @@ function getFilteredSortedSongs(){
 }
 
 function renderSongsGrid() {
-  if (!songsGridEl) return;
+  const grid = document.getElementById('songs-grid');
+  if (!grid) return;
 
   const entries = getFilteredSortedSongs();
 
-  if (songResultsBarEl) {
-    songResultsBarEl.textContent = `${entries.length} song${entries.length===1?'':'s'}${currentSongSearch ? ` matching "${currentSongSearch}"` : ''}`;
+  const bar = document.getElementById('songResultsBar');
+  if (bar) {
+    bar.textContent = `${entries.length} song${entries.length===1?'':'s'}${currentSongSearch ? ` matching "${currentSongSearch}"` : ''}`;
   }
 
-  const fragment = document.createDocumentFragment();
-
   if (entries.length === 0) {
-    const msg = document.createElement('div');
-    msg.className = 'text-center py-12 text-[var(--text-secondary)] col-span-full';
-    msg.textContent = 'No songs match your filters.';
-    fragment.appendChild(msg);
-  } else {
-    if (currentSongView === 'list') {
-      songsGridEl.className = 'list-view';
-      entries.forEach(([key, song]) => {
-        const genreChips = (song.genres||[]).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
-        const row = document.createElement('div');
-        row.id = `song-${key}`;
-        row.className = 'song-row glass';
-        row.setAttribute('onclick', `openSong('${key}')`);
-        row.innerHTML = `
-          <div class="song-row-thumb">
-            ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" onerror="this.style.display='none'" loading="lazy">` : (song.cover||'🎵')}
-          </div>
-          <div class="flex-1 min-w-0">
-            <div class="font-semibold text-white truncate">${song.name}</div>
-            <div class="text-sm text-[var(--text-secondary)] truncate">${song.year || ''} • ${song.artist}</div>
-          </div>
-          <div class="song-row-genres flex gap-1.5 flex-wrap">${genreChips}</div>
-          <button class="w-10 h-10 rounded-full bg-[#A596DA] hover:bg-[#8B78CB] flex items-center justify-center flex-shrink-0 transition" onclick="event.stopPropagation(); openSong('${key}')" aria-label="Play ${song.name}">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
-          </button>
-        `;
-        fragment.appendChild(row);
-      });
-    } else {
-      const sizeGridClasses = {
-        sm: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 size-sm',
-        md: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6',
-        lg: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 size-lg'
-      };
-      songsGridEl.className = sizeGridClasses[currentSongSize] || sizeGridClasses.md;
-      entries.forEach(([key, song]) => {
-        const badges = (song.badges || []).slice(0,3).map(b => {
-          const label = badgeLabel(b), color = badgeColor(b);
-          return color
-            ? `<span class="text-[10px] px-2 py-0.5 rounded-full" style="background:${color};color:#fff">${label}</span>`
-            : `<span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">${label}</span>`;
-        }).join('');
-        const genreChips = (song.genres||[]).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
-        const card = document.createElement('div');
-        card.id = `song-${key}`;
-        card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
-        card.setAttribute('onclick', `openSong('${key}')`);
-        card.innerHTML = `
-          <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+    grid.className = '';
+    grid.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)] col-span-full">No songs match your filters.</div>';
+    return;
+  }
+
+  if (currentSongView === 'list') {
+    grid.className = 'list-view';
+    grid.innerHTML = entries.map(([key, song]) => {
+      const genreChips = (song.genres||[]).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
+      return `
+      <div id="song-${key}" class="song-row glass" onclick="openSong('${key}')">
+        <div class="song-row-thumb">
+          ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" onerror="this.style.display='none'">` : (song.cover||'🎵')}
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold text-white truncate">${song.name}</div>
+          <div class="text-sm text-[var(--text-secondary)] truncate">${song.year || ''} • ${song.artist}</div>
+        </div>
+        <div class="song-row-genres flex gap-1.5 flex-wrap">${genreChips}</div>
+        <button class="w-10 h-10 rounded-full bg-[#A596DA] hover:bg-[#8B78CB] flex items-center justify-center flex-shrink-0 transition" onclick="event.stopPropagation(); openSong('${key}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>`;
+    }).join('');
+    return;
+  }
+
+  const sizeGridClasses = {
+    sm: 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-3 size-sm',
+    md: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6',
+    lg: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 size-lg'
+  };
+  grid.className = sizeGridClasses[currentSongSize] || sizeGridClasses.md;
+  grid.innerHTML = entries.map(([key, song]) => {
+    const badges = (song.badges || []).slice(0,3).map(b => {
+      const label = badgeLabel(b), color = badgeColor(b);
+      return color
+        ? `<span class="text-[10px] px-2 py-0.5 rounded-full" style="background:${color};color:#fff">${label}</span>`
+        : `<span class="text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/70">${label}</span>`;
+    }).join('');
+    const genreChips = (song.genres||[]).map(g => `<span class="song-genre-chip">${g}</span>`).join('');
+    return `
+    <div id="song-${key}" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('${key}')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             ${song.year ? `<span class="song-year-badge">${song.year}</span>` : ''}
-            ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'" loading="lazy">` : ''}
+            ${song.coverImg ? `<img src="${song.coverImg}" alt="${song.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">${song.cover || '🎵'}</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
-              <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
-              </div>
+                <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black"><path d="M8 5v14l11-7z"/></svg>
+                </div>
             </div>
-          </div>
-          <div class="p-4">
+        </div>
+        <div class="p-4">
             <h3 class="font-semibold text-white truncate">${song.name}</h3>
             <p class="text-sm text-[var(--text-secondary)] mt-1">${song.artist}</p>
             ${genreChips ? `<div class="flex gap-1.5 mt-2 flex-wrap">${genreChips}</div>` : ''}
             <div class="flex gap-1.5 mt-3 flex-wrap">${badges}</div>
-          </div>
-        `;
-        fragment.appendChild(card);
-      });
-    }
-  }
-  songsGridEl.innerHTML = '';
-  songsGridEl.appendChild(fragment);
+        </div>
+    </div>`;
+  }).join('');
 }
 
 function renderAlbumsGrid() {
-  if (!albumsGridEl) return;
-  const fragment = document.createDocumentFragment();
-  Object.keys(ALBUMS).forEach(key => {
+  const grid = document.getElementById('albums-grid');
+  if (!grid) return;
+  grid.innerHTML = Object.keys(ALBUMS).map(key => {
     const album = ALBUMS[key];
-    const card = document.createElement('div');
-    card.className = 'group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1';
-    card.setAttribute('onclick', `openAlbum('${key}')`);
-    card.innerHTML = `
-      <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
-        ${album.coverImg ? `<img src="${album.coverImg}" alt="${album.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'" loading="lazy">` : ''}
-        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60"></div>
-        <div class="absolute bottom-3 left-3">
-          <span class="px-2 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] text-[10px] font-medium backdrop-blur">${album.status || ''}</span>
+    return `
+    <div class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openAlbum('${key}')">
+        <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
+            ${album.coverImg ? `<img src="${album.coverImg}" alt="${album.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">` : ''}
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60"></div>
+            <div class="absolute bottom-3 left-3">
+                <span class="px-2 py-1 rounded-full bg-[#A596DA]/20 text-[#A596DA] text-[10px] font-medium backdrop-blur">${album.status || ''}</span>
+            </div>
         </div>
-      </div>
-      <div class="p-4">
-        <h3 class="font-semibold text-white truncate">${album.name}</h3>
-        <p class="text-sm text-[var(--text-secondary)] mt-1">${album.year || ''} • ${(album.tracks || (album.tracklist||[]).length) || 0} tracks</p>
-      </div>
-    `;
-    fragment.appendChild(card);
-  });
-  albumsGridEl.innerHTML = '';
-  albumsGridEl.appendChild(fragment);
+        <div class="p-4">
+            <h3 class="font-semibold text-white truncate">${album.name}</h3>
+            <p class="text-sm text-[var(--text-secondary)] mt-1">${album.year || ''} • ${(album.tracks || (album.tracklist||[]).length) || 0} tracks</p>
+        </div>
+    </div>`;
+  }).join('');
 }
 
-// ===== 7. FRIENDS & COLLABORATORS =====
+/* ============================================================
+   Friends & Collaborators
+   ============================================================ */
+
 function renderPeople(peopleList) {
   const collabsGrid = document.getElementById('collabs-grid');
   const friendsGrid = document.getElementById('friends-grid');
   if (!collabsGrid && !friendsGrid) return;
 
-  const collabFragment = document.createDocumentFragment();
-  const friendFragment = document.createDocumentFragment();
-
-  peopleList.forEach(p => {
-    const card = document.createElement('div');
-    card.className = 'person-card';
-    card.setAttribute('onclick', `openPersonOverlay('${p.id}')`);
-
+  function cardFor(p) {
     const avatarBase = (p.avatar || `Friends/${p.id}.jpg`).replace(/\.jpg$|\.png$/i, '');
     const tryJpg = avatarBase + '.jpg';
     const tryPng = avatarBase + '.png';
@@ -873,10 +823,13 @@ function renderPeople(peopleList) {
       return `<span class="person-chip">${role}${song ? ` · <span>${song}</span>` : ''}</span>`;
     }).join('');
 
+    const card = document.createElement('div');
+    card.className = 'person-card';
+    card.onclick = () => openPersonOverlay(p.id);
     card.innerHTML = `
       <div class="person-banner">
         <div class="person-avatar-ring">
-          <img src="${tryJpg}" alt="${p.name}" onerror="this.onerror=null; this.src='${tryPng}';" loading="lazy">
+          <img src="${tryJpg}" alt="${p.name}" onerror="this.onerror=null; this.src='${tryPng}';">
         </div>
       </div>
       <div class="person-card-body">
@@ -889,20 +842,25 @@ function renderPeople(peopleList) {
           ${twitter ? `<a href="${twitter}" target="_blank" onclick="event.stopPropagation()" class="person-social-btn"><i class="fab fa-x-twitter"></i> Twitter</a>` : ''}
           <span class="person-social-btn" style="background:transparent;border:1px solid rgba(165,150,218,0.35);color:var(--accent);margin-left:auto;">View <i class="fas fa-arrow-right" style="font-size:10px"></i></span>
         </div>
-      </div>
-    `;
+      </div>`;
+    return card;
+  }
 
-    if ((p.tags || []).map(t => t.toLowerCase()).includes('collab')) {
-      collabFragment.appendChild(card.cloneNode(true));
-    }
-    const tagsLower = (p.tags || []).map(t => t.toLowerCase());
-    if (tagsLower.includes('friend') || (!tagsLower.includes('collab') && tagsLower.length === 0)) {
-      friendFragment.appendChild(card);
-    }
-  });
-
-  if (collabsGrid) { collabsGrid.innerHTML = ''; collabsGrid.appendChild(collabFragment); }
-  if (friendsGrid) { friendsGrid.innerHTML = ''; friendsGrid.appendChild(friendFragment); }
+  if (collabsGrid) {
+    collabsGrid.innerHTML = '';
+    peopleList
+      .filter(p => (p.tags || []).map(t => t.toLowerCase()).includes('collab'))
+      .forEach(p => collabsGrid.appendChild(cardFor(p)));
+  }
+  if (friendsGrid) {
+    friendsGrid.innerHTML = '';
+    peopleList
+      .filter(p => {
+        const tags = (p.tags || []).map(t => t.toLowerCase());
+        return tags.includes('friend') || (!tags.includes('collab') && tags.length === 0);
+      })
+      .forEach(p => friendsGrid.appendChild(cardFor(p)));
+  }
 }
 
 window.openPersonOverlay = function(personId) {
@@ -919,7 +877,7 @@ window.openPersonOverlay = function(personId) {
 
   header.innerHTML = `
       <div class="w-16 h-16 rounded-full bg-gradient-to-br ${person.color} flex items-center justify-center overflow-hidden flex-shrink-0 relative">
-          <img src="${tryJpg}" alt="${person.name}" class="w-full h-full object-cover" onerror="this.onerror=function(){this.style.display='none'}; this.src='${tryPng}';" loading="lazy">
+          <img src="${tryJpg}" alt="${person.name}" class="w-full h-full object-cover" onerror="this.onerror=function(){this.style.display='none'}; this.src='${tryPng}';">
           <i class="${person.icon} text-2xl absolute" style="z-index:-1"></i>
       </div>
       <div>
@@ -977,7 +935,7 @@ window.openPersonOverlay = function(personId) {
     linksHTML = `
     <div class="flex gap-4">
         ${links.map(l => `
-            <a href="${l.url}" target="_blank" class="w-12 h-12 rounded-lg glass flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors" onclick="event.stopPropagation()" aria-label="${l.name}">
+            <a href="${l.url}" target="_blank" class="w-12 h-12 rounded-lg glass flex items-center justify-center text-[var(--text-secondary)] hover:text-[var(--accent)] transition-colors" onclick="event.stopPropagation()">
                 <i class="${l.icon} text-xl"></i>
             </a>
         `).join('')}
@@ -1003,14 +961,16 @@ window.closePersonOverlay = function(event) {
   document.body.style.overflow = '';
 };
 
-// ===== 8. CONTENT BLOCKS RENDERER =====
+/* ============================================================
+   Shared content-block renderer (used by Blog posts and Song overlay)
+   ============================================================ */
 function renderContentBlocks(blocks, accentColor){
   const col = accentColor || '#A596DA';
   if(!blocks || !Array.isArray(blocks) || blocks.length === 0) return null;
   return blocks.map(b => {
     if(b.type === 'image' && b.src){
       const cap = b.caption ? `<div class="text-xs text-[var(--text-secondary)] mt-2">${(b.caption||'').replace(/</g,'&lt;')}</div>` : '';
-      return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')" loading="lazy">${cap}</div>`;
+      return `<div class="mb-5"><img src="${b.src}" class="w-full rounded-xl border border-white/10 cursor-pointer hover:opacity-95 transition" style="max-height:700px;object-fit:contain;background:#08050f" onclick="window.open('${b.src}','_blank')">${cap}</div>`;
     }
     if(b.type === 'text'){
       const txt = (b.content||'').replace(/</g,'&lt;').replace(/>/g,'&gt;');
@@ -1037,7 +997,10 @@ function renderContentBlocks(blocks, accentColor){
   }).join('');
 }
 
-// ===== 9. BLOG =====
+/* ============================================================
+   Blog: categories, search, sort, year, posts
+   ============================================================ */
+
 let currentCat = 'All';
 let currentSub = 'All';
 let currentSearch = '';
@@ -1052,7 +1015,7 @@ function postYear(post){
 function renderCategories(){
   const wrap = document.getElementById('category-filters');
   if(!wrap) return;
-  const fragment = document.createDocumentFragment();
+  wrap.innerHTML = '';
 
   const countFor = (name) => name === 'All'
     ? allPosts.length
@@ -1068,13 +1031,10 @@ function renderCategories(){
     return btn;
   };
 
-  fragment.appendChild(makeBtn('All', currentCat === 'All', '#A596DA'));
-  categories.forEach(c => fragment.appendChild(makeBtn(c.name, currentCat === c.name, c.color)));
+  wrap.appendChild(makeBtn('All', currentCat === 'All', '#A596DA'));
+  categories.forEach(c => wrap.appendChild(makeBtn(c.name, currentCat === c.name, c.color)));
 
-  wrap.innerHTML = '';
-  wrap.appendChild(fragment);
-
-  // Populate year dropdown
+  // Populate year dropdown dynamically from post data
   const yearSelect = document.getElementById('blogYearSelect');
   if (yearSelect) {
     const years = Array.from(new Set(allPosts.map(postYear))).sort((a,b) => b.localeCompare(a));
@@ -1099,28 +1059,25 @@ function renderSubs(){
   const cat = categories.find(c => c.name === currentCat);
   if(!cat || currentCat === 'All' || !(cat.subs||[]).length){ subWrap.classList.add('hidden'); sub.innerHTML = ''; return; }
   subWrap.classList.remove('hidden');
-  const fragment = document.createDocumentFragment();
+  sub.innerHTML = '';
   const allBtn = document.createElement('button');
   allBtn.className = 'cat-list-btn' + (currentSub === 'All' ? ' active' : '');
   allBtn.innerHTML = `<span>All ${currentCat}</span>`;
   allBtn.onclick = () => { currentSub = 'All'; renderSubs(); renderPosts(); };
-  fragment.appendChild(allBtn);
+  sub.appendChild(allBtn);
   (cat.subs || []).forEach(s => {
     const b = document.createElement('button');
     b.className = 'cat-list-btn' + (currentSub === s ? ' active' : '');
     b.innerHTML = `<span>${s}</span>`;
     b.onclick = () => { currentSub = s; renderSubs(); renderPosts(); };
-    fragment.appendChild(b);
+    sub.appendChild(b);
   });
-  sub.innerHTML = '';
-  sub.appendChild(fragment);
 }
 
-// Debounced blog search
-window.onBlogSearch = debounce((value) => {
+window.onBlogSearch = function(value){
   currentSearch = (value || '').trim().toLowerCase();
   renderPosts();
-});
+};
 
 window.onBlogSort = function(value){
   currentSort = value;
@@ -1173,47 +1130,30 @@ function renderPosts(){
     bar.innerHTML = `<span>${p.length} post${p.length===1?'':'s'}${currentSearch ? ` matching "<span class="text-white">${currentSearch}</span>"`:''}</span>`;
   }
 
-  const fragment = document.createDocumentFragment();
-
   if(p.length === 0){
-    const div = document.createElement('div');
-    div.className = 'text-center py-12 text-[var(--text-secondary)]';
-    div.textContent = 'No posts match your filters.';
-    fragment.appendChild(div);
-  } else {
-    p.forEach(post => {
-      const cat = categories.find(x => x.name === post.category);
-      const col = post.color || (cat && cat.color) || '#A596DA';
-
-      const blocksHtml = renderContentBlocks(post.blocks, col);
-      const imgs = post.images || [];
-      let imgHtml = '';
-      if (imgs.length === 1) {
-        imgHtml = `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')" loading="lazy"></div>`;
-      } else if (imgs.length > 1) {
-        imgHtml = `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i => `<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')" loading="lazy">`).join('')}</div>`;
-      }
-      const legacyHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${(post.body||'').replace(/</g,'&lt;')}</p>${imgHtml}`;
-
-      const article = document.createElement('article');
-      article.className = 'glass rounded-2xl p-6 md:p-8 mb-8 glow-hover';
-      article.innerHTML = `
-        <div class="flex gap-3 items-center mb-5 text-sm flex-wrap">
-          <span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span>
-          <span class="text-[var(--text-secondary)]">${post.subcategory||''}</span>
-          <span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span>
-        </div>
-        <h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">${post.title}</h3>
-        ${blocksHtml || legacyHtml}
-      `;
-      fragment.appendChild(article);
-    });
+    c.innerHTML = '<div class="text-center py-12 text-[var(--text-secondary)]">No posts match your filters.</div>';
+    return;
   }
-  c.innerHTML = '';
-  c.appendChild(fragment);
+  c.innerHTML = p.map(post => {
+    const cat = categories.find(x => x.name === post.category);
+    const col = post.color || (cat && cat.color) || '#A596DA';
+
+    const blocksHtml = renderContentBlocks(post.blocks, col);
+    const imgs = post.images || [];
+    const imgHtml = imgs.length === 1
+      ? `<div class="mb-6"><img src="${imgs[0]}" class="max-w-full rounded-xl border border-white/10 mx-auto cursor-pointer" style="max-height:500px" onclick="window.open('${imgs[0]}')"></div>`
+      : imgs.length > 1
+        ? `<div class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">${imgs.map(i=>`<img src="${i}" class="w-full h-48 object-cover rounded-lg border border-white/10 cursor-pointer" onclick="window.open('${i}')">`).join('')}</div>`
+        : '';
+    const legacyHtml = `<p class="text-[var(--text-secondary)] leading-relaxed whitespace-pre-wrap mb-4">${(post.body||'').replace(/</g,'&lt;')}</p>${imgHtml}`;
+
+    return `<article class="glass rounded-2xl p-6 md:p-8 mb-8 glow-hover"><div class="flex gap-3 items-center mb-5 text-sm flex-wrap"><span class="px-3 py-1 rounded-full font-medium" style="background:${col}20;color:${col};border:1px solid ${col}40">${post.category}</span><span class="text-[var(--text-secondary)]">${post.subcategory||''}</span><span class="ml-auto text-[var(--text-secondary)]">${post.displayDate||post.date||''}</span></div><h3 class="text-2xl md:text-[28px] font-bold mb-6 gradient-text">${post.title}</h3>${blocksHtml || legacyHtml}</article>`;
+  }).join('');
 }
 
-// ===== 10. NAVIGATION =====
+/* ============================================================
+   Navigation (TABS + BLACK TRANSPARENT DRAWER)
+   ============================================================ */
 const sectionIds = ['home','music','blog','rhythm','collabs','friends'];
 const drawer = document.getElementById('mobile-menu');
 const overlay = document.getElementById('mobile-menu-overlay');
@@ -1298,7 +1238,10 @@ window.addEventListener('load', () => {
   fillRhythmData();
 });
 
-// ===== 11. SONG OVERLAY =====
+/* ============================================================
+   Song overlay / persistent bottom player
+   ============================================================ */
+
 const songAudio = document.getElementById('songAudio');
 let currentSongKey = null;
 
@@ -1306,6 +1249,7 @@ function getSongContentHtml(song){
   if (song.blocks && song.blocks.length) {
     return renderContentBlocks(song.blocks, '#A596DA') || '<p class="text-[var(--text-secondary)]">No story shared yet for this song.</p>';
   }
+  // Legacy fallback: build blocks on the fly from the old about/thoughts/behindTheScenes fields
   const legacyBlocks = [];
   if (song.about) legacyBlocks.push({ type: 'text', heading: 'About', content: song.about });
   if (song.thoughts) legacyBlocks.push({ type: 'text', heading: 'Thoughts', content: song.thoughts });
@@ -1371,7 +1315,7 @@ function openSong(key) {
         const avatarHtml = person
           ? (() => {
               const base = (person.avatar || `Friends/${c.personId}.jpg`).replace(/\.jpg$|\.png$/i, '');
-              return `<img src="${base}.jpg" alt="${displayName}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${base}.png';" loading="lazy">`;
+              return `<img src="${base}.jpg" alt="${displayName}" class="w-full h-full object-cover" onerror="this.onerror=null;this.src='${base}.png';">`;
             })()
           : `<div class="w-full h-full flex items-center justify-center bg-white/10"><i class="fas fa-user text-xs text-white/40"></i></div>`;
 
@@ -1423,6 +1367,7 @@ function openSong(key) {
 function closeOverlay() {
   document.getElementById('songOverlay').classList.add('hidden');
   document.body.style.overflow = '';
+  // intentionally does not pause playback
 }
 
 function reopenOverlay() {
@@ -1527,7 +1472,64 @@ document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { closePersonOverlay(); closeOverlay(); closeAlbum(); }
 });
 
-// ===== 12. RHYTHM GAME STATS =====
+/* ============================================================
+   Rhythm game stats (from the hardcoded RHYTHM_GAME_STATS above)
+   ============================================================ */
+
+function fmtNum(n){ return (n || 0).toLocaleString(); }
+function fmtHours(sec){
+  const h = (sec || 0) / 3600;
+  return (h >= 100 ? Math.round(h) : h.toFixed(1)) + 'h';
+}
+function setText(id, val){ const el = document.getElementById(id); if (el) el.textContent = val; }
+
+function gradeBg(grade){
+  return { SS:'#Fdd700', SSH:'#C0C0C0', S:'#Fdd700', SH:'#C0C0C0', A:'#8BC34A' }[grade] || '#A596DA';
+}
+function gradeFg(grade){
+  return (grade === 'SSH' || grade === 'SH' || grade === 'A') ? '#000' : '#000';
+}
+
+function playRow(p, i){
+  return `<tr class="border-b border-white/5 last:border-0">
+    <td class="py-3 pr-3 text-[var(--text-secondary)] w-6">${i+1}</td>
+    <td class="py-3 pr-3">
+      <div class="font-medium">${p.title}</div>
+      <div class="text-xs text-[var(--text-secondary)]">${p.subtitle || ''}</div>
+    </td>
+    <td class="py-3 pr-3 text-right font-mono text-[#A596DA]">${p.pp}pp</td>
+    <td class="py-3 pr-3 text-right font-mono">${p.acc}%</td>
+    <td class="py-3 text-right"><span class="grade-pill" style="background:${gradeBg(p.grade)};color:${gradeFg(p.grade)}">${p.grade}</span></td>
+  </tr>`;
+}
+function fillTop5(id, arr){
+  const tb = document.getElementById(id);
+  if (!tb || !arr) return;
+  tb.innerHTML = arr.map(playRow).join('');
+}
+
+function etternaRow(s, i){
+  return `<tr class="border-b border-white/5 last:border-0">
+    <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
+    <td class="py-2">${s.song}${s.artist ? ` <span class="text-xs text-[var(--text-secondary)]">— ${s.artist}</span>` : ''}</td>
+    <td class="py-2 text-right font-mono text-[#A596DA]">${s.msd.toFixed(2)}</td>
+    <td class="py-2 text-right font-mono">${s.acc}%</td>
+  </tr>`;
+}
+function ffrRow(s, i){
+  return `<tr class="border-b border-white/5 last:border-0">
+    <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
+    <td class="py-2">${s.song}</td>
+    <td class="py-2 text-right font-mono">${s.level}</td>
+    <td class="py-2 text-right font-mono text-[#A596DA]">${s.score}</td>
+  </tr>`;
+}
+
+/* ===========================================================================
+   RHYTHM_GAME_STATS — your osu! / osu!mania / Etterna / FFR stats for the
+   Rhythm page. Edit these numbers directly whenever you want to update them
+   — no external file, no fetch.
+   =========================================================================== */
 const RHYTHM_GAME_STATS = {
   osuStandard: {
     rank: 176993,
@@ -1632,77 +1634,13 @@ const RHYTHM_GAME_STATS = {
     ]
   }
 };
-
-function fmtNum(n){ return (n || 0).toLocaleString(); }
-function fmtHours(sec){
-  const h = (sec || 0) / 3600;
-  return (h >= 100 ? Math.round(h) : h.toFixed(1)) + 'h';
-}
-function setText(id, val){ const el = document.getElementById(id); if (el) el.textContent = val; }
-
-function gradeBg(grade){
-  return { SS:'#Fdd700', SSH:'#C0C0C0', S:'#Fdd700', SH:'#C0C0C0', A:'#8BC34A' }[grade] || '#A596DA';
-}
-function gradeFg(grade){
-  return (grade === 'SSH' || grade === 'SH' || grade === 'A') ? '#000' : '#000';
-}
-
-function playRow(p, i){
-  return `<tr class="border-b border-white/5 last:border-0">
-    <td class="py-3 pr-3 text-[var(--text-secondary)] w-6">${i+1}</td>
-    <td class="py-3 pr-3">
-      <div class="font-medium">${p.title}</div>
-      <div class="text-xs text-[var(--text-secondary)]">${p.subtitle || ''}</div>
-    </td>
-    <td class="py-3 pr-3 text-right font-mono text-[#A596DA]">${p.pp}pp</td>
-    <td class="py-3 pr-3 text-right font-mono">${p.acc}%</td>
-    <td class="py-3 text-right"><span class="grade-pill" style="background:${gradeBg(p.grade)};color:${gradeFg(p.grade)}">${p.grade}</span></td>
-  </tr>`;
-}
-function fillTop5(id, arr){
-  const tb = document.getElementById(id);
-  if (!tb || !arr) return;
-  const fragment = document.createDocumentFragment();
-  arr.forEach((p, i) => {
-    const row = document.createElement('tr');
-    row.className = 'border-b border-white/5 last:border-0';
-    row.innerHTML = `
-      <td class="py-3 pr-3 text-[var(--text-secondary)] w-6">${i+1}</td>
-      <td class="py-3 pr-3">
-        <div class="font-medium">${p.title}</div>
-        <div class="text-xs text-[var(--text-secondary)]">${p.subtitle || ''}</div>
-      </td>
-      <td class="py-3 pr-3 text-right font-mono text-[#A596DA]">${p.pp}pp</td>
-      <td class="py-3 pr-3 text-right font-mono">${p.acc}%</td>
-      <td class="py-3 text-right"><span class="grade-pill" style="background:${gradeBg(p.grade)};color:${gradeFg(p.grade)}">${p.grade}</span></td>
-    `;
-    fragment.appendChild(row);
-  });
-  tb.innerHTML = '';
-  tb.appendChild(fragment);
-}
-
-function etternaRow(s, i){
-  return `<tr class="border-b border-white/5 last:border-0">
-    <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
-    <td class="py-2">${s.song}${s.artist ? ` <span class="text-xs text-[var(--text-secondary)]">— ${s.artist}</span>` : ''}</td>
-    <td class="py-2 text-right font-mono text-[#A596DA]">${s.msd.toFixed(2)}</td>
-    <td class="py-2 text-right font-mono">${s.acc}%</td>
-  </tr>`;
-}
-function ffrRow(s, i){
-  return `<tr class="border-b border-white/5 last:border-0">
-    <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
-    <td class="py-2">${s.song}</td>
-    <td class="py-2 text-right font-mono">${s.level}</td>
-    <td class="py-2 text-right font-mono text-[#A596DA]">${s.score}</td>
-  </tr>`;
-}
+/* ========================= END OF RHYTHM_GAME_STATS ========================= */
 
 function fillRhythmData(){
   const std = RHYTHM_GAME_STATS.osuStandard, man = RHYTHM_GAME_STATS.osuMania, ett = RHYTHM_GAME_STATS.etterna, ffr = RHYTHM_GAME_STATS.ffr;
 
   // Overview tab
+
   setText('overview-std-rank', '#' + fmtNum(std.rank));
   setText('overview-std-pp', std.pp);
   setText('overview-std-acc', std.acc + '%');
@@ -1754,47 +1692,20 @@ function fillRhythmData(){
     if (bar) { bar.style.width = Math.min(100, (v/12)*100) + '%'; bar.style.background = '#A596DA'; }
   });
   const etTb = document.getElementById('etterna-top10');
-  if (etTb) {
-    const fragment = document.createDocumentFragment();
-    ett.top10.forEach((s, i) => {
-      const tr = document.createElement('tr');
-      tr.className = 'border-b border-white/5 last:border-0';
-      tr.innerHTML = `
-        <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
-        <td class="py-2">${s.song}${s.artist ? ` <span class="text-xs text-[var(--text-secondary)]">— ${s.artist}</span>` : ''}</td>
-        <td class="py-2 text-right font-mono text-[#A596DA]">${s.msd.toFixed(2)}</td>
-        <td class="py-2 text-right font-mono">${s.acc}%</td>
-      `;
-      fragment.appendChild(tr);
-    });
-    etTb.innerHTML = '';
-    etTb.appendChild(fragment);
-  }
+  if (etTb) etTb.innerHTML = ett.top10.map(etternaRow).join('');
 
   // FFR tab
   setText('ffr-rank', '#' + fmtNum(ffr.rank));
   setText('ffr-avg-rank', ffr.avgRank ? fmtNum(ffr.avgRank) : '-');
   setText('ffr-skill', ffr.skillRating);
   const ffrTb = document.getElementById('ffr-top10');
-  if (ffrTb) {
-    const fragment = document.createDocumentFragment();
-    ffr.top10.forEach((s, i) => {
-      const tr = document.createElement('tr');
-      tr.className = 'border-b border-white/5 last:border-0';
-      tr.innerHTML = `
-        <td class="py-2 text-[var(--text-secondary)]">${i+1}</td>
-        <td class="py-2">${s.song}</td>
-        <td class="py-2 text-right font-mono">${s.level}</td>
-        <td class="py-2 text-right font-mono text-[#A596DA]">${s.score}</td>
-      `;
-      fragment.appendChild(tr);
-    });
-    ffrTb.innerHTML = '';
-    ffrTb.appendChild(fragment);
-  }
+  if (ffrTb) ffrTb.innerHTML = ffr.top10.map(ffrRow).join('');
 }
 
-// ===== 13. HARDWARE TABLET VISUALIZER =====
+/* ============================================================
+   Hardware tablet-area visualizer (rhythm page)
+   ============================================================ */
+
 const TABLET_AREA = { width: 95, height: 65, x: 47.5, y: 32.5, rotation: 0, unit: 'mm' };
 const TABLET_BOUNDS = { xMin: 47.5, xMax: 104.5, yMin: 32.5, yMax: 62.5 };
 
@@ -1831,7 +1742,10 @@ function updateHardwareTablet() {
   }
 }
 
-// ===== 14. HQ / PERFORMANCE TOGGLE =====
+/* ============================================================
+   HQ / performance toggle
+   ============================================================ */
+
 document.addEventListener('DOMContentLoaded', function() {
   const hqBtn = document.getElementById('hq-toggle');
   let isOptimized = localStorage.getItem('mobileOptimized') === 'true';
