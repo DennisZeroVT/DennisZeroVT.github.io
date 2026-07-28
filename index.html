@@ -28,6 +28,22 @@
 <meta name="twitter:description" content="Independent music producer and game developer."/>
 <meta name="twitter:image" content="https://denniszerovt.github.io/icons/pfp.png"/>
 
+<!-- Critical shim: Tailwind is loaded from a CDN below and needs a beat to scan
+     the page and inject utility classes. Until it does, "hidden"/"md:flex"/
+     "md:hidden" utilities don't exist yet, so the desktop nav links and the
+     mobile hamburger can both flash on screen at once on first paint
+     (worse on slow mobile connections). These few rules cover it immediately. -->
+<style>
+  [hidden]{display:none!important}
+  .hidden{display:none!important}
+  @media (max-width:767px){
+    .md\:flex{display:none!important}
+  }
+  @media (min-width:768px){
+    .md\:hidden{display:none!important}
+  }
+</style>
+
 <!-- Third-party assets -->
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
@@ -1141,12 +1157,57 @@ body::after{content:"";position:fixed;inset:0;background:rgba(8,6,4,0.78);z-inde
 }
 html, body { overflow-x: hidden !important; max-width: 100vw !important; }
 
+/* Kill iOS tap-flash + 300ms tap delay on interactive elements */
+a, button, .social-btn, .nav-link, input[type="range"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Prevent iOS Safari from auto-zooming the page when a text input is focused
+   (any input/select under 16px triggers this) */
+@media (max-width: 768px) {
+  .blog-search input,
+  .blog-select,
+  select {
+    font-size: 16px !important;
+  }
+  /* Fixed backgrounds are expensive and buggy on mobile browsers (repaint
+     glitches / disappears behind position:fixed overlays on iOS Safari) */
+  body {
+    background-attachment: scroll !important;
+  }
+}
+</style>
+
 <style id="hq-styles">
-/* HQ toggle styles */
-body.optimized .glass {
+/* ============================================================
+   HQ / LQ (performance) toggle
+   LQ ("optimized") strips every expensive backdrop-filter blur on the
+   page (not just .glass), turns off the fixed/blurred backdrop, and
+   shortens animations — this is the part mobile GPUs choke on, so this
+   is where the visible/perceptible difference actually comes from.
+   ============================================================ */
+body.optimized .glass,
+body.optimized .people-grid .person-card,
+body.optimized #mobile-menu,
+body.optimized #mobile-menu-overlay,
+body.optimized #songOverlay .absolute.inset-0,
+body.optimized #albumOverlay .absolute.inset-0,
+body.optimized [class*="backdrop-blur"] {
   backdrop-filter: none !important;
   -webkit-backdrop-filter: none !important;
+}
+body.optimized .glass {
   background: rgba(10,10,15,0.95) !important;
+}
+body.optimized .people-grid .person-card {
+  background: rgba(10,10,15,0.95) !important;
+}
+body.optimized {
+  background-attachment: scroll !important;
+}
+body.optimized::after {
+  background: rgba(8,6,4,0.92) !important;
 }
 body.optimized * {
   animation-duration: 0.01s !important;
@@ -1157,11 +1218,39 @@ body.optimized video {
 }
 body.optimized .glow-hover {
   box-shadow: none !important;
+  transform: none !important;
+}
+#hq-toggle {
+  touch-action: manipulation;
 }
 #hq-toggle.active {
   background: rgba(165,150,218,0.4) !important;
   border-color: #A596DA !important;
   color: white !important;
+}
+
+/* Tiny toast used to confirm the HQ/LQ tap actually did something */
+#hq-toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(24px, env(safe-area-inset-bottom));
+  transform: translate(-50%, 12px);
+  background: rgba(10,10,15,0.95);
+  border: 1px solid rgba(165,150,218,0.35);
+  color: #fff;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 999px;
+  z-index: 200;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  white-space: nowrap;
+}
+#hq-toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
 }
 
 /* ---------------------------------------------------------------------------
@@ -2029,6 +2118,8 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 </div>
 </footer>
+
+<div id="hq-toast"></div>
 
 <script src="app.js"></script>
 </body>

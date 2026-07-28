@@ -1748,30 +1748,42 @@ function updateHardwareTablet() {
 
 document.addEventListener('DOMContentLoaded', function() {
   const hqBtn = document.getElementById('hq-toggle');
+  const toast = document.getElementById('hq-toast');
   let isOptimized = localStorage.getItem('mobileOptimized') === 'true';
+  let toastTimer = null;
 
-  function applyMode() {
+  function showToast(msg) {
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 1600);
+  }
+
+  function applyMode(announce) {
     if (isOptimized) {
       document.body.classList.add('optimized');
       document.body.classList.remove('hq-mode');
-      if (hqBtn) { hqBtn.textContent = 'LQ'; hqBtn.classList.add('active'); hqBtn.title = 'Tap for HQ (high quality)'; }
+      if (hqBtn) { hqBtn.textContent = 'LQ'; hqBtn.classList.add('active'); hqBtn.title = 'Tap for HQ (high quality)'; hqBtn.setAttribute('aria-pressed', 'true'); }
       document.querySelectorAll('video').forEach(v => { try { v.pause(); } catch(e){} });
+      if (announce) showToast('Performance mode on — blur & effects reduced');
     } else {
       document.body.classList.remove('optimized');
       document.body.classList.add('hq-mode');
-      if (hqBtn) { hqBtn.textContent = 'HQ'; hqBtn.classList.remove('active'); hqBtn.title = 'Tap for LQ (save battery)'; }
+      if (hqBtn) { hqBtn.textContent = 'HQ'; hqBtn.classList.remove('active'); hqBtn.title = 'Tap for LQ (save battery)'; hqBtn.setAttribute('aria-pressed', 'false'); }
       document.querySelectorAll('video[autoplay]').forEach(v => { try { v.play().catch(()=>{}); } catch(e){} });
+      if (announce) showToast('High quality mode on');
     }
   }
 
-  applyMode();
+  applyMode(false);
 
   if (hqBtn) {
     hqBtn.addEventListener('click', function(e) {
       e.stopPropagation();
       isOptimized = !isOptimized;
       localStorage.setItem('mobileOptimized', isOptimized);
-      applyMode();
+      applyMode(true);
       if (navigator.vibrate) navigator.vibrate(10);
     });
   }
