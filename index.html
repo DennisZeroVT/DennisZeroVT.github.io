@@ -29,8 +29,8 @@
 <meta name="twitter:image" content="https://denniszerovt.github.io/icons/pfp.png"/>
 
 <!-- Third-party assets -->
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/>
+<link href="./tailwind.min.css" rel="stylesheet"/>
+<link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/><noscript><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"/></noscript>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
@@ -46,9 +46,7 @@
         --border: rgba(165, 150, 218, 0.15);
     }
     
-    * {
-        scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; }
     
     body {
         background-color: var(--bg-main);
@@ -1209,7 +1207,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="flex items-center justify-between h-20">
 <div class="flex items-center gap-3">
 <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-[#A596DA] to-[#C4B5FD] flex items-center justify-center overflow-hidden">
-<img alt="Dennis" src="/icons/pfp.png" class="w-full h-full object-cover" onerror="this.style.display='none';this.parentNode.textContent='D'"/>
+<img loading="lazy" decoding="async" alt="Dennis" src="/icons/pfp.png" class="w-full h-full object-cover" onerror="this.style.display='none';this.parentNode.textContent='D'"/>
 </div>
 <div>
 <h1 class="text-xl font-bold gradient-text">DennisZeroVT</h1>
@@ -1365,7 +1363,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
     <div id="song-adrenaline" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('adrenaline')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             <span class="song-year-badge">2026</span>
-            <img src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" alt="Adrenaline" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <img loading="lazy" decoding="async" src="https://denniszerovt.github.io/SongData/AlbumArt/1781376777984-andrenaline.png" alt="Adrenaline" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🎵</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
                 <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
@@ -1384,7 +1382,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
     <div id="song-snowfall" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('snowfall')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             <span class="song-year-badge">2025</span>
-            <img src="SongData/AlbumArt/snowfall.png" alt="Snowfall" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <img loading="lazy" decoding="async" src="SongData/AlbumArt/snowfall.png" alt="Snowfall" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🌨️</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
                 <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
@@ -1403,7 +1401,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
     <div id="song-stuck_in_time" class="group relative glass rounded-2xl overflow-hidden cursor-pointer glow-hover transition-all duration-300 hover:-translate-y-1" onclick="openSong('stuck_in_time')">
         <div class="aspect-square relative overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a]">
             <span class="song-year-badge">2026</span>
-            <img src="SongData/AlbumArt/stuckintime.png" alt="Stuck In Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
+            <img loading="lazy" decoding="async" src="SongData/AlbumArt/stuckintime.png" alt="Stuck In Time" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.style.display='none'">
             <div class="absolute inset-0 flex items-center justify-center text-5xl opacity-20">🕒</div>
             <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center z-[1]">
                 <div class="w-14 h-14 rounded-full bg-[#A596DA] flex items-center justify-center shadow-lg scale-90 group-hover:scale-100 transition-transform">
@@ -1826,7 +1824,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="people-grid" id="collabs-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
       <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
       <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
+        <img loading="lazy" decoding="async" src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
         <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
         <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
         <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
@@ -1838,7 +1836,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
       <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
       <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
+        <img loading="lazy" decoding="async" src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
         <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
         <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
         <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
@@ -1864,7 +1862,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="people-grid" id="friends-grid"><div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('erik')">
       <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
       <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
+        <img loading="lazy" decoding="async" src="Friends/erik.jpg" alt="Erik" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/erik.png';">
         <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Erik</h3>
         <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">eri_k416</div>
         <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend // eri_k416</div>
@@ -1876,7 +1874,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('kula')">
       <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
       <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
+        <img loading="lazy" decoding="async" src="Friends/kula.jpg" alt="Kula" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/kula.png';">
         <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Kula</h3>
         <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@mee_yawwwwww</div>
         <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, Drummer // @mee_yawwwwww</div>
@@ -1888,7 +1886,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('vivid')">
       <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
       <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="Friends/vivid.jpg" alt="Vivid" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/vivid.png';">
+        <img loading="lazy" decoding="async" src="Friends/vivid.jpg" alt="Vivid" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/vivid.png';">
         <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Vivid</h3>
         <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@vivid_exile</div>
         <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">best Friend, // @vivid_exile</div>
@@ -1900,7 +1898,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('skylar')">
       <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
       <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="Friends/skylar.jpg" alt="Skylar" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/skylar.png';">
+        <img loading="lazy" decoding="async" src="Friends/skylar.jpg" alt="Skylar" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/skylar.png';">
         <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Skylar</h3>
         <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@skylar_corgi</div>
         <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @skylar_corgi</div>
@@ -1912,7 +1910,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <div class="person-card" style="background:#1a1a1a;border-radius:12px;overflow:hidden;border:1px solid #333;" onclick="openPersonOverlay('nox')">
       <div style="height:60px;background:linear-gradient(135deg,#A596DA,#8B78CB);"></div>
       <div style="padding:0 16px 16px;margin-top:-30px;position:relative;">
-        <img src="Friends/nox.jpg" alt="Nox" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/nox.png';">
+        <img loading="lazy" decoding="async" src="Friends/nox.jpg" alt="Nox" style="width:70px;height:70px;border-radius:50%;border:3px solid #1a1a1a;object-fit:cover;background:#333;display:block;" onerror="this.onerror=null; this.src='Friends/nox.png';">
         <h3 style="margin:12px 0 4px;color:white;font-size:1.1em;">Nox</h3>
         <div style="color:#A596DA;font-size:0.85em;margin-bottom:4px;">@Nox_Daemon</div>
         <div style="margin:4px 0 8px;font-size:0.8em;color:#aaa;">Friend, // @Nox_Daemon</div>
@@ -1958,7 +1956,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <svg fill="none" height="20" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="20"><path d="M18 6L6 18M6 6l12 12"></path></svg>
 </button>
 <div class="w-64 h-64 rounded-2xl overflow-hidden shadow-2xl mb-6 relative bg-gradient-to-br from-[#2a2a2a] to-[#0f0f0f]">
-<img alt="" class="w-full h-full object-cover hidden" id="ovCoverImg"/>
+<img loading="lazy" decoding="async" alt="" class="w-full h-full object-cover hidden" id="ovCoverImg"/>
 <div class="w-full h-full flex items-center justify-center text-7xl opacity-30" id="ovCoverEmoji"></div>
 </div>
 <h2 class="text-2xl font-bold text-center" id="ovTitle"></h2>
@@ -2021,7 +2019,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 <div class="flex items-center gap-4 p-3">
 <div class="w-12 h-12 rounded-lg overflow-hidden bg-gradient-to-br from-[#2a2a2a] to-[#0f0f0f] flex-shrink-0 cursor-pointer" onclick="reopenOverlay()">
-<img alt="" class="w-full h-full object-cover hidden" id="bpCover"/>
+<img loading="lazy" decoding="async" alt="" class="w-full h-full object-cover hidden" id="bpCover"/>
 <div class="w-full h-full flex items-center justify-center text-xl opacity-50" id="bpEmoji"></div>
 </div>
 <div class="flex-1 min-w-0 cursor-pointer" onclick="reopenOverlay()">
@@ -2055,7 +2053,7 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
         </button>
         <div class="w-60 h-60 rounded-2xl overflow-hidden shadow-2xl mb-6">
-          <img id="alCover" class="w-full h-full object-cover" alt="">
+          <img loading="lazy" decoding="async" id="alCover" class="w-full h-full object-cover" alt="">
         </div>
         <h2 id="alTitle" class="text-2xl font-bold text-center"></h2>
         <p id="alArtist" class="text-[var(--text-secondary)] mt-1"></p>
@@ -2114,6 +2112,6 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 </div>
 </footer>
 
-<script src="app.js"></script>
+<script src="app.js" defer></script>
 </body>
 </html>
