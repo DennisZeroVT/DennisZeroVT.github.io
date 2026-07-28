@@ -1178,23 +1178,40 @@ function closeDrawer(){
 function toggleDrawer(){ if(drawer && drawer.classList.contains('translate-x-full')) openDrawer(); else closeDrawer(); }
 
 function showPage(id, updateHash=true){
+  // toggle sections
   sectionIds.forEach(sid=>{ const el=document.getElementById(sid); if(el) el.classList.toggle('active', sid===id); });
-  document.querySelectorAll('.nav-link, #mobile-menu a[data-page]').forEach(link=>{
-    const m=link.dataset.page===id;
-    link.classList.toggle('active', m);
-    if(link.classList.contains('nav-link')){ link.classList.toggle('text-white', m); }
-    else { if(m){ link.classList.add('bg-white/[0.12]','text-white'); link.classList.remove('text-white/60'); } else { link.classList.remove('bg-white/[0.12]','text-white'); link.classList.add('text-white/60'); } }
+  // desktop pills + old nav-links
+  document.querySelectorAll('.nav-link, .nav-pill').forEach(link=>{
+    const isActive = link.dataset.page===id;
+    link.classList.toggle('active', isActive);
+    if(link.classList.contains('nav-link')){
+      link.classList.toggle('text-white', isActive);
+      if(!link.classList.contains('nav-pill')){
+        link.classList.toggle('text-[var(--text-secondary)]', !isActive);
+      }
+    }
+  });
+  // mobile drawer
+  document.querySelectorAll('#mobile-menu a[data-page]').forEach(link=>{
+    const isActive = link.dataset.page===id;
+    link.classList.toggle('active', isActive);
+    if(isActive){ link.classList.add('bg-white/[0.12]','text-white'); link.classList.remove('text-white/60'); }
+    else { link.classList.remove('bg-white/[0.12]','text-white'); link.classList.add('text-white/60'); }
   });
   if(updateHash && history.replaceState) history.replaceState(null,'','#'+id);
   window.scrollTo({top:0,behavior:'instant'});
   closeDrawer();
 }
 
-document.querySelectorAll('[data-page]').forEach(a=>{
-  a.addEventListener('click', e=>{
-    const p=a.dataset.page||a.getAttribute('href')?.slice(1);
-    if(p && sectionIds.includes(p)){ e.preventDefault(); showPage(p); }
-  });
+// Delegated handler so home buttons + nav pills + future elements all work
+document.addEventListener('click', e=>{
+  const a = e.target.closest('[data-page]');
+  if(!a) return;
+  const p = a.dataset.page || a.getAttribute('href')?.slice(1);
+  if(p && sectionIds.includes(p)){
+    e.preventDefault();
+    showPage(p);
+  }
 });
 
 if(menuBtn) menuBtn.addEventListener('click', e=>{ e.stopPropagation(); toggleDrawer(); });

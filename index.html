@@ -34,13 +34,15 @@
      mobile hamburger can both flash on screen at once on first paint
      (worse on slow mobile connections). These few rules cover it immediately. -->
 <style>
+  /* FOUC shim - fixed so desktop nav (hidden md:flex) actually shows on desktop */
   [hidden]{display:none!important}
-  .hidden{display:none!important}
+  .hidden{display:none}
   @media (max-width:767px){
     .md\:flex{display:none!important}
   }
   @media (min-width:768px){
     .md\:hidden{display:none!important}
+    .md\:flex{display:flex!important}
   }
 </style>
 
@@ -138,6 +140,40 @@
     .nav-link.active {
         color: var(--accent) !important;
     }
+
+    /* --- NEW: Purple pill navigation (desktop) --- */
+    .nav-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        padding: 8px 16px;
+        border-radius: 9999px;
+        font-size: 13px;
+        font-weight: 600;
+        font-family: 'Space Grotesk', sans-serif;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.10);
+        color: rgba(255,255,255,0.65);
+        transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+    .nav-pill:hover {
+        background: rgba(165,150,218,0.16);
+        border-color: rgba(165,150,218,0.38);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 18px rgba(165,150,218,0.18);
+    }
+    .nav-pill.active {
+        background: linear-gradient(135deg, #A596DA 0%, #C4B5FD 100%);
+        border-color: transparent;
+        color: #12101a;
+        box-shadow: 0 6px 24px rgba(165,150,218,0.38), 0 0 0 1px rgba(165,150,218,0.25);
+        font-weight: 700;
+    }
+    .nav-pill.active i { color: #12101a; }
+
     
     main {
         animation: fadeInUp 0.4s ease;
@@ -1305,16 +1341,16 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
 <p class="text-xs text-[var(--text-secondary)]">Producer & Dev</p>
 </div>
 </div>
-<div class="hidden md:flex items-center gap-8">
-<a href="#home" data-page="home" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Home</a>
-<a href="#music" data-page="music" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">My Music</a>
-<a href="#blog" data-page="blog" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Blog</a>
-<a href="#rhythm" data-page="rhythm" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Rhythm</a>
-<a href="#collabs" data-page="collabs" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Collaborators</a>
-<a href="#friends" data-page="friends" class="nav-link text-sm font-medium text-[var(--text-secondary)] hover:text-white">Friends</a>
+<div class="hidden md:flex items-center gap-2.5">
+<a href="#home" data-page="home" class="nav-pill active"><i class="fas fa-house text-[11px]"></i> Home</a>
+<a href="#music" data-page="music" class="nav-pill"><i class="fas fa-music text-[11px]"></i> Music</a>
+<a href="#blog" data-page="blog" class="nav-pill"><i class="fas fa-book-open text-[11px]"></i> Blog</a>
+<a href="#rhythm" data-page="rhythm" class="nav-pill"><i class="fas fa-gamepad text-[11px]"></i> Rhythm</a>
+<a href="#collabs" data-page="collabs" class="nav-pill"><i class="fas fa-handshake text-[11px]"></i> Collabs</a>
+<a href="#friends" data-page="friends" class="nav-pill"><i class="fas fa-users text-[11px]"></i> Friends</a>
 </div>
 <div class="flex items-center gap-2">
-<button id="hq-toggle" class="px-3 py-1.5 rounded-lg glass text-xs font-semibold border border-[#A596DA]/30 hover:bg-[#A596DA]/20 transition">HQ</button>
+<button id="hq-toggle" class="px-3 py-1.5 rounded-lg glass text-xs font-semibold border border-[#A596DA]/30 hover:bg-[#A596DA]/20 transition md:hidden">HQ</button>
 <button type="button" id="mobile-menu-btn" class="md:hidden" aria-label="Menu" aria-expanded="false">
 <span class="hb-line"></span><span class="hb-line"></span><span class="hb-line"></span>
 </button>
@@ -1366,10 +1402,10 @@ html.js main > section.active{display:block !important;animation:fadeInUp .35s e
                             Independent music producer and game developer 
                         </p>
 <div class="flex flex-wrap gap-4">
-<a class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center" href="#music">
+<a data-page="music" class="px-8 py-4 rounded-lg bg-gradient-to-r from-[#A596DA] to-[#C4B5FD] font-semibold text-black glow-hover inline-flex items-center shadow-[0_8px_24px_rgba(165,150,218,0.35)] hover:shadow-[0_12px_32px_rgba(165,150,218,0.45)] hover:-translate-y-0.5 transition-all" href="#music">
 <i class="fas fa-play mr-2"></i>Listen to My Music
                             </a>
-<a class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center" href="#blog">
+<a data-page="blog" class="px-8 py-4 rounded-lg glass font-semibold glow-hover inline-flex items-center border border-white/10 hover:border-[#A596DA]/40 hover:bg-[#A596DA]/10 transition-all" href="#blog">
 <i class="fas fa-gamepad mr-2"></i>View Game Projects
                             </a>
 </div>
