@@ -1,4 +1,3 @@
-/* OPTIMIZED */
 /* =========================================================
    DennisZeroVT site — consolidated app script
    One data load, one render pass per section, one nav system.
