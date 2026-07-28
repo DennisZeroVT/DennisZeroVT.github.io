@@ -1191,12 +1191,16 @@ function showPage(id, updateHash=true){
       }
     }
   });
-  // mobile drawer
+  // mobile drawer - purple filled via CSS #mobile-menu a.active
   document.querySelectorAll('#mobile-menu a[data-page]').forEach(link=>{
     const isActive = link.dataset.page===id;
     link.classList.toggle('active', isActive);
-    if(isActive){ link.classList.add('bg-white/[0.12]','text-white'); link.classList.remove('text-white/60'); }
-    else { link.classList.remove('bg-white/[0.12]','text-white'); link.classList.add('text-white/60'); }
+    // keep base text color for inactive
+    if(isActive){
+      link.classList.remove('text-white/60');
+    } else {
+      if(!link.classList.contains('active')) link.classList.add('text-white/60');
+    }
   });
   if(updateHash && history.replaceState) history.replaceState(null,'','#'+id);
   window.scrollTo({top:0,behavior:'instant'});
