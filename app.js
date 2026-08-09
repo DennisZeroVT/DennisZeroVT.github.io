@@ -990,6 +990,37 @@ function renderContentBlocks(blocks, accentColor){
       }
       return '';
     }
+    if(b.type === 'ref'){
+      const song = b.songId ? SONGS[b.songId] : null;
+      const person = b.personId ? personData[b.personId] : null;
+      if(!song && !person) return '';
+      const chip = (kind, name, thumbHtml, onclick) => `
+        <button type="button" onclick="${onclick}" style="display:inline-flex;align-items:center;gap:10px;padding:8px 14px 8px 8px;border-radius:999px;background:${col}1a;border:1px solid ${col}55;cursor:pointer;color:inherit;transition:.15s;max-width:100%;"
+          onmouseover="this.style.background='${col}33'" onmouseout="this.style.background='${col}1a'">
+          <span style="width:30px;height:30px;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);">${thumbHtml}</span>
+          <span style="text-align:left;min-width:0;">
+            <span style="display:block;font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;opacity:.65;color:${col}">${kind}</span>
+            <span style="display:block;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${name}</span>
+          </span>
+          <i class="fas fa-arrow-up-right-from-square" style="font-size:9px;opacity:.55;flex-shrink:0;"></i>
+        </button>`;
+      const chips = [];
+      if(song){
+        const name = (song.name||'').replace(/</g,'&lt;');
+        const thumb = song.coverImg
+          ? `<img src="${song.coverImg}" alt="" style="width:100%;height:100%;object-fit:cover;">`
+          : `<span style="font-size:14px;">${song.cover||'🎵'}</span>`;
+        chips.push(chip('Song', name, thumb, `openSong('${song.id}')`));
+      }
+      if(person){
+        const name = (person.name||'').replace(/</g,'&lt;');
+        const avatarBase = (person.avatar || `Friends/${person.id||''}.jpg`).replace(/\.jpg$|\.png$/i, '');
+        const thumb = `<img src="${avatarBase}.jpg" alt="" style="width:100%;height:100%;object-fit:cover;" onerror="this.onerror=function(){this.style.display='none'};this.src='${avatarBase}.png';"><i class="${person.icon||'fas fa-user'}" style="font-size:12px;margin-left:-100%"></i>`;
+        chips.push(chip('Person', name, thumb, `openPersonOverlay('${person.id}')`));
+      }
+      const noteHtml = b.note ? `<div class="text-xs text-[var(--text-secondary)] mb-2">${(b.note||'').replace(/</g,'&lt;')}</div>` : '';
+      return `<div class="mb-5">${noteHtml}<div class="flex flex-wrap gap-2">${chips.join('')}</div></div>`;
+    }
     if(b.type === 'divider'){
       return `<div class="my-8 w-full flex justify-center"><div class="h-[3px] w-full max-w-3xl rounded-full" style="background:${col};opacity:0.35"></div></div>`;
     }
@@ -1115,7 +1146,12 @@ function renderPosts(){
   if(currentYear !== 'All') p = p.filter(x => postYear(x) === currentYear);
   if(currentSearch){
     p = p.filter(x => {
-      const haystack = [x.title, x.category, x.subcategory, ...(x.blocks||[]).map(b => b.content||'')].join(' ').toLowerCase();
+      const refText = (x.blocks||[]).filter(b => b.type === 'ref').map(b => {
+        const s = b.songId ? SONGS[b.songId] : null;
+        const p = b.personId ? personData[b.personId] : null;
+        return [s && s.name, p && p.name, b.note].filter(Boolean).join(' ');
+      });
+      const haystack = [x.title, x.category, x.subcategory, ...(x.blocks||[]).map(b => b.content||''), ...refText].join(' ').toLowerCase();
       return haystack.includes(currentSearch);
     });
   }
