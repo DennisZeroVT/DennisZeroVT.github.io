@@ -41,6 +41,68 @@ let categories = [];
    ============================================================ */
 const SITE_SONGS = [
   {
+    "id": "song-1787263450989",
+    "title": "Dont lose sight",
+    "artist": "DennisZeroVT",
+    "year": 2026,
+    "status": "Announced",
+    "genres": [
+      "Pop",
+      "Rock"
+    ],
+    "coverEmoji": "",
+    "badges": [
+      {
+        "label": "Announced",
+        "color": "#3B82F6"
+      }
+    ],
+    "streaming": {
+      "spotify": "",
+      "apple": "",
+      "tidal": "",
+      "youtube": "",
+      "amazon": "",
+      "deezer": ""
+    },
+    "blocks": [
+      {
+        "type": "text",
+        "heading": "Why it was made ",
+        "content": "I made this song as a sort of showcase how much i improved \n\neven tho i original planned to over throw stuck in time whice ironicly i did top it  but not by a lot but its so much better mix and master wise \n\n"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "text",
+        "heading": "Theme ",
+        "content": "The irony is that i wanted for the first time a happy and inspiration song whice worked  really well"
+      },
+      {
+        "type": "divider"
+      },
+      {
+        "type": "image",
+        "src": "https://denniszerovt.github.io/images/posts/1787264077248-1000069525.jpg",
+        "caption": "The project  (the biggest project file i made yet)"
+      }
+    ],
+    "credits": [
+      {
+        "role": "Druns",
+        "name": "Kula",
+        "personId": "kula"
+      }
+    ],
+    "about": "",
+    "thoughts": "",
+    "miscellaneous": "",
+    "behindTheScenes": "",
+    "cover": "https://denniszerovt.github.io/SongData/AlbumArt/1787263742565-1000069524.jpg",
+    "audio": "https://denniszerovt.github.io/SongData/Songs/1787263769590-Don't-Your-Sight-(final).mp3"
+  },
+  {
     "id": "adrenaline",
     "title": "Adrenaline",
     "artist": "DennisZeroVT",
@@ -133,7 +195,11 @@ const SITE_SONGS = [
       }
     ],
     "credits": [
-      { "role": "Drums", "name": "Kula", "personId": "kula" }
+      {
+        "role": "Drums",
+        "name": "Kula",
+        "personId": "kula"
+      }
     ]
   },
   {
@@ -192,7 +258,11 @@ const SITE_SONGS = [
     "miscellaneous": "The track is the first song I ever released. It was released on Spotify in 2025",
     "behindTheScenes": "I was using Studio One at the time. The arrangement started with just a piano line and some light percussion. The winter atmosphere came from layered pads and a lot of reverb on everything. I wanted it to feel like you were standing outside in the cold, watching snow fall slowly — calm but a little melancholic.",
     "credits": [
-      { "role": "Inspiration", "name": "Erik", "personId": "erik" }
+      {
+        "role": "Inspiration",
+        "name": "Erik",
+        "personId": "erik"
+      }
     ]
   },
   {
@@ -251,7 +321,11 @@ const SITE_SONGS = [
     "miscellaneous": "the harmonies in the song is sang by me its actualy one of the first time i used my own voice in my song.",
     "behindTheScenes": "i went back in cubase for this one. The drums were recorded live by my friend Kula i met during an idol group project, which added a lot of energy to the track. I built the produced the song to finish and i send the mockup drums to kula and told him you can put your own spin to the drums and he killed it, like i put a half time section in it before the key change and he went insane on the half time section and his drums conbined with my guitars and the song just came alive, it was a really fun process and i hope to work with him again in the future.",
     "credits": [
-      { "role": "Drums", "name": "Kula", "personId": "kula" }
+      {
+        "role": "Drums",
+        "name": "Kula",
+        "personId": "kula"
+      }
     ]
   }
 ];
