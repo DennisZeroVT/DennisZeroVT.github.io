@@ -1055,7 +1055,7 @@ function renderContentBlocks(blocks, accentColor){
       if (b.url) {
         const embedUrl = toYouTubeEmbed(b.url);
         if (embedUrl) {
-          return `<div class="mb-5"><div class="relative w-full rounded-xl overflow-hidden border border-white/10" style="aspect-ratio:16/9"><iframe src="${embedUrl}" title="Embedded video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" class="absolute inset-0 w-full h-full"></iframe></div><a href="${b.url}" target="_blank" class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] mt-2 inline-block">Open on YouTube ↗</a></div>`;
+          return `<div class="mb-5"><div class="relative w-full rounded-xl overflow-hidden border border-white/10" style="aspect-ratio:16/9"><iframe src="${embedUrl}" title="Embedded video" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen loading="lazy" decoding="async" decoding="async" class="absolute inset-0 w-full h-full"></iframe></div><a href="${b.url}" target="_blank" class="text-xs text-[var(--text-secondary)] hover:text-[var(--accent)] mt-2 inline-block">Open on YouTube ↗</a></div>`;
         }
         return `<div class="mb-5"><a href="${b.url}" target="_blank" class="text-[var(--accent)] inline-flex items-center gap-2">▶ Watch video</a></div>`;
       }
@@ -1273,7 +1273,7 @@ function openDrawer(){
   if(!drawer) return;
   drawer.classList.remove('translate-x-full');
   drawer.classList.add('translate-x-0');
-  if(overlay){ overlay.classList.remove('hidden'); requestAnimationFrame(()=>{ overlay.classList.remove('opacity-0'); overlay.classList.add('opacity-100'); }); }
+  if(overlay){ overlay.classList.remove('hidden'); overlay.classList.remove('opacity-0'); overlay.classList.add('opacity-100'); }
   if(menuBtn){ menuBtn.classList.add('is-open'); menuBtn.setAttribute('aria-expanded','true'); }
   document.body.style.overflow='hidden';
 }

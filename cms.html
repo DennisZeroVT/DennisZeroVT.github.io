@@ -236,7 +236,7 @@ body::before{
   filter:blur(40px); z-index:-1; animation:float 25s ease-in-out infinite alternate;
 }
 @keyframes float{to{transform:translateY(-20px) scale(1.03)}}
-.glass{background:var(--glass);backdrop-filter:blur(22px) saturate(140%);border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.glass{background:var(--glass);backdrop-filter:blur(12px) saturate(120%);-webkit-backdrop-filter:blur(12px) saturate(120%);border:1px solid var(--border);box-shadow:0 12px 40px rgba(0,0,0,.45)}
 .app{display:flex;flex-direction:column;height:100vh}
 .topbar{display:flex;align-items:center;gap:14px;padding:12px 16px;position:sticky;top:0;z-index:20}
 .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.6px}
@@ -321,7 +321,7 @@ input[type="color"]{width:44px;height:38px;padding:0;border-radius:8px;border:1p
 .dot.err{background:var(--red)}
 .dot.work{background:var(--amber);animation:pulse 1s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(8px);padding:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:20px}
 .modal.show{display:flex}
 .modal img{max-width:92vw;max-height:88vh;border-radius:12px;border:1px solid var(--border)}
 .alert{padding:10px 12px;border-radius:10px;font-size:13px;border:1px solid;margin-bottom:12px}
@@ -478,8 +478,8 @@ function setStatus(msg, type=''){
   dotEl.className = 'dot ' + (type==='ok'?'ok':type==='err'?'err':type==='work'?'work':'');
 }
 function slugify(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'') }
-function b64enc(str){ return btoa(unescape(encodeURIComponent(str))) }
-function b64dec(str){ return decodeURIComponent(escape(atob(str.replace(/\n/g,'')))) }
+function b64enc(str){ const bytes=new TextEncoder().encode(str); let bin=''; const chunk=0x8000; for(let i=0;i<bytes.length;i+=chunk) bin+=String.fromCharCode(...bytes.subarray(i,i+chunk)); return btoa(bin) }
+function b64dec(str){ const bin=atob(str.replace(/\n/g,'')); const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0)); return new TextDecoder().decode(bytes) }
 function today(){ return new Date().toISOString().slice(0,10) }
 function ghUrl(path){ return `https://${OWNER}.github.io/${path}` }
 
@@ -632,8 +632,8 @@ async function patchStaticIndexHtml({ bustCache = true, songs = null } = {}){
 
     if(bustCache){
       const v = Date.now();
-      const scriptRe = /<script\s+src=["']app\.js(?:\?v=\d+)?["']\s*><\/script>/;
-      if(scriptRe.test(html)){ html = html.replace(scriptRe, `<script src="app.js?v=${v}"><\/script>`); changed = true; }
+      const scriptRe = /<script\s+src=["']app\.js(?:\?v=\d+)?["'][^>]*><\/script>/;
+      if(scriptRe.test(html)){ html = html.replace(scriptRe, `<script src="app.js?v=${v}" defer><\/script>`); changed = true; }
       else console.warn('Cache-bust skipped: could not find <script src="app.js"> in index.html');
     }
 
@@ -660,9 +660,9 @@ async function patchStaticIndexHtml({ bustCache = true, songs = null } = {}){
   }
 }
 async function uploadFile(file, dest){
-  const buf = await file.arrayBuffer();
-  let binary=''; const bytes=new Uint8Array(buf); for(let i=0;i<bytes.byteLength;i++) binary+=String.fromCharCode(bytes[i]);
-  const content = btoa(binary);
+  const bytes=new Uint8Array(await file.arrayBuffer());
+  const chunk=0x8000; let content='';
+  for(let i=0;i<bytes.length;i+=chunk){ content+=btoa(String.fromCharCode(...bytes.subarray(i,i+chunk))); if(i && i%(chunk*32)===0) await new Promise(requestAnimationFrame); }
   let sha=null;
   try{ const info = await ghFetch(dest,{ref:BRANCH}); sha=info.sha; }catch{}
   const body={message:`upload ${dest}`,content,branch:BRANCH, ...(sha?{sha}:{})};
@@ -1454,63 +1454,30 @@ async function deleteAlbum(){ const a=getCurrentItem(); if(!a||!confirm('Delete 
 // ── Video compression using MediaRecorder + Canvas ──────────────────────────
 // Quality presets: cap resolution + set bitrate. Browser transcodes client-side.
 async function compressVideo(file, quality){
-  const presets = {
-    high:   { maxH: 1080, videoBps: 4_000_000, audioBps: 128_000 },
-    medium: { maxH: 720,  videoBps: 1_500_000, audioBps:  96_000 },
-    low:    { maxH: 480,  videoBps:   600_000, audioBps:  64_000 },
-  };
-  const p = presets[quality] || presets.medium;
-
-  // Load video into a hidden element
-  const vid = document.createElement('video');
-  vid.muted = true;
-  vid.src = URL.createObjectURL(file);
-  await new Promise((res,rej)=>{ vid.onloadedmetadata=res; vid.onerror=rej; });
-
-  // Compute scaled dimensions
-  const scale = Math.min(1, p.maxH / vid.videoHeight);
-  const w = Math.round(vid.videoWidth  * scale / 2) * 2; // must be even
-  const h = Math.round(vid.videoHeight * scale / 2) * 2;
-
-  const canvas = document.createElement('canvas');
-  canvas.width = w; canvas.height = h;
-  const ctx = canvas.getContext('2d');
-
-  // Pick best supported codec
-  const mimeTypes = ['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
-  const mimeType = mimeTypes.find(m=>MediaRecorder.isTypeSupported(m)) || 'video/webm';
-
-  const stream = canvas.captureStream(30);
-  // Add audio if source has it
-  try {
-    const audioCtx = new AudioContext();
-    const src = audioCtx.createMediaElementSource(vid);
-    const dest = audioCtx.createMediaStreamDestination();
-    src.connect(dest);
-    dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t));
-  } catch(e){ /* no audio track, fine */ }
-
-  const recorder = new MediaRecorder(stream, {
-    mimeType,
-    videoBitsPerSecond: p.videoBps,
-    audioBitsPerSecond: p.audioBps,
-  });
-  const chunks = [];
-  recorder.ondataavailable = e=>{ if(e.data.size>0) chunks.push(e.data); };
-
-  // Play + draw frames
-  recorder.start(100);
-  vid.play();
-  await new Promise(res=>{
-    vid.ontimeupdate = ()=>ctx.drawImage(vid, 0, 0, w, h);
-    vid.onended = ()=>{ recorder.stop(); res(); };
-  });
-  await new Promise(res=>{ recorder.onstop=res; });
-
-  URL.revokeObjectURL(vid.src);
-  const blob = new Blob(chunks, { type: mimeType });
-  const ext = mimeType.includes('mp4') ? 'mp4' : 'webm';
-  return new File([blob], file.name.replace(/\.[^.]+$/, '')+`_${quality}.${ext}`, { type: mimeType });
+  const presets={high:{maxH:1080,videoBps:4_000_000,audioBps:128_000},medium:{maxH:720,videoBps:1_500_000,audioBps:96_000},low:{maxH:480,videoBps:600_000,audioBps:64_000}};
+  const p=presets[quality]||presets.medium, url=URL.createObjectURL(file), vid=document.createElement('video');
+  vid.muted=true; vid.playsInline=true; vid.preload='metadata'; vid.src=url;
+  try{
+    await new Promise((res,rej)=>{vid.onloadedmetadata=res;vid.onerror=()=>rej(new Error('Could not read video'));});
+    const scale=Math.min(1,p.maxH/vid.videoHeight), w=Math.max(2,Math.round(vid.videoWidth*scale/2)*2), h=Math.max(2,Math.round(vid.videoHeight*scale/2)*2);
+    const canvas=document.createElement('canvas'); canvas.width=w; canvas.height=h;
+    const ctx=canvas.getContext('2d',{alpha:false,desynchronized:true});
+    if(!ctx||!canvas.captureStream) throw new Error('Video compression is not supported by this browser');
+    const mimeTypes=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
+    const mimeType=mimeTypes.find(m=>MediaRecorder.isTypeSupported(m))||'video/webm', stream=canvas.captureStream(30);
+    let audioCtx=null;
+    try{ audioCtx=new (window.AudioContext||window.webkitAudioContext)(); const src=audioCtx.createMediaElementSource(vid),dest=audioCtx.createMediaStreamDestination(); src.connect(dest); dest.stream.getAudioTracks().forEach(t=>stream.addTrack(t)); if(audioCtx.state==='suspended') await audioCtx.resume(); }catch(e){}
+    const recorder=new MediaRecorder(stream,{mimeType,videoBitsPerSecond:p.videoBps,audioBitsPerSecond:p.audioBps}), chunks=[];
+    recorder.ondataavailable=e=>{if(e.data.size)chunks.push(e.data)};
+    const stopped=new Promise((res,rej)=>{recorder.onstop=res;recorder.onerror=()=>rej(new Error('Video recording failed'));});
+    recorder.start(250); let raf=0;
+    const draw=()=>{if(vid.ended){raf=0;return}ctx.drawImage(vid,0,0,w,h);raf=requestAnimationFrame(draw)};
+    await vid.play(); draw();
+    await new Promise((res,rej)=>{vid.onended=res;vid.onerror=()=>rej(new Error('Video playback failed'));});
+    if(raf)cancelAnimationFrame(raf); recorder.stop(); await stopped; stream.getTracks().forEach(t=>t.stop()); if(audioCtx)await audioCtx.close().catch(()=>{});
+    const blob=new Blob(chunks,{type:mimeType}), ext=mimeType.includes('mp4')?'mp4':'webm';
+    return new File([blob],file.name.replace(/\.[^.]+$/,'')+`_${quality}.${ext}`,{type:mimeType});
+  }finally{URL.revokeObjectURL(url);vid.remove()}
 }
 
 function esc(s){ return (s||'').replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])) }
